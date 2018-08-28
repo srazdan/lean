@@ -18,6 +18,10 @@ html() {
 }
 
 htmls() {
+  for f in *.lua; do
+    g=$(basename "$f" .lua)
+    echo "-- - [$g]($g.html)"
+  done > index.lua
   for f in *.lua; do pycco -d ../docs $f; done 
 }
 

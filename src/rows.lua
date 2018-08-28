@@ -2,6 +2,7 @@
 --------- --------- --------- --------- --------- --------- 
 
 require "num"
+
 -- ## Example 
 -- This code handles tables of data, like the following.
 --
