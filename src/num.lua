@@ -3,13 +3,12 @@
 
 function num()  
   return {n=0, mu=0, m2=0, sd=0, 
-          lo=10^32, hi=-10^32, all={},
+          lo=10^32, hi=-10^32, some={},
           w=1}
 end
 
 function numInc(t,x,    d) 
   if x == "?" then return x end
-  t.all[#t.all + 1] = x
   t.n  = t.n + 1
   d    = x - t.mu
   t.mu = t.mu + d/t.n

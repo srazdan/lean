@@ -63,7 +63,8 @@ function names2data(name) return header(data(), name) end
 -- - '>' is a dependent goal to be minimized (it is also numeric)
 -- - '$' is an independent  numeric colum;
 -- - '!' is a class column (and is not numeric).
-
+--
+-- The function `header` reads and processes these special symbols.
 function header(t,cells,     c,w)
   for c0,x in pairs(cells) do
     if not x:match("%?")  then
@@ -77,7 +78,55 @@ function header(t,cells,     c,w)
   return t
 end
 
--- For example, the above example call to `names2data` returns
+-- For example, the above example call to `names2data` initializes
+-- a `data` with the following structure. 
+-- Note that columns 2 and 3
+--    have each been given a [`num`](num) object (we will use that to
+--    collect statistics on those columns). 
+-- Also, observe how
+--    column three has a weight of `w[3]==-1`.
+--    
+--
+--
+--        _use:
+--        |  1: 1
+--        |  2: 2
+--        |  3: 3
+--        |  4: 4
+--        |  5: 5
+--        class: 5
+--        name:
+--        |  1: outlook
+--        |  2: $temp
+--        |  3: <humid
+--        |  4: wind
+--        |  5: !play
+--        nums:
+--        |  2:
+--        |  |  hi: -1e+32
+--        |  |  lo: 1e+32
+--        |  |  m2: 0
+--        |  |  mu: 0
+--        |  |  n: 0
+--        |  |  sd: 0
+--        |  |  some:
+--        |  |  w: 1
+--        |  3:
+--        |  |  hi: -1e+32
+--        |  |  lo: 1e+32
+--        |  |  m2: 0
+--        |  |  mu: 0
+--        |  |  n: 0
+--        |  |  sd: 0
+--        |  |  some:
+--        |  |  w: 1
+--        rows:
+--        w:
+--        |  3: -1
+--
+-- Another thing to observe is that the `rows` are empty.
+-- Why? Because we have yet to add any rows to this `data`.
+-- That task is handled by `row`.
 
 function row(t,cells,     x,r)
   r= #t.rows+1
@@ -92,6 +141,8 @@ function row(t,cells,     x,r)
   return t
 end  
 
+-- Other wist
+--
 function rows1(stream, t,f0,f,   first,line,cells)
   first,line = true,io.read()
   while line do
