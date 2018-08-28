@@ -21,7 +21,8 @@
 <hr />
     </div>
     <div class='code'>
-      <div class="highlight"><pre><span></span><span class="nb">require</span> <span class="s2">&quot;num&quot;</span></pre></div>
+      <div class="highlight"><pre><span></span><span class="nb">require</span> <span class="s2">&quot;num&quot;</span>
+<span class="nb">require</span> <span class="s2">&quot;sym&quot;</span></pre></div>
     </div>
   </div>
   <div class='clearall'></div>
@@ -47,21 +48,22 @@ rainy,  71, 91, TRUE,   no
 rainy,  70, 96, FALSE,  yes
 rainy,  70, 96, FALSE,  yes
 </code></pre>
+<p>Note that first row describes each columns.
+The special sympols <code>$&lt;&gt;!</code> will be defined below.</p>
 <p>Tables can be created two ways</p>
 <ul>
-<li>From disk data;</li>
-<li>From ram data;</li>
+<li>From ram data: using the function <code>header</code> and <code>row</code> to handle
+  the first, then subsequent lines</li>
+<li>From disk data: using <code>rows</code> which internally calls <code>header</code> and <code>row</code>.</li>
 </ul>
-<p>In both cases, the first row is handled by the <code>header</code>
-function and the other rows are handled by the <code>rows</code>
-functions, shown below.</p>
+<p>These functions are discussed further, below.</p>
 <h2>Inside  a <code>data</code></h2>
 <p>A <code>data</code> object holds lists of various things, including <code>rows</code> of the actual data
 plus some meta knowledge. </p>
 <ul>
 <li>E.g. <code>name[c]</code> is the name of column <code>c</code>. </li>
 <li>Some columns are goals we want to achienge and each of
-  those has a weight <code>w</code> (and <code>w[c]s==-1</code> means <em>minimize</em>
+  those has a weight <code>w</code> (and <code>w[c]==-1</code> means <em>minimize</em>
   and w[c]==1 means <em>maximize</em>).</li>
 <li><code>Data</code> may have one (and only) one <code>class</code> column.</li>
 </ul>
@@ -79,9 +81,9 @@ plus some meta knowledge. </p>
       <div class='octowrap'>
         <a class='octothorpe' href='#section-2'>#</a>
       </div>
-      <p>Columns can be <code>indep</code>endent or <code>dep</code>endent and the goal
+      <p>Columns can be <code>indep</code>endent or <code>dep</code>endent (and the goal
 of learning is often to find what parts of the former
-predict for the latter.</p>
+predict for the latter).</p>
     </div>
     <div class='code'>
       <div class="highlight"><pre><span class="kr">function</span> <span class="nf">indep</span><span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="n">c</span><span class="p">)</span> <span class="kr">return</span> <span class="ow">not</span> <span class="n">t</span><span class="p">.</span><span class="n">w</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="ow">and</span> <span class="n">t</span><span class="p">.</span><span class="n">class</span> <span class="o">~=</span> <span class="n">c</span> <span class="kr">end</span>
@@ -94,12 +96,11 @@ predict for the latter.</p>
       <div class='octowrap'>
         <a class='octothorpe' href='#section-3'>#</a>
       </div>
-      <p>To create a table from ram data, start with, e.g.</p>
-<pre><code>names2data({'outlook', '$temp', '&lt;humid', 'wind', '!play'})
-</code></pre>
+      <h2>Making <code>data</code></h2>
+<h3>Step1: <code>header</code></h3>
     </div>
     <div class='code'>
-      <div class="highlight"><pre><span class="kr">function</span> <span class="nf">names2data</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="kr">return</span> <span class="n">header</span><span class="p">(</span><span class="n">data</span><span class="p">(),</span> <span class="n">name</span><span class="p">)</span> <span class="kr">end</span></pre></div>
+      <div class="highlight"><pre></pre></div>
     </div>
   </div>
   <div class='clearall'></div>
@@ -108,17 +109,18 @@ predict for the latter.</p>
       <div class='octowrap'>
         <a class='octothorpe' href='#section-4'>#</a>
       </div>
-      <p>Note the special symbols in a header:</p>
+      <p>The function <code>header</code> reads and processes special symbols
+that define a table.</p>
 <ul>
-<li>'&lt;' is a dependent goal to be maximized (it is also numeric)</li>
-<li>'&gt;' is a dependent goal to be minimized (it is also numeric)</li>
+<li>'&lt;' is a dependent goal to be maximized (it is also numeric);</li>
+<li>'&gt;' is a dependent goal to be minimized (it is also numeric);</li>
 <li>'$' is an independent  numeric colum;</li>
 <li>'!' is a class column (and is not numeric).</li>
 </ul>
-<p>The function <code>header</code> reads and processes these special symbols.</p>
     </div>
     <div class='code'>
-      <div class="highlight"><pre><span class="kr">function</span> <span class="nf">header</span><span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="n">cells</span><span class="p">,</span>     <span class="n">c</span><span class="p">,</span><span class="n">w</span><span class="p">)</span>
+      <div class="highlight"><pre><span class="kr">function</span> <span class="nf">header</span><span class="p">(</span><span class="n">cells</span><span class="p">,</span><span class="n">t</span><span class="p">,</span>     <span class="n">c</span><span class="p">,</span><span class="n">w</span><span class="p">)</span>
+  <span class="n">t</span> <span class="o">=</span> <span class="n">t</span> <span class="ow">or</span> <span class="n">data</span><span class="p">()</span>
   <span class="kr">for</span> <span class="n">c0</span><span class="p">,</span><span class="n">x</span> <span class="kr">in</span> <span class="nb">pairs</span><span class="p">(</span><span class="n">cells</span><span class="p">)</span> <span class="kr">do</span>
     <span class="kr">if</span> <span class="ow">not</span> <span class="n">x</span><span class="p">:</span><span class="n">match</span><span class="p">(</span><span class="s2">&quot;%?&quot;</span><span class="p">)</span>  <span class="kr">then</span>
       <span class="n">c</span> <span class="o">=</span> <span class="o">#</span><span class="n">t</span><span class="p">.</span><span class="n">_use</span><span class="o">+</span><span class="mi">1</span>
@@ -126,11 +128,11 @@ predict for the latter.</p>
       <span class="n">t</span><span class="p">.</span><span class="n">name</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="o">=</span> <span class="n">x</span>
       <span class="kr">if</span> <span class="n">x</span><span class="p">:</span><span class="n">match</span><span class="p">(</span><span class="s2">&quot;[&lt;&gt;%$]&quot;</span><span class="p">)</span> 
 	 <span class="kr">then</span> <span class="n">t</span><span class="p">.</span><span class="n">nums</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="o">=</span> <span class="n">num</span><span class="p">()</span> 
-	 <span class="kr">else</span> <span class="n">t</span><span class="p">.</span><span class="n">syms</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="o">=</span> <span class="n">ent</span><span class="p">()</span> 
+	 <span class="kr">else</span> <span class="n">t</span><span class="p">.</span><span class="n">syms</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="o">=</span> <span class="n">sym</span><span class="p">()</span> 
       <span class="kr">end</span> 
-      <span class="kr">if</span> <span class="n">x</span><span class="p">:</span><span class="n">match</span><span class="p">(</span><span class="s2">&quot;&lt;&quot;</span><span class="p">)</span>      <span class="kr">then</span> <span class="n">t</span><span class="p">.</span><span class="n">w</span><span class="p">[</span><span class="n">c</span><span class="p">]</span>  <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="kr">end</span>
-      <span class="kr">if</span> <span class="n">x</span><span class="p">:</span><span class="n">match</span><span class="p">(</span><span class="s2">&quot;&gt;&quot;</span><span class="p">)</span>      <span class="kr">then</span> <span class="n">t</span><span class="p">.</span><span class="n">w</span><span class="p">[</span><span class="n">c</span><span class="p">]</span>  <span class="o">=</span>  <span class="mi">1</span> <span class="kr">end</span> 
-      <span class="kr">if</span> <span class="n">x</span><span class="p">:</span><span class="n">match</span><span class="p">(</span><span class="s2">&quot;!&quot;</span><span class="p">)</span>      <span class="kr">then</span> <span class="n">t</span><span class="p">.</span><span class="n">class</span> <span class="o">=</span>  <span class="n">c</span> <span class="kr">end</span> <span class="kr">end</span> <span class="kr">end</span>
+      <span class="kr">if</span> <span class="n">x</span><span class="p">:</span><span class="n">match</span><span class="p">(</span><span class="s2">&quot;&lt;&quot;</span><span class="p">)</span> <span class="kr">then</span> <span class="n">t</span><span class="p">.</span><span class="n">w</span><span class="p">[</span><span class="n">c</span><span class="p">]</span>  <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="kr">end</span>
+      <span class="kr">if</span> <span class="n">x</span><span class="p">:</span><span class="n">match</span><span class="p">(</span><span class="s2">&quot;&gt;&quot;</span><span class="p">)</span> <span class="kr">then</span> <span class="n">t</span><span class="p">.</span><span class="n">w</span><span class="p">[</span><span class="n">c</span><span class="p">]</span>  <span class="o">=</span>  <span class="mi">1</span> <span class="kr">end</span> 
+      <span class="kr">if</span> <span class="n">x</span><span class="p">:</span><span class="n">match</span><span class="p">(</span><span class="s2">&quot;!&quot;</span><span class="p">)</span> <span class="kr">then</span> <span class="n">t</span><span class="p">.</span><span class="n">class</span> <span class="o">=</span>  <span class="n">c</span> <span class="kr">end</span> <span class="kr">end</span> <span class="kr">end</span>
   <span class="kr">return</span> <span class="n">t</span>
 <span class="kr">end</span></pre></div>
     </div>
@@ -141,11 +143,12 @@ predict for the latter.</p>
       <div class='octowrap'>
         <a class='octothorpe' href='#section-5'>#</a>
       </div>
-      <p>For example, the above example call to <code>names2data</code> initializes
+      <p>For example, the above example call to <code>header</code> initializes
 a <code>data</code> with the following structure. 
 Note that columns 2 and 3
-   have each been given a <a href="num"><code>num</code></a> object (we will use that to
-   collect statistics on those columns). 
+   have each been given a <a href="num"><code>num</code></a> object or
+   a <a href="sym"><code>sym</code></a> object (we will use those to
+   collect statistics on each column). 
 Also, observe how
    column three has a weight of <code>w[3]==-1</code>.</p>
     </div>
@@ -173,31 +176,46 @@ Also, observe how
    |  4: wind
    |  5: !play
    nums:
-   |  2:
-   |  |  hi: -1e+32
-   |  |  lo: 1e+32
-   |  |  m2: 0
-   |  |  mu: 0
-   |  |  n: 0
-   |  |  sd: 0
-   |  |  some:
-   |  |  w: 1
-   |  3:
-   |  |  hi: -1e+32
-   |  |  lo: 1e+32
-   |  |  m2: 0
-   |  |  mu: 0
-   |  |  n: 0
-   |  |  sd: 0
-   |  |  some:
-   |  |  w: 1
+   |  2:  &lt;an empyy num&gt;
+   |  3:  &lt;an empty num&gt;
    rows:
+   syms:
+   |  1:  &lt;an empty sym&gt;
+   |  4:  &lt;an empty sym&gt;
+   |  5:  &lt;an empty sym&gt;
    w:
    |  3: -1
 </code></pre>
-<p>Another thing to observe is that the <code>rows</code> are empty.
-Why? Because we have yet to add any rows to this <code>data</code>.
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-7'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-7'>#</a>
+      </div>
+      <p>Another thing to observe is that the <code>rows</code> and <code>syms</code>
+and <code>nums</code> are empty.
+Why? Because we have yet to add any data to this <code>data</code>.
 That task is handled by <code>row</code>.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-8'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-8'>#</a>
+      </div>
+      <h3>Step2: Add a <code>row</code></h3>
+<p>The only tricky bits of adding a row is handling the 
+string to number conversions, and when to skip
+cells with an unknown value.</p>
     </div>
     <div class='code'>
       <div class="highlight"><pre><span class="kr">function</span> <span class="nf">row</span><span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="n">cells</span><span class="p">,</span>     <span class="n">x</span><span class="p">,</span><span class="n">r</span><span class="p">)</span>
@@ -207,7 +225,8 @@ That task is handled by <code>row</code>.</p>
     <span class="n">x</span> <span class="o">=</span> <span class="n">cells</span><span class="p">[</span><span class="n">c0</span><span class="p">]</span>
     <span class="kr">if</span> <span class="n">x</span> <span class="o">~=</span> <span class="s2">&quot;?&quot;</span> <span class="kr">then</span>
       <span class="kr">if</span> <span class="n">t</span><span class="p">.</span><span class="n">nums</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="kr">then</span> 
-        <span class="n">numInc</span><span class="p">(</span><span class="n">t</span><span class="p">.</span><span class="n">nums</span><span class="p">[</span><span class="n">c</span><span class="p">],</span> <span class="nb">tonumber</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+	<span class="n">x</span> <span class="o">=</span> <span class="nb">tonumber</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">numInc</span><span class="p">(</span><span class="n">t</span><span class="p">.</span><span class="n">nums</span><span class="p">[</span><span class="n">c</span><span class="p">],</span> <span class="n">x</span><span class="p">)</span>
       <span class="kr">else</span>
 	<span class="n">symInc</span><span class="p">(</span><span class="n">t</span><span class="p">.</span><span class="n">syms</span><span class="p">[</span><span class="n">c</span><span class="p">],</span> <span class="n">x</span><span class="p">)</span>
     <span class="kr">end</span> <span class="kr">end</span>
@@ -217,12 +236,16 @@ That task is handled by <code>row</code>.</p>
     </div>
   </div>
   <div class='clearall'></div>
-  <div class='section' id='section-7'>
+  <div class='section' id='section-9'>
     <div class='docs'>
       <div class='octowrap'>
-        <a class='octothorpe' href='#section-7'>#</a>
+        <a class='octothorpe' href='#section-9'>#</a>
       </div>
-      <p>Other wist</p>
+      <h2>Making <code>data</code> from Ram</h2>
+<p>Reading data from disk, is handled by the
+<code>rows</code> function (that sets some defaults), after
+which time it calls <code>rows1</code> to do the actually
+stream over the disk data. </p>
     </div>
     <div class='code'>
       <div class="highlight"><pre><span class="kr">function</span> <span class="nf">rows1</span><span class="p">(</span><span class="n">stream</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span><span class="n">f0</span><span class="p">,</span><span class="n">f</span><span class="p">,</span>   <span class="n">first</span><span class="p">,</span><span class="n">line</span><span class="p">,</span><span class="n">cells</span><span class="p">)</span>
@@ -233,7 +256,7 @@ That task is handled by <code>row</code>.</p>
     <span class="n">cells</span> <span class="o">=</span> <span class="n">split</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
     <span class="n">line</span> <span class="o">=</span> <span class="nb">io.read</span><span class="p">()</span>
     <span class="kr">if</span> <span class="o">#</span><span class="n">cells</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="kr">then</span>
-      <span class="kr">if</span> <span class="n">first</span> <span class="kr">then</span> <span class="n">f0</span><span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="n">cells</span><span class="p">)</span> <span class="kr">else</span> <span class="n">f</span><span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="n">cells</span><span class="p">)</span> <span class="kr">end</span> <span class="kr">end</span>
+      <span class="kr">if</span> <span class="n">first</span> <span class="kr">then</span> <span class="n">f0</span><span class="p">(</span><span class="n">cells</span><span class="p">,</span><span class="n">t</span><span class="p">)</span> <span class="kr">else</span> <span class="n">f</span><span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="n">cells</span><span class="p">)</span> <span class="kr">end</span> <span class="kr">end</span>
       <span class="n">first</span> <span class="o">=</span> <span class="kc">false</span>
   <span class="kr">end</span> 
   <span class="nb">io.close</span><span class="p">(</span><span class="n">stream</span><span class="p">)</span>
@@ -242,9 +265,32 @@ That task is handled by <code>row</code>.</p>
 
 <span class="kr">function</span> <span class="nf">rows</span><span class="p">(</span><span class="n">file</span><span class="p">,</span><span class="n">t</span><span class="p">,</span><span class="n">f0</span><span class="p">,</span><span class="n">f</span><span class="p">,</span>      <span class="n">stream</span><span class="p">,</span><span class="n">txt</span><span class="p">,</span><span class="n">cells</span><span class="p">,</span><span class="n">r</span><span class="p">,</span><span class="n">line</span><span class="p">)</span>
   <span class="kr">return</span> <span class="n">rows1</span><span class="p">(</span> <span class="n">file</span> <span class="ow">and</span> <span class="nb">io.input</span><span class="p">(</span><span class="n">file</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">io.input</span><span class="p">(),</span>
-                <span class="n">t</span>  <span class="ow">or</span> <span class="n">data</span><span class="p">(),</span> <span class="n">f0</span> <span class="ow">or</span> <span class="n">header</span><span class="p">,</span> <span class="n">f</span> <span class="ow">or</span> <span class="n">row</span><span class="p">)</span> <span class="kr">end</span>
-
-</pre></div>
+                <span class="n">t</span>  <span class="ow">or</span> <span class="n">data</span><span class="p">(),</span> <span class="n">f0</span> <span class="ow">or</span> <span class="n">header</span><span class="p">,</span> <span class="n">f</span> <span class="ow">or</span> <span class="n">row</span><span class="p">)</span> <span class="kr">end</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-10'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-10'>#</a>
+      </div>
+      <h2>Making <code>data</code> from Ram</h2>
+<p>Note that if your data
+was in RAM, you would <strong>not</strong> use <code>rows</code>. Rather,
+your code would:</p>
+<ul>
+<li>would call <code>header</code> to create a <code>data</code>,</li>
+<li>then call <code>row</code> for each row of data.</li>
+</ul>
+<p>For example, to select all rows from <code>old</code> whose last cells is <code>happy</code>...</p>
+<pre><code>new = header(old.names)
+for _,cells in pairs(old.rows) do
+   if cells[#cells] == 'happy' then
+       row(new, cells) end end
+</code></pre>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
     </div>
   </div>
   <div class='clearall'></div>

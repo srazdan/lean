@@ -49,7 +49,7 @@ function o(t,    indent,   formatting)
       print(formatting)
       o(v, indent+1)
     else
-      print(formatting .. v) end end 
+      print(formatting .. tostring(v)) end end 
 end
 
 function max(x,y) return x>y and x or y end

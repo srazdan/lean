@@ -69,7 +69,7 @@ function fft(t,d,  pre,cut,otherwise,x,str)
   if #t.rows < The.fft.min then return true end
   cut = bestCut(t) 
   fftClause(cut,t,pre)
-  otherwise = names2data(t.name)
+  otherwise = header(t.name)
   for _,cells in pairs(t.rows) do
     if not withinCut(cells[cut.col], cut.lo, cut.hi) then
       row(otherwise, cells) end end

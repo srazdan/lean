@@ -2,6 +2,7 @@
 --------- --------- --------- --------- --------- --------- 
 
 require "num"
+require "sym"
 
 -- ## Example 
 -- This code handles tables of data, like the following.
@@ -21,14 +22,16 @@ require "num"
 --     rainy,	70,	96,	FALSE,	yes
 --     rainy,	70,	96,	FALSE,	yes
 --
+-- Note that first row describes each columns.
+-- The special sympols `$<>!` will be defined below.
+--
 -- Tables can be created two ways
 --
--- - From disk data;
--- - From ram data;
+-- - From ram data: using the function `header` and `row` to handle
+--   the first, then subsequent lines
+-- - From disk data: using `rows` which internally calls `header` and `row`.
 --
--- In both cases, the first row is handled by the `header`
--- function and the other rows are handled by the `rows`
--- functions, shown below.
+-- These functions are discussed further, below.
 --
 -- ## Inside  a `data`
 --
@@ -37,7 +40,7 @@ require "num"
 --
 -- - E.g. `name[c]` is the name of column `c`. 
 -- - Some columns are goals we want to achienge and each of
---   those has a weight `w` (and `w[c]s==-1` means _minimize_
+--   those has a weight `w` (and `w[c]==-1` means _minimize_
 --   and w[c]==1 means _maximize_).
 -- - `Data` may have one (and only) one `class` column.
 
@@ -46,28 +49,27 @@ function data()
           rows={}, name= {}, _use={}} 
 end
 
--- Columns can be `indep`endent or `dep`endent and the goal
+-- Columns can be `indep`endent or `dep`endent (and the goal
 -- of learning is often to find what parts of the former
--- predict for the latter.
+-- predict for the latter).
 
 function indep(t,c) return not t.w[c] and t.class ~= c end
 function dep(t,c)   return not indep(t,c) end
 
--- To create a table from ram data, start with, e.g.
---
---     names2data({'outlook', '$temp', '<humid', 'wind', '!play'})
+-- ## Making `data`
+-- ### Step1: `header`
 
-function names2data(name) return header(data(), name) end
-
--- Note the special symbols in a header:
+-- The function `header` reads and processes special symbols
+-- that define a table.
 --
--- - '<' is a dependent goal to be maximized (it is also numeric)
--- - '>' is a dependent goal to be minimized (it is also numeric)
+-- - '<' is a dependent goal to be maximized (it is also numeric);
+-- - '>' is a dependent goal to be minimized (it is also numeric);
 -- - '$' is an independent  numeric colum;
 -- - '!' is a class column (and is not numeric).
 --
--- The function `header` reads and processes these special symbols.
-function header(t,cells,     c,w)
+
+function header(cells,t,     c,w)
+  t = t or data()
   for c0,x in pairs(cells) do
     if not x:match("%?")  then
       c = #t._use+1
@@ -75,19 +77,20 @@ function header(t,cells,     c,w)
       t.name[c] = x
       if x:match("[<>%$]") 
 	 then t.nums[c] = num() 
-	 else t.syms[c] = ent() 
+	 else t.syms[c] = sym() 
       end 
-      if x:match("<")      then t.w[c]  = -1 end
-      if x:match(">")      then t.w[c]  =  1 end 
-      if x:match("!")      then t.class =  c end end end
+      if x:match("<") then t.w[c]  = -1 end
+      if x:match(">") then t.w[c]  =  1 end 
+      if x:match("!") then t.class =  c end end end
   return t
 end
 
--- For example, the above example call to `names2data` initializes
+-- For example, the above example call to `header` initializes
 -- a `data` with the following structure. 
 -- Note that columns 2 and 3
---    have each been given a [`num`](num) object (we will use that to
---    collect statistics on those columns). 
+--    have each been given a [`num`](num) object or
+--    a [`sym`](sym) object (we will use those to
+--    collect statistics on each column). 
 -- Also, observe how
 --    column three has a weight of `w[3]==-1`.
 
@@ -106,31 +109,27 @@ end
 --        |  4: wind
 --        |  5: !play
 --        nums:
---        |  2:
---        |  |  hi: -1e+32
---        |  |  lo: 1e+32
---        |  |  m2: 0
---        |  |  mu: 0
---        |  |  n: 0
---        |  |  sd: 0
---        |  |  some:
---        |  |  w: 1
---        |  3:
---        |  |  hi: -1e+32
---        |  |  lo: 1e+32
---        |  |  m2: 0
---        |  |  mu: 0
---        |  |  n: 0
---        |  |  sd: 0
---        |  |  some:
---        |  |  w: 1
+--        |  2:  <an empyy num>
+--        |  3:  <an empty num>
 --        rows:
+--        syms:
+--        |  1:  <an empty sym>
+--        |  4:  <an empty sym>
+--        |  5:  <an empty sym>
 --        w:
 --        |  3: -1
 --
--- Another thing to observe is that the `rows` are empty.
--- Why? Because we have yet to add any rows to this `data`.
+
+-- Another thing to observe is that the `rows` and `syms`
+-- and `nums` are empty.
+-- Why? Because we have yet to add any data to this `data`.
 -- That task is handled by `row`.
+
+
+-- ### Step2: Add a `row`
+-- The only tricky bits of adding a row is handling the 
+-- string to number conversions, and when to skip
+-- cells with an unknown value.
 
 function row(t,cells,     x,r)
   r= #t.rows+1
@@ -139,7 +138,8 @@ function row(t,cells,     x,r)
     x = cells[c0]
     if x ~= "?" then
       if t.nums[c] then 
-        numInc(t.nums[c], tonumber(x))
+	x = tonumber(x)
+        numInc(t.nums[c], x)
       else
 	symInc(t.syms[c], x)
     end end
@@ -147,8 +147,13 @@ function row(t,cells,     x,r)
   return t
 end  
 
--- Other wist
+-- ## Making `data` from Ram 
 --
+-- Reading data from disk, is handled by the
+-- `rows` function (that sets some defaults), after
+-- which time it calls `rows1` to do the actually
+-- stream over the disk data. 
+
 function rows1(stream, t,f0,f,   first,line,cells)
   first,line = true,io.read()
   while line do
@@ -157,7 +162,7 @@ function rows1(stream, t,f0,f,   first,line,cells)
     cells = split(line)
     line = io.read()
     if #cells > 0 then
-      if first then f0(t,cells) else f(t,cells) end end
+      if first then f0(cells,t) else f(t,cells) end end
       first = false
   end 
   io.close(stream)
@@ -168,3 +173,18 @@ function rows(file,t,f0,f,      stream,txt,cells,r,line)
   return rows1( file and io.input(file) or io.input(),
                 t  or data(), f0 or header, f or row) end 
 
+-- ## Making `data` from Ram 
+-- Note that if your data
+-- was in RAM, you would **not** use `rows`. Rather,
+-- your code would:
+--
+-- - would call `header` to create a `data`,
+-- - then call `row` for each row of data.
+--
+-- For example, to select all rows from `old` whose last cells is `happy`...
+--   
+--     new = header(old.names)
+--     for _,cells in pairs(old.rows) do
+--        if cells[#cells] == 'happy' then
+--            row(new, cells) end end
+--

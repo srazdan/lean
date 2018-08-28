@@ -1,6 +1,8 @@
 --vim: ts=2 sw=2 sts=2 expandtab:cindent:formatoptions+=cro 
 --------- --------- --------- --------- --------- --------- 
 
+require "sample"
+
 -- ## Example
 
 --
@@ -14,7 +16,7 @@
 
 function num()  
   return {n=0, mu=0, m2=0, sd=0, 
-          lo=10^32, hi=-10^32, some={},
+          lo=10^32, hi=-10^32, some=sample(),
           w=1}
 end
 
@@ -32,6 +34,7 @@ end
 function numInc(t,x,    d) 
   if x == "?" then return x end
   t.n  = t.n + 1
+  sampleInc(t.some, x)
   d    = x - t.mu
   t.mu = t.mu + d/t.n
   t.m2 = t.m2 + d*(x - t.mu)
