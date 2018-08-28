@@ -13,6 +13,14 @@ pathmunge $PWD/bin after
 alias pull="git pull"
 alias push="git commit -am pushing; git push"
 
+html() {
+  pycco -d ../docs $1.lua 
+}
+
+htmls() {
+  for f in *.lua; do pycco -d ../docs $f; done 
+}
+
 make -f etc/setup.mk
 
 ok() {

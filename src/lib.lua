@@ -82,6 +82,14 @@ function cols(t,     numfmt, sfmt,noline,w,txt,sep)
 end
 
 --------- --------- --------- --------- --------- --------- 
+-- ## Num Stuff
+
+function close(x,y,  c)
+  c=c or 0.01
+  return math.abs((x-y)/x) < c
+end
+
+--------- --------- --------- --------- --------- --------- 
 -- ## Meta Stuff
 
 function main(t)

@@ -4,6 +4,7 @@
 The = {random = {seed = 10013},
        ok     = {tries = 0, fails  =0},
        dom    = {samples=100}, 
+       sample = {max=128}, 
        fft    = {min=4},
        enough = 100,
        margin = 1.02,

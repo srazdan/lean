@@ -7,6 +7,13 @@ function num()
           w=1}
 end
 
+function nums(t,f,      n)
+  f=f or function(x) return x end
+  n=num()
+  for _,x in pairs(t) do numInc(n, f(x)) end
+  return n
+end
+
 function numInc(t,x,    d) 
   if x == "?" then return x end
   t.n  = t.n + 1
@@ -40,4 +47,3 @@ function numXpect(i,j,   n)
   n = i.n + j.n +0.0001
   return i.n/n * i.sd+ j.n/n * j.sd
 end
-

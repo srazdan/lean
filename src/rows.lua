@@ -41,7 +41,8 @@ require "num"
 -- - `Data` may have one (and only) one `class` column.
 
 function data()
-  return {w={}, nums={}, class=nil, rows={}, name= {}, _use={}} 
+  return {w={}, syms={}, nums={}, class=nil, 
+          rows={}, name= {}, _use={}} 
 end
 
 -- Columns can be `indep`endent or `dep`endent and the goal
@@ -71,7 +72,10 @@ function header(t,cells,     c,w)
       c = #t._use+1
       t._use[c] = c0
       t.name[c] = x
-      if x:match("[<>%$]") then t.nums[c] = num() end 
+      if x:match("[<>%$]") 
+	 then t.nums[c] = num() 
+	 else t.syms[c] = ent() 
+      end 
       if x:match("<")      then t.w[c]  = -1 end
       if x:match(">")      then t.w[c]  =  1 end 
       if x:match("!")      then t.class =  c end end end
@@ -85,8 +89,7 @@ end
 --    collect statistics on those columns). 
 -- Also, observe how
 --    column three has a weight of `w[3]==-1`.
---    
---
+
 --
 --        _use:
 --        |  1: 1
@@ -133,10 +136,12 @@ function row(t,cells,     x,r)
   t.rows[r] = {}
   for c,c0 in pairs(t._use) do
     x = cells[c0]
-    if t.nums[c] then 
-      if x ~= "?" then
-	x = tonumber(x)
-        numInc(t.nums[c], x) end end
+    if x ~= "?" then
+      if t.nums[c] then 
+        numInc(t.nums[c], tonumber(x))
+      else
+	symInc(t.syms[c], x)
+    end end
     t.rows[r][c] = x  end
   return t
 end  
