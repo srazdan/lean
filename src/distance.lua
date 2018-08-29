@@ -9,8 +9,7 @@ function symDist(t,x,y)
   return x==y and 0,1 or 1,1
 end
 
-function numDist(t,x,y,p)
-  p = p or The.num.p
+function numDist(t,x,y)
   if x=="?" and y=="?" then 
     return 0,0 
   elseif x=="?" then 
@@ -22,7 +21,7 @@ function numDist(t,x,y,p)
   else
     x,y = numNorm(t,x), numNorm(t,y)
   end
-  return (x-y)^p, 1
+  return (x-y)^2, 1
 end
 
 function indeps(t, u)
@@ -32,18 +31,17 @@ function indeps(t, u)
   return u
 end
 
-function dist(t,row1,row2,use,p,    d,n,x,y,f,d1,n1)
-  d,n,p = 0,0,p or The.num.p
+function dist(t,row1,row2,use,    d,n,x,y,f,d1,n1)
+  d,n = 0,0
   for _,c in pairs(use) do
     x, y  = row1[c], row2[c]
     f     = nump[c] and numDist or symDist
     d1,n1 = f(t,x,y) 
     d, n  = d + d1, n + n1 end
-  return d^(1/p) / n^(1/p)
+  return d^(1/2) / n^(1/2)
 end
 
-function faraway(t,row1,  use,tmp,row2)
-  use = indeps(t)
+function faraway(t,row1,use,  tmp,row2)
   tmp = {}
   for i=1,100 do
     row2 = any(t.rows)
@@ -53,8 +51,8 @@ function faraway(t,row1,  use,tmp,row2)
   return tmp[5][1]
 end
 
-function farPairs(t,    x,row1,row2)
-  row1 = faraway(t, any(t.rows))
-  row2 = faraway(t, row1)
+function farPairs(t,use,    x,row1,row2)
+  row1 = faraway(t, any(t.rows), use)
+  row2 = faraway(t, row1,        use)
   return row1,row2
 end
