@@ -41,10 +41,10 @@ function dist(t,row1,row2,cols,    d,n,x,y,f,d1,n1)
   return d^(1/2) / n^(1/2)
 end
 
-function faraway(t,row1,rows,cols,  tmp,row2)
+function faraway(data,row1,rows,cols,  tmp,row2)
   tmp = {}
-  rows = rows or t.rows
-  cols = cols or indeps()
+  rows = rows or data.rows
+  cols = cols or indeps(data)
   for i=1,100 do
     row2 = any(rows)
     tmp[ #tmp+1 ] = {row2, dist(t, row1, row2, cols, The.num.p)}
