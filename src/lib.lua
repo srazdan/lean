@@ -44,12 +44,13 @@ end
 function o(t,    indent,   formatting)
   indent = indent or 0
   for k, v in ordered(t) do
-    formatting = string.rep("|  ", indent) .. k .. ": "
-    if type(v) == "table" then
-      print(formatting)
-      o(v, indent+1)
-    else
-      print(formatting .. tostring(v)) end end 
+    if not (type(k)=='string' and k:match("^_")) then
+      formatting = string.rep("|  ", indent) .. k .. ": "
+      if type(v) == "table" then
+        print(formatting)
+        o(v, indent+1)
+      else
+        print(formatting .. tostring(v)) end end end
 end
 
 function max(x,y) return x>y and x or y end
