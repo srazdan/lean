@@ -12,9 +12,13 @@ do
     return seed / modulus end
 end
 
-function another(x,l,     y)   
-  y = math.floor(0.5+ rand() * #l)  
-  if x==y then return another(x,l) end
-  if l[y] then return l[y] end
-  return another(x,l)
+function another(x,t,     y)   
+  y = math.floor(0.5+ rand() * #t)  
+  if x==y then return another(x,t) end
+  if t[y] then return t[y] end
+  return another(x,t)
+end
+
+function any(t,    x)
+  return t[ math.floor(0.5+ rand() * #t) ]
 end

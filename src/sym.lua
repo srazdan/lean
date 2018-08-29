@@ -57,3 +57,5 @@ function symEnt(t,  p)
       t._ent = t._ent - p * math.log(p,2) end end
   return t._ent
 end
+
+
