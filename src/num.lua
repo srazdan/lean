@@ -29,7 +29,8 @@ function nums(t,f,      n)
   return n
 end
 
--- Add `x` to a `num`:
+-- Incremenally, add `x` to a `num`.
+-- This is [Welford's algorithm](https://en.wikipedia.org/wiki/Algorithms_for_calculating_variance#Online_algorithm)
 
 function numInc(t,x,    d) 
   if x == "?" then return x end
@@ -45,6 +46,18 @@ function numInc(t,x,    d)
   return x  
 end
 
+-- Aside: this can be generalized to 
+-- higher order moments; e.g. to calcuate
+-- [skew and kurtosis](https://en.wikipedia.org/wiki/Algorithms_for_calculating_variance#Higher-order_statistics). 
+--
+-- ![](https://www.scratchapixel.com/images/upload/monte-carlo-methods/skew.png?)
+--
+-- Note that mean, variance, skew,
+-- kurtosis may not be enough to characterize
+-- real world data sets. e.g
+-- see [these plots](https://raw.githubusercontent.com/txt/fss17/master/img/notnorm8.png) of CPU wait times for disk access time for numerous SQL queries from one program on one system. So whenever I can, I cluster the data and build
+-- different models for different small local regions.
+--
 -- Remove `x` from a `num`. Note: due to
 -- the approximation of this method, this
 -- gets inaccurate for small `x` numbers

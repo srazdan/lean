@@ -1,5 +1,6 @@
 -- - [abcd](abcd.html)
 -- - [config](config.html)
+-- - [distance](distance.html)
 -- - [dom](dom.html)
 -- - [fft](fft.html)
 -- - [index](index.html)
@@ -10,3 +11,4 @@
 -- - [rows](rows.html)
 -- - [sample](sample.html)
 -- - [sym](sym.html)
+-- - [where](where.html)
