@@ -1,4 +1,4 @@
-outlook, $temp, <humid, wind, !play
+%outlook, $temp, <humid, wind, !play
 over,	64,	65,	TRUE,	yes 
 over,	64,	65,	TRUE,	yes 
 over,	72,	90,	TRUE,	yes 
