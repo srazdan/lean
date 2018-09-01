@@ -25,6 +25,14 @@ htmls() {
   for f in *.lua; do pycco -d ../docs $f; done 
 }
 
+para() {
+    gawk 'BEGIN {FS="\n"; RS=""} NR=='$1
+}
+
+cols()  {
+  column -t -s, "$@" | less -F -S -X -K
+}
+
 make -f etc/setup.mk
 
 ok() {
