@@ -19,16 +19,16 @@ function off(t) return t end
 
 function ok(t,  n,score)
   s=function() return math.floor(0.5 + 100*(1- 
-                        ((The.ok.tries-The.ok.fails)/
-                        The.ok.tries))) end
+                        ((Lean.ok.tries-Lean.ok.fails)/
+                        Lean.ok.tries))) end
   for x,f in pairs(t) do
-    The.ok.tries = The.ok.tries + 1
-    print("-- Test #" .. The.ok.tries .. 
+    Lean.ok.tries = Lean.ok.tries + 1
+    print("-- Test #" .. Lean.ok.tries .. 
           " (oops=".. s() .."%). Checking ".. x .."... ")
     local passed,err = pcall(f)
     if not passed then
-      The.ok.fails = The.ok.fails + 1
-      print("-- E> Failure " .. The.ok.fails .. " of " 
-            .. The.ok.tries ..": ".. err) end end
+      Lean.ok.fails = Lean.ok.fails + 1
+      print("-- E> Failure " .. Lean.ok.fails .. " of " 
+            .. Lean.ok.tries ..": ".. err) end end
   rogues()
 end

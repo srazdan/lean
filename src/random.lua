@@ -2,7 +2,7 @@
 --------- --------- --------- --------- --------- --------- 
 
 do
-  local seed0     = The.random.seed
+  local seed0     = Lean.random.seed
   local seed      = seed0
   local modulus   = 2147483647
   local multipler = 16807

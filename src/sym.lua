@@ -42,6 +42,7 @@ end
 
 function symDec(t,x)
   t._ent= nil
+  t.n = t.n - 1
   i.counts[x] = i.counts - 1
   return x
 end

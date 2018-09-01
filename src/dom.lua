@@ -19,7 +19,7 @@ function dom(t,row1,row2,     n,a0,a,b0,b,s1,s2)
 end
 
 function doms(t,  n,c,row1,row2,s)
-  n= The.dom.samples
+  n= Lean.dom.samples
   c= #t.name + 1
   print(cat(t.name,",") .. ",>dom")
   for r1=1,#t.rows do

@@ -66,7 +66,7 @@ end
 function fft(t,d,  pre,cut,otherwise,x,str)
   d = d or 4
   if d <= 0                then return true end
-  if #t.rows < The.fft.min then return true end
+  if #t.rows < Lean.fft.min then return true end
   cut = bestCut(t) 
   fftClause(cut,t,pre)
   otherwise = header(t.name)

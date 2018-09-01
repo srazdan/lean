@@ -10,7 +10,7 @@ require "random"
 --
 
 function sample(max) 
-  return {max=max or The.sample.max, 
+  return {max=max or Lean.sample.max, 
           n=0, sorted=false, some={}}
 end
 
