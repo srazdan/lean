@@ -98,9 +98,9 @@ function super(data,goal,enough,       rows)
 --
 -- - Then recurse to, maybe, find other cuts. 
 -- - Else, rewrite all values in `lo` to `hi` to
---   the same range.
+--   the same string `s` representing the range..
 
-  local function cuts(c,lo,hi,pre,       cut,txt,r,mu)
+  local function cuts(c,lo,hi,pre,       cut,txt,s,mu)
     txt = pre..rows[lo][c]..".."..rows[hi][c]
     cut = argmin(c,lo,hi)
     if cut then
@@ -108,10 +108,10 @@ function super(data,goal,enough,       rows)
       cuts(c,lo,   cut, pre.."|.. ")
       cuts(c,cut+1, hi, pre.."|.. ")
     else
-      r,mu= range(c,lo,hi)
+      s,mu= range(c,lo,hi)
       fyi(txt.." = "..math.floor(100*mu))
-      for i=lo,hi do
-        if rows[i][c] ~= "?" then rows[i][c]=r end end end
+      for r=lo,hi do
+        if rows[r][c] ~= "?" then rows[r][c]=s end end end
   end
 
 -- For all numeric indpendent columns, sort it and 

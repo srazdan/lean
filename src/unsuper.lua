@@ -4,7 +4,7 @@
 require "lib"
 require "num"
 
-function unsuper(data,  enough)
+function unsuper(data,  enough,rows)
   rows = data.rows
   enough = (#rows)^Lean.unsuper.enough 
 

@@ -10,5 +10,7 @@
 -- - [random](random.html)
 -- - [rows](rows.html)
 -- - [sample](sample.html)
+-- - [super](super.html)
 -- - [sym](sym.html)
+-- - [unsuper](unsuper.html)
 -- - [where](where.html)
