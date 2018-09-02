@@ -5,6 +5,7 @@ require "config"
 require "rows"
 require "num"
 require "random"
+require "ok"
 
 --------- --------- --------- --------- --------- --------- 
 -- ## String Stuff
@@ -95,7 +96,7 @@ end
 
 function main(t)
   if type(t) == 'table' and type(t.main) == 'function' then
-       t.main() end 
+       t.main(); rogues() end 
 end 
 
 function mainLib() print("lib loaded") end

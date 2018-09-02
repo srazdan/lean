@@ -1,6 +1,6 @@
 -- vim: tabstop=2:softtabstop=2:shiftwidth=2:expandtab
 --------- --------- --------- --------- --------- --------- 
-require "lib"
+require "config"
 
 function rogues(    ignore,match)
   ignore = {
