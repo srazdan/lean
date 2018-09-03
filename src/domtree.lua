@@ -7,8 +7,7 @@ require "num"
 
 function domTree(data0,show,goal,enough,    out)
   goal   = goal or #(data0.name)
-  enough = enough or (#(data0.rows))^Lean.domtree.enough
-  print(goal,enough)
+  enough = enough or (#data0.rows)^Lean.domtree.enough
   
   local function xpect(n,vals,out)
     for _,val in pairs(vals) do
@@ -23,7 +22,7 @@ function domTree(data0,show,goal,enough,    out)
 
   local function col(data,c,       val,x,y,n,vals)
     val= function(x) return 
-         {col=c,val=x,data=header(data.name),n=num()} end
+         {col=c, val=x, n=num(), data=header(data.name)} end
     n, vals = 0, {}
     for _,cells in pairs(data.rows) do
       x = cells[c]
@@ -40,34 +39,37 @@ function domTree(data0,show,goal,enough,    out)
 -- Otherwise, find the best column to split on, 
 -- then recurse for each value of that split.
 
-  local function recurse(data,kids,cols) 
-    if #(data.rows) < enough then 
-      return {_data=data, kids={}}
-    else
-      for i,c in pairs(data.indeps) do 
-        cols[i] = col(data,c) end
+  local function recurse(data,kids,cols,    best) 
+    for i,c in pairs(data.indeps) do 
+      cols[i] = col(data,c) end
       cols = ksort("score", cols)
-      for i,val in pairs(cols[1].vals) do
+      best = cols[1]
+      for i,val in pairs(best.vals) do
         if #(val.data.rows) < #(data.rows) then
-          kids[i]= {col=val.col, name=data.name[val.col],
-                    val=val.val,
-                    sub=recurse(val.data,{},{})} end end end
+          if #(val.data.rows) > enough then
+            kids[ #kids+1 ]= {col=val.col, 
+                              name=data.name[val.col],
+                              val=val.val, 
+                              mu=val.n.mu,
+                              sub=recurse(val.data,{},{})} 
+      end end end 
       return {_data=data, kids=kids}
     end
 
 -- Print the tree
 
-  local function display(t, pre)
-    if #(t.kids) > 0 then
-      pre = pre or "|.. "
-      for _,kid in pairs(ksort("val",t.kids)) do
-        --dump(kid)
-       print(pre, kid.name .."="..kid.val)
-       display(kid.kids,"|.. " .. pre) end end
+  local function display(t,     pre,pretty,s)
+    pre = pre or "|.. "
+    for _,kid in pairs(ksort("mu",t.kids)) do
+      s= pre..kid.name.."="..kid.val
+      if #kid.sub.kids == 0 then
+        s= s.." --> "..math.floor(100*kid.mu) end
+      print(s) 
+      display(kid.sub,"|.. " .. pre) end 
   end
 
   out = recurse(data0,{},{})  
-  if show then display(out) end
+  if show then print(""); display(out,"") end
   return out
 end
 

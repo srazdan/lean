@@ -5,7 +5,7 @@
 Lean = {random = {seed = 10013},
        ok     = {tries = 0, fails  =0},
        dom    = {samples=100}, 
-       domtree = {enough=0.2},
+       domtree = {enough=0.5},
        sample = {max=128}, 
        num    = {p=2},
        fft    = {min=4},

@@ -40,11 +40,11 @@ function super(data,goal,enough,       rows,most)
 
   local function band(c,lo,hi)
     if lo==1 then
-      return ":".. rows[hi][c]
+      return "..".. rows[hi][c]
     elseif hi == most then
-      return rows[lo][c]..":"
+      return rows[lo][c]..".."
     else
-      return rows[lo][c]..":"..rows[hi][c] end
+      return rows[lo][c]..".."..rows[hi][c] end
   end
 
 -- Find one best cut, as follows.

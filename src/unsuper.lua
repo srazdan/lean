@@ -10,11 +10,11 @@ function unsuper(data,  enough,rows, most)
 
   local function band(c,lo,hi)
     if lo==1 then
-      return ":".. rows[hi][c]
+      return "..".. rows[hi][c]
     elseif hi == most then
-      return rows[lo][c]..":"
+      return rows[lo][c]..".."
     else
-      return rows[lo][c]..":"..rows[hi][c] end
+      return rows[lo][c]..".."..rows[hi][c] end
   end
 
   local function argmin(c,lo,hi,     l,r,cut,best ,tmp,x)
@@ -41,7 +41,7 @@ function unsuper(data,  enough,rows, most)
       cuts(c,lo,   cut, pre.."|.. ")
       cuts(c,cut+1, hi, pre.."|.. ")
     else
-      b= band(c,lo,hi)
+      b= band(c,lo,hi
       fyi(txt.." ("..b..")")
       for r=lo,hi do
         rows[r][c]=b end end
