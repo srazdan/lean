@@ -27,7 +27,7 @@ require "num"
 -- so the only thing to do when it terminates is
 -- dump the new table and quit.
 
-function super(data,goal,enough,       rows)
+function super(data,goal,enough,       rows,most)
   rows   = data.rows
   goal   = goal or #(rows[1])
   enough = enough or (#rows)^Lean.super.enough 
@@ -37,16 +37,14 @@ function super(data,goal,enough,       rows)
 -- points of a range are `?` then search inwards
 -- for the most and least none `?` values.
 
-  local function  range(c,lo,hi,   lo1,hi1,n)
-    lo1,hi1 = lo,hi
-    for r=lo,hi do 
-     if rows[r][c] ~= "?" then lo1 = r; break; end end
-    for r=hi,lo,-1 do
-     if rows[r][c] ~= "?" then hi1 = r; break; end end
-    n = num()
-    for r=lo,hi do
-      numInc(n, rows[r][goal]) end
-    return rows[lo1][c]..":"..rows[hi1][c], n.mu
+
+  local function band(c,lo,hi)
+    if lo==1 then
+      return ":".. rows[hi][c]
+    elseif hi == most then
+      return rows[lo][c]..":"
+    else
+      return rows[lo][c]..":"..rows[hi][c] end
   end
 
 -- Find one best cut, as follows.
@@ -70,20 +68,20 @@ function super(data,goal,enough,       rows)
                           x,xl,xr,bestx,tmpx,
                           y,yl,yr,besty,tmpy,
                           cut,mu) 
+    xl,xr = num(), num()
+    yl,yr = num(), num()
+    for i=lo,hi do 
+      numInc(xr, rows[i][c]) 
+      numInc(yr, rows[i][goal]) end
+    bestx = xr.sd
+    besty = yr.sd
+    mu    = yr.mu
     if (hi - lo > 2*enough) then
-      xl,xr = num(), num()
-      yl,yr = num(), num()
-      for i=lo,hi do 
-        numInc(xr, rows[i][c]) 
-        numInc(yr, rows[i][goal]) end
-      bestx = xr.sd
-      besty = yr.sd
-      mu    = yr.mu
       for i=lo,hi do
         x = rows[i][c]
         y = rows[i][goal]
-        if x ~= "?" then numInc(xl, x);numDec(xr, x) end
-        if y ~= "?" then numInc(yl, y);numDec(yr, y) end
+        numInc(xl, x); numDec(xr, x) 
+        numInc(yl, y); numDec(yr, y) 
         if xl.n >= enough and xr.n >= enough then
           tmpx = numXpect(xl,xr) * Lean.super.margin
           tmpy = numXpect(yl,yr) * Lean.super.margin
@@ -91,7 +89,7 @@ function super(data,goal,enough,       rows)
             if tmpy < besty then
               cut,bestx,besty = i, tmpx, tmpy
       end end end end end
-    return cut
+    return cut,mu
   end
 
 -- If we can find one good cut:
@@ -102,16 +100,25 @@ function super(data,goal,enough,       rows)
 
   local function cuts(c,lo,hi,pre,       cut,txt,s,mu)
     txt = pre..rows[lo][c]..".."..rows[hi][c]
-    cut = argmin(c,lo,hi)
+    cut,mu = argmin(c,lo,hi)
     if cut then
       fyi(txt)
       cuts(c,lo,   cut, pre.."|.. ")
       cuts(c,cut+1, hi, pre.."|.. ")
     else
-      s,mu= range(c,lo,hi)
+      s = band(c,lo,hi)
       fyi(txt.." = "..math.floor(100*mu))
       for r=lo,hi do
-        if rows[r][c] ~= "?" then rows[r][c]=s end end end
+        rows[r][c]=s end end
+  end
+
+-- Our data sorts such that all the "?" unknown values
+-- are pushed to the end. This function tells us
+-- where to stop so we don't run into those values.
+
+  function stop(c,t)
+    for i=#t,1,-1 do if t[i][c] ~= "?" then return i end end
+    return 0
   end
 
 -- For all numeric indpendent columns, sort it and 
@@ -120,9 +127,10 @@ function super(data,goal,enough,       rows)
   for _,c  in pairs(data.indeps) do
     if data.nums[c] then
       ksort(c,rows)
+      most = stop(c,rows)
       fyi("\n-- ".. data.name[c] .. " ----------")
-      cuts(c,1,#rows,"|.. ") end end
-  print(string.gsub(cat(data.name,", "), "%$",""))
+      cuts(c,1,most,"|.. ") end end
+  print(gsub( cat(data.name,", "), "%$",""))
   dump(rows)
 end
 

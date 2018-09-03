@@ -4,3 +4,10 @@
 require "lib"
 require "ok"
 
+function xxx()
+end
+
+-- ## Main 
+-- If called as top-level file.
+
+return {main = function() xxx() end}

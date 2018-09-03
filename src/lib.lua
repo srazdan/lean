@@ -24,12 +24,20 @@ end
 
 function fyi(x) io.stderr:write(x .. "\n") end
 
+function gsub(s,a,b,  _)
+  s,_ = string.gsub(s,a,b)
+  return s
+end
 --------- --------- --------- --------- --------- --------- 
 -- ## Table Stuff
 
-function ksort(k,t) 
-  table.sort(t,function(x,y) return 
-            x[k] ~= "?" and y[k] ~="?" and x[k] < y[k] end) 
+function ksort(k,t,  f) 
+  f=function(x,y)
+       x,y=x[k], y[k]
+       if     x=="?" then return false
+       elseif y=="?" then return true
+      else return x < y end end
+  table.sort(t,f)
   return t
 end  
 
