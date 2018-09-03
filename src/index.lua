@@ -2,6 +2,7 @@
 -- - [config](config.html)
 -- - [distance](distance.html)
 -- - [dom](dom.html)
+-- - [domtree](domtree.html)
 -- - [fft](fft.html)
 -- - [index](index.html)
 -- - [lib](lib.html)

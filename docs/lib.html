@@ -50,7 +50,12 @@
   <span class="kr">for</span> <span class="n">i</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="o">#</span><span class="n">a</span> <span class="kr">do</span> <span class="nb">print</span><span class="p">(</span><span class="n">cat</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">sep</span> <span class="ow">or</span> <span class="s2">&quot;,&quot;</span><span class="p">))</span> <span class="kr">end</span>
 <span class="kr">end</span>
 
-<span class="kr">function</span> <span class="nf">fyi</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="nb">io.stderr</span><span class="p">:</span><span class="n">write</span><span class="p">(</span><span class="n">x</span> <span class="o">..</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span> <span class="kr">end</span></pre></div>
+<span class="kr">function</span> <span class="nf">fyi</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="nb">io.stderr</span><span class="p">:</span><span class="n">write</span><span class="p">(</span><span class="n">x</span> <span class="o">..</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span> <span class="kr">end</span>
+
+<span class="kr">function</span> <span class="nf">gsub</span><span class="p">(</span><span class="n">s</span><span class="p">,</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span>  <span class="n">_</span><span class="p">)</span>
+  <span class="n">s</span><span class="p">,</span><span class="n">_</span> <span class="o">=</span> <span class="nb">string.gsub</span><span class="p">(</span><span class="n">s</span><span class="p">,</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">)</span>
+  <span class="kr">return</span> <span class="n">s</span>
+<span class="kr">end</span></pre></div>
     </div>
   </div>
   <div class='clearall'></div>
@@ -63,9 +68,13 @@
 <h2>Table Stuff</h2>
     </div>
     <div class='code'>
-      <div class="highlight"><pre><span class="kr">function</span> <span class="nf">ksort</span><span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="n">t</span><span class="p">)</span> 
-  <span class="nb">table.sort</span><span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="kr">function</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)</span> <span class="kr">return</span> 
-            <span class="n">x</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">~=</span> <span class="s2">&quot;?&quot;</span> <span class="ow">and</span> <span class="n">y</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">~=</span><span class="s2">&quot;?&quot;</span> <span class="ow">and</span> <span class="n">x</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">y</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="kr">end</span><span class="p">)</span> 
+      <div class="highlight"><pre><span class="kr">function</span> <span class="nf">ksort</span><span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="n">t</span><span class="p">,</span>  <span class="n">f</span><span class="p">)</span> 
+  <span class="n">f</span><span class="o">=</span><span class="kr">function</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)</span>
+       <span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="n">x</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="n">y</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+       <span class="kr">if</span>     <span class="n">x</span><span class="o">==</span><span class="s2">&quot;?&quot;</span> <span class="kr">then</span> <span class="kr">return</span> <span class="kc">false</span>
+       <span class="kr">elseif</span> <span class="n">y</span><span class="o">==</span><span class="s2">&quot;?&quot;</span> <span class="kr">then</span> <span class="kr">return</span> <span class="kc">true</span>
+      <span class="kr">else</span> <span class="kr">return</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="n">y</span> <span class="kr">end</span> <span class="kr">end</span>
+  <span class="nb">table.sort</span><span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="n">f</span><span class="p">)</span>
   <span class="kr">return</span> <span class="n">t</span>
 <span class="kr">end</span>  
 
