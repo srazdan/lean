@@ -4,7 +4,7 @@
 require "rows"
 require "lib"
 
-function dist(t,row1,row2,cols,p,   d,n,x,y,f,d1,n1)
+function dist(t,row1,row2,cols,  p,   d,n,x,y,f,d1,n1)
   cols = cols or t.indeps
   p    = p    or Lean.distance.p
   function symDist(x,y)
@@ -42,14 +42,13 @@ function dist(t,row1,row2,cols,p,   d,n,x,y,f,d1,n1)
   return (d/n) ^ (1/p) 
 end
 
-function around(data,row1,rows,samples, cols,  tmp,row2,d)
+function around(data,row1,rows,cols,  tmp,row2,d)
   rows   = rows or data.rows
   cols   = cols or data.indeps
-  samples= samples or Lean.distance.samples
   tmp    = {}
-  for i=1,samples do
+  for i=1,Lean.distance.samples do
     row2 = any(rows)
-    d = dist(data,row1,row2,cols,Lean.num.p)
+    d    = dist(data,row1,row2,cols)
     if d > 0 then tmp[#tmp+1]= {row2, d} end
   end
   table.sort(tmp, function(a,b) return second(a) < second(b) end)

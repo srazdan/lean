@@ -5,45 +5,48 @@ require "lib"
 require "distance"
 require "rows"
 
-function knn(data,k,row1,  goal,samples,kernel,rows,   some) 
-  local function combine(t)
-    local function triangular(t,   sum,n)  
-      sum, n = 0,0
-      for i=1,#t do sum=sum+ first(t[i]) / second(t[i]) end
-      for i=1,#t do n  =n  + 1/second(t[i]) end
-      return sum/n
-    end 
-    kernel = kernel or Lean.distance.kernel
+function knn(data,row1,  goal,rows,cols) 
+  local function klass(x) return first(x)[goal or data.class] end
+  local function gap(x)   return second(x) end
+  local function triangular(t,   sum,n,ds)  
+    sum, ds = 0,0
+    for i=1,Lean.distance.k do 
+      d   = gap(t[i])
+      sum = sum + klass(t[i]) / d
+      ds   = ds + 1/d
+    end
+    return sum/ds
+  end 
+  local function combine(t,   kernel)
+    kernel = Lean.distance.kernel
     if     kernel=="triangluar" then return triangular(t) 
-    elseif kernel=="median" then return first(t[int(#t/2)])
-    else   return first(t[1])
+    elseif kernel=="median" then return klass(t[int(#k/2)])
+    else   return klass(t[1])
     end
   end
-
-  some = around(data, row1 or any(rows), rows or data.rows,
-                      samples) 
-  return combine(splice(some, 1, k or Lean.distance.k, 
-                        function(z) return  {
-                          first(z)[goal or data.class], 
-                          second(z)} end))
+  return combine( around(data, row1, rows,cols) ) 
 end  
 
 function knnDemo(data,   want,got,s)
-  for _,n in pairs{16,32,64,128} do
+  for _,samples in pairs{16,32,64,128} do
     for _,k in pairs{1,2,4,8} do
+      Lean = Lean0()
+      Lean.distance.samples= samples
+      Lean.distance.k      = k
       s=sample()
       for _,row in pairs(data.rows) do
         want = row[#data.name]
-        got  = knn(data,k,row, #data.name,n) 
+        got  = knn(data,row, #data.name) 
         if type(want) == 'number' then
            sampleInc(s, int(100*(want-got)/(want+10^-32)))
         else
           fy(want == got and "." or "X") 
         end
       end 
-      if s.n > 0 then print(n..","..
+      if s.n > 0 then print(samples..","..
   	                  k..","..cat(nths(s),",")) end
     end end
+  Lean=Lean0()
 end
 
 return {main = function() knnDemo(rows()) end}

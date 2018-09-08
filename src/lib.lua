@@ -1,5 +1,5 @@
--- vim: ts=2 sw=2 sts=2 expandtab:cindent:formatoptions+=cro 
---------- --------- --------- --------- --------- ---------~
+-- vim: ts=2 sw=2 sts=2 expandtab:cindent:formatoptions+=cro   
+--------- --------- --------- --------- --------- ---------~  
 
 require "config"
 require "rows"
@@ -40,6 +40,7 @@ function splice(t,m,n,f,    u)
   f = f or function(x) return x end
   m = m or 1
   n = n or #t
+  if n > #t then n=#t end
   u = {}
   for i=m,n do u[ #u+1 ]= f(t[i]) end
   return u
@@ -54,6 +55,11 @@ function ksort(k,t,  f)
   table.sort(t,f)
   return t
 end  
+
+function sorted(t,f)
+  table.sort(t,f)
+  return t
+end
 
 function ordered(t,  i,keys)
   i,keys = 0,{}
@@ -103,6 +109,27 @@ function cols(t,     numfmt, sfmt,noline,w,txt,sep)
         io.write(sep .. string.rep("-",w1)  )
         sep=", " end
       print("") end end
+end
+
+function same(x) return x end
+
+function map(t,f,    out)
+  out = {}
+  if t ~= nil then
+    for i,v in pairs(t) do out[i] = f(v) end end
+  return out
+end
+
+function copy(t) return map(t,same) end
+
+function deepCopy(t)
+  return type(t)=="table" and map(t,deepCopy) or t
+end
+
+function complete(t1,t2,    out)
+  out = deepCopy(t1 or {})
+  for x,y in pairs(t2 or {}) do out[x] = y end 
+  return out
 end
 
 --------- --------- --------- --------- --------- --------- 
