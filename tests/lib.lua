@@ -37,8 +37,8 @@ ok {csv = function (    d)
 for i=1,100 do
   io.write(another(2,{"a","!","c","d"}))
 end
-print()
 
+print()
 
 ok { cols = function()
      local t={ {"name", "age", "shoesize"},

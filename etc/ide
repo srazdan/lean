@@ -38,3 +38,6 @@ make -f etc/setup.mk
 ok() {
   (cd ../tests; lua $1.lua)
 }
+
+echo "# Changing to src"
+cd src

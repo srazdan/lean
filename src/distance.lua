@@ -2,53 +2,60 @@
 --------- --------- --------- --------- --------- ---------~
 
 require "rows"
+require "lib"
 
-function symDist(t,x,y)
-  if x=="?" and y=="?" then return 0,0 end
-  if x=="?" or  y=="?" then return 1,1 end
-  return x==y and 0,1 or 1,1
-end
-
-function numDist(t,x,y)
-  if x=="?" and y=="?" then 
-    return 0,0 
-  elseif x=="?" then 
-    y = numNorm(t,y) 
-    x = y < 0.5 and 1 or 0
-  elseif y=="?" then
-    x = numNorm(t,x) 
-    y = x < 0.5 and 1 or 0
-  else
-    x,y = numNorm(t,x), numNorm(t,y)
+function dist(t,row1,row2,cols,p,   d,n,x,y,f,d1,n1)
+  cols = cols or t.indeps
+  p    = p    or Lean.distance.p
+  function symDist(x,y)
+    if     x=="?" and y=="?" then return 0,0 
+    elseif x=="?" or  y=="?" then return 1,1 
+    elseif x==y              then return 0,1
+    else                          return 1,1
+    end
   end
-  return (x-y)^2, 1
-end
+  
+  function numDist(t,x,y)
+    if x=="?" and y=="?" then 
+      return 0,0 
+    elseif x=="?" then 
+      y = numNorm(t,y) 
+      x = y < 0.5 and 1 or 0
+    elseif y=="?" then
+      x = numNorm(t,x) 
+      y = x < 0.5 and 1 or 0
+    else 
+      x,y = numNorm(t,x), numNorm(t,y) 
+    end
+    return (x-y)^p, 1
+  end
 
-function indeps(t, u)
-  u = {}
-  for _,c in pairs(t.names) do 
-    if indep(c) then u[#u+1]=c end end
-  return u
-end
-
-function dist(t,row1,row2,cols,    d,n,x,y,f,d1,n1)
   d,n = 0,0
   for _,c in pairs(cols) do
     x, y  = row1[c], row2[c]
-    f     = nump[c] and numDist or symDist
-    d1,n1 = f(t,x,y) 
-    d, n  = d + d1, n + n1 end
-  return d^(1/2) / n^(1/2)
+    if t.nums[c] 
+      then d1,n1 = numDist(t.nums[c],x,y) 
+      else d1,n1 = symDist(x,y)
+    end
+    d, n = d + d1, n + n1 
+  end
+  return (d/n) ^ (1/p) 
 end
 
-function faraway(data,row1,rows,cols,  tmp,row2)
-  tmp = {}
-  rows = rows or data.rows
-  cols = cols or indeps(data)
-  for i=1,100 do
+function around(data,row1,rows,samples, cols,  tmp,row2,d)
+  rows   = rows or data.rows
+  cols   = cols or data.indeps
+  samples= samples or Lean.distance.samples
+  tmp    = {}
+  for i=1,samples do
     row2 = any(rows)
-    tmp[ #tmp+1 ] = {row2, dist(t, row1, row2, cols, The.num.p)}
+    d = dist(data,row1,row2,cols,Lean.num.p)
+    if d > 0 then tmp[#tmp+1]= {row2, d} end
   end
-  table.sort(tmp, function(a,b) return a[2] < a[2] end)
-  return tmp[95][1]
+  table.sort(tmp, function(a,b) return second(a) < second(b) end)
+  return tmp
+end
+
+function faraway(data,row1,rows) 
+  return first( around(data,row1,rows)[95] ) 
 end

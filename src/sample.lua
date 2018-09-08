@@ -61,3 +61,10 @@ function nth(t,n,    s)
   s = sampleSorted(t)
   return s[ min(#s, max(1, math.floor(0.5 + #s*n))) ]
 end
+
+function nths(t, ns,out)
+  ns = ns or {0.1,0.3,0.5,0.7,0.9}
+  out={}
+  for _,n in pairs(ns) do out[#out+1] = nth(t,n) end
+  return out
+end

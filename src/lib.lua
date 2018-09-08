@@ -17,11 +17,7 @@ function split(s, sep,    t,notsep)
   return t
 end
 
-cat = table.concat
-function dump(a,sep) 
-  for i=1,#a do print(cat(a[i],sep or ",")) end
-end
-
+function fy(x)  io.stderr:write(x) end
 function fyi(x) io.stderr:write(x .. "\n") end
 
 function gsub(s,a,b,  _)
@@ -30,6 +26,24 @@ function gsub(s,a,b,  _)
 end
 --------- --------- --------- --------- --------- --------- 
 -- ## Table Stuff
+cat = table.concat
+function dump(a,sep)
+  for i=1,#a do print(cat(a[i],sep or ",")) end
+end
+
+
+function first(t)  return t[ 1] end
+function second(t) return t[ 2] end
+function last(t)   return t[#t] end
+
+function splice(t,m,n,f,    u)
+  f = f or function(x) return x end
+  m = m or 1
+  n = n or #t
+  u = {}
+  for i=m,n do u[ #u+1 ]= f(t[i]) end
+  return u
+end
 
 function ksort(k,t,  f) 
   f=function(x,y)
@@ -99,6 +113,11 @@ function close(x,y,  c)
   return math.abs((x-y)/x) < c
 end
 
+int = function(x) return math.floor(0.5 + x) end
+
+function cap(x, lo, hi)
+  return min(hi, max(lo, x))
+end
 --------- --------- --------- --------- --------- --------- 
 -- ## Meta Stuff
 
