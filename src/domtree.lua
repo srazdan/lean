@@ -37,7 +37,9 @@ function domTree(data0,show,goal,enough,    out)
 
 -- If there is too little data, return a leaf node.
 -- Otherwise, find the best column to split on, 
--- then recurse for each value of that split.
+-- then recurse for each value of that split.   
+-- TODO: if N siblisngs are small in part but large enoguh together
+-- then report otherwise. also, add counts to parents
 
   local function recurse(data,kids,cols,    best) 
     for i,c in pairs(data.indeps) do 
