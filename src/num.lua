@@ -14,9 +14,9 @@ require "sample"
 
 -- Inside a `num`:
 
-function num()  
+function num(max)  
   return {n=0, mu=0, m2=0, sd=0, 
-          lo=10^32, hi=-10^32, _some=sample(),
+          lo=10^32, hi=-10^32, _some=sample(max),
           w=1}
 end
 

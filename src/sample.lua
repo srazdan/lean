@@ -2,6 +2,7 @@
 --------- --------- --------- --------- --------- --------- 
 
 require "random"
+require "meta"
 
 -- ## Inside a `sample`
 --
@@ -9,8 +10,9 @@ require "random"
 -- called `some`.
 --
 
-function sample(max) 
-  return {max=max or Lean.sample.max, 
+function sample(max,txt) 
+  return {max=max or Lean.sample.max,
+          rank=1, txt=txt or txt,
           n=0, sorted=false, some={}}
 end
 
@@ -67,4 +69,8 @@ function nths(t, ns,out)
   out={}
   for _,n in pairs(ns) do out[#out+1] = nth(t,n) end
   return out
+end
+
+function sampleLt(s1,s2)
+  return nth(s1,0.5) < nth(s2,0.5) 
 end

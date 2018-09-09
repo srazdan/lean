@@ -1,7 +1,8 @@
 -- vim: ts=2 sw=2 sts=2 expandtab:cindent:formatoptions+=cro  
---------- --------- --------- --------- --------- ---------  
-
-require "lib"
+--------- --------- --------- --------- --------- --------- 
+require "meta"
+require "num"
+require "sample"
 
 local function xtile(t,the,lo,hi,      what,where,out,b4)
   the    = complete(Lean.tiles, the)
@@ -41,27 +42,31 @@ local function xtile(t,the,lo,hi,      what,where,out,b4)
 end
 
 -- assumes everyone is sorted first
+-- (all flat lists)
 function xtiles(ts, the, n) 
   function med(t)    return t[int(#t/2)] end
   function sort(t,u) return med(t) < med(u) end
   n=num()
   for _,t in pairs(ts) do
-    for _,x in pairs(t) do numInc(n,x) end end
+    numInc(n, t[1]) 
+    numInc(n, t[#t]) end 
   the = complete(the, {lo=n.lo, hi=n.hi})
   for _,t in pairs(sorted(ts, sort)) do
     print(xtile(t, the)) end
 end
 
-do
-  local	t1,t2,t3={},{},{}
-  rseed(1)
-  for i=1,10^4 do
-    t1[#t1+1] = rand()^0.5 
-    t2[#t2+1] = rand() 
-    t3[#t3+1] = rand()^2 
-  end
-  print(xtiles({t1,t2,t3},{num="%8.2f"}))
-  rogues()
+-- assumes everyone is sorted first
+-- (all flat lists)
+function xtileSamples(samples, the, n) 
+  n=num()
+  for _,s in pairs(samples) do
+    numInc(n, nth(s, 0))
+    numInc(n, nth(s, 1)) end
+  the = complete(the, {lo=n.lo, hi=n.hi})
+  for _,s in pairs(sorted(samples, sampleLt)) do
+    print("#"..s.rank..", "..
+          xtile(sampleSorted(s), the).." ,"..
+          s.txt) end
 end
 
 
