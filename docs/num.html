@@ -61,9 +61,9 @@
       <p>Inside a <code>num</code>:</p>
     </div>
     <div class='code'>
-      <div class="highlight"><pre><span class="kr">function</span> <span class="nf">num</span><span class="p">()</span>  
+      <div class="highlight"><pre><span class="kr">function</span> <span class="nf">num</span><span class="p">(</span><span class="n">max</span><span class="p">)</span>  
   <span class="kr">return</span> <span class="p">{</span><span class="n">n</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">mu</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">m2</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">sd</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> 
-          <span class="n">lo</span><span class="o">=</span><span class="mi">10</span><span class="o">^</span><span class="mi">32</span><span class="p">,</span> <span class="n">hi</span><span class="o">=-</span><span class="mi">10</span><span class="o">^</span><span class="mi">32</span><span class="p">,</span> <span class="n">some</span><span class="o">=</span><span class="n">sample</span><span class="p">(),</span>
+          <span class="n">lo</span><span class="o">=</span><span class="mi">10</span><span class="o">^</span><span class="mi">32</span><span class="p">,</span> <span class="n">hi</span><span class="o">=-</span><span class="mi">10</span><span class="o">^</span><span class="mi">32</span><span class="p">,</span> <span class="n">_some</span><span class="o">=</span><span class="n">sample</span><span class="p">(</span><span class="n">max</span><span class="p">),</span>
           <span class="n">w</span><span class="o">=</span><span class="mi">1</span><span class="p">}</span>
 <span class="kr">end</span></pre></div>
     </div>
@@ -92,13 +92,13 @@
         <a class='octothorpe' href='#section-5'>#</a>
       </div>
       <p>Incremenally, add <code>x</code> to a <code>num</code>.
-This is <a href="https://en.wikipedia.org/wiki/Algorithms_for_calculating_variance#Online_algorithm">Welford&rsquo;s algorithm</a></p>
+This is <a href="https://en.wikipedia.org/wiki/Algorithms_for_calculating_variance#Online_algorithm">Welford's algorithm</a></p>
     </div>
     <div class='code'>
       <div class="highlight"><pre><span class="kr">function</span> <span class="nf">numInc</span><span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="n">x</span><span class="p">,</span>    <span class="n">d</span><span class="p">)</span> 
   <span class="kr">if</span> <span class="n">x</span> <span class="o">==</span> <span class="s2">&quot;?&quot;</span> <span class="kr">then</span> <span class="kr">return</span> <span class="n">x</span> <span class="kr">end</span>
   <span class="n">t</span><span class="p">.</span><span class="n">n</span>  <span class="o">=</span> <span class="n">t</span><span class="p">.</span><span class="n">n</span> <span class="o">+</span> <span class="mi">1</span>
-  <span class="n">sampleInc</span><span class="p">(</span><span class="n">t</span><span class="p">.</span><span class="n">some</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+  <span class="n">sampleInc</span><span class="p">(</span><span class="n">t</span><span class="p">.</span><span class="n">_some</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
   <span class="n">d</span>    <span class="o">=</span> <span class="n">x</span> <span class="o">-</span> <span class="n">t</span><span class="p">.</span><span class="n">mu</span>
   <span class="n">t</span><span class="p">.</span><span class="n">mu</span> <span class="o">=</span> <span class="n">t</span><span class="p">.</span><span class="n">mu</span> <span class="o">+</span> <span class="n">d</span><span class="o">/</span><span class="n">t</span><span class="p">.</span><span class="n">n</span>
   <span class="n">t</span><span class="p">.</span><span class="n">m2</span> <span class="o">=</span> <span class="n">t</span><span class="p">.</span><span class="n">m2</span> <span class="o">+</span> <span class="n">d</span><span class="o">*</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">t</span><span class="p">.</span><span class="n">mu</span><span class="p">)</span>

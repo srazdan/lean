@@ -55,7 +55,7 @@
       </div>
       <p>Score each column by the expected value of the standard
 deviation of the <code>goal</code> values in each split.
-As a side effect, build a table for each split (we&rsquo;ll need
+As a side effect, build a table for each split (we'll need
 that if we reurse on that split).</p>
     </div>
     <div class='code'>
@@ -83,7 +83,9 @@ that if we reurse on that split).</p>
       </div>
       <p>If there is too little data, return a leaf node.
 Otherwise, find the best column to split on, 
-then recurse for each value of that split.</p>
+then recurse for each value of that split. <br />
+TODO: if N siblisngs are small in part but large enoguh together
+then report otherwise. also, add counts to parents</p>
     </div>
     <div class='code'>
       <div class="highlight"><pre>  <span class="kd">local</span> <span class="kr">function</span> <span class="nf">recurse</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="n">kids</span><span class="p">,</span><span class="n">cols</span><span class="p">,</span>    <span class="n">best</span><span class="p">)</span> 
