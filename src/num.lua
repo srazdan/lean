@@ -89,10 +89,5 @@ function numXpect(i,j,   n)
   return i.n/n * i.sd+ j.n/n * j.sd
 end
 
-function mu(all,l,r,   n)  
-  return l.n/all.n * (all.mu - l.mu)^2 + 
-         r.n/all.n * (all.mu - r.mu)^2
-end
-
 
 
