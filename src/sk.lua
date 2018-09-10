@@ -12,7 +12,7 @@ function sk(samples)
     f = f or numInc
     for _,x in paris(samples[i]) do f(n,x) end end
 
-  local function xpect(all,l,r,   n)  
+  local function xpect(all,l,r)  
     return l.n/all.n * (all.mu - l.mu)^2 + 
            r.n/all.n * (all.mu - r.mu)^2 end
 
@@ -38,7 +38,7 @@ function sk(samples)
     else
       fyi(txt.." ("..rank..")")
       for i=lo,hi do
-        samples[i] = rank end end
+        samples[i].rank = rank end end
     return rank end
 
   samples = sorted(samples, sampleLt)
