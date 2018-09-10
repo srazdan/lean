@@ -7,25 +7,28 @@ require "sample"
 require "stats"
 require "xtiles"
 
-function sk(samples)
+function sk(samples,  epsilon)
   local function inc(n,i,f)
     f = f or numInc
-    for _,x in paris(samples[i]) do f(n,x) end end
+    for _,x in pairs(samples[i].some) do f(n,x) end end
 
-  local function xpect(all,l,r)  
+  local function prediction(all,l,r)  
     return l.n/all.n * (all.mu - l.mu)^2 + 
            r.n/all.n * (all.mu - r.mu)^2 end
 
   local function argmax(lo,hi,       all,l,r,cut,best,tmp)
     all, l, r = num(), num(), num()
     for i=lo,hi do inc(r,i); inc(all,i) end
+    epsilon = epsilon or Lean.sk.cohen * all.sd
     best = 0
     for i=lo,hi-1 do
       inc(l, i)
       inc(r, i, numDec)
-      tmp = xpect(all,l,r) * Lean.unsuper.margin
-      if tmp > best then
-        cut,best = i, tmp end end 
+      if l.mu + epsilon < r.mu then
+        tmp = prediction(all,l,r) * Lean.unsuper.margin
+        if tmp > best then
+          if different(l._some, r._some) then
+            cut,best = i, tmp end end end end
     return cut end
 
   local function cuts(lo,hi,rank, pre,            cut,txt)
