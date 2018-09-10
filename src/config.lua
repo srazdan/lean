@@ -1,5 +1,5 @@
--- vim: ts=2 sw=2 sts=2 expandtab:cindent:formatoptions+=cro 
----------~---------~---------~---------~---------~---------~
+-- vim: ts=2 sw=2 sts=2 expandtab:cindent:formatoptions+=cro   
+--------- --------- --------- --------- --------- ---------    
 
 
 function Lean0() return  {
@@ -16,7 +16,7 @@ function Lean0() return  {
   sample   = {max=512}, 
   sk       = {conf = 95}, 
   stats    = {conf = 95,
-              bootstraps = 512,
+              bootstraps = 375,
               cf = ({0.147,0.33,0.474})[1]}, 
   super    = {enough=0.5, margin=1.05},
   tiles    = {width = 50,

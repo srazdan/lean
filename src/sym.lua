@@ -42,8 +42,10 @@ end
 
 function symDec(t,x)
   t._ent= nil
-  t.n = t.n - 1
-  t.counts[x] = i.counts[x] - 1
+  if t.n > 0 then
+    t.n = t.n - 1
+    t.counts[x] = t.counts[x] - 1
+  end
   return x
 end
 

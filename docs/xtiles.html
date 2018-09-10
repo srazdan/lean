@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <title>xtiles.lua</title>
+  <link rel="stylesheet" href="pycco.css">
+</head>
+<body>
+<div id='container'>
+  <div id="background"></div>
+  <div class='section'>
+    <div class='docs'><h1>xtiles.lua</h1></div>
+  </div>
+  <div class='clearall'>
+  <div class='section' id='section-0'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-0'>#</a>
+      </div>
+      <p>vim: ts=2 sw=2 sts=2 expandtab:cindent:formatoptions+=cro  </p>
+<hr />
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span></span><span class="nb">require</span> <span class="s2">&quot;meta&quot;</span>
+<span class="nb">require</span> <span class="s2">&quot;num&quot;</span>
+<span class="nb">require</span> <span class="s2">&quot;sample&quot;</span>
+
+<span class="kd">local</span> <span class="kr">function</span> <span class="nf">xtile</span><span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="n">the</span><span class="p">,</span><span class="n">lo</span><span class="p">,</span><span class="n">hi</span><span class="p">,</span>      <span class="n">what</span><span class="p">,</span><span class="n">where</span><span class="p">,</span><span class="n">out</span><span class="p">,</span><span class="n">b4</span><span class="p">)</span>
+  <span class="n">the</span>    <span class="o">=</span> <span class="n">complete</span><span class="p">(</span><span class="n">Lean</span><span class="p">.</span><span class="n">tiles</span><span class="p">,</span> <span class="n">the</span><span class="p">)</span>
+  <span class="n">the</span><span class="p">.</span><span class="n">lo</span> <span class="o">=</span> <span class="n">lo</span> <span class="ow">or</span> <span class="n">the</span><span class="p">.</span><span class="n">lo</span> <span class="ow">or</span> <span class="n">t</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+  <span class="n">the</span><span class="p">.</span><span class="n">hi</span> <span class="o">=</span> <span class="n">hi</span> <span class="ow">or</span> <span class="n">the</span><span class="p">.</span><span class="n">hi</span> <span class="ow">or</span> <span class="n">t</span><span class="p">[</span><span class="o">#</span><span class="n">t</span><span class="p">]</span>
+  <span class="kd">local</span> <span class="kr">function</span> <span class="nf">fl</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>    <span class="kr">return</span> <span class="mi">1</span><span class="o">+</span> <span class="nb">math.floor</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="kr">end</span>
+  <span class="kd">local</span> <span class="kr">function</span> <span class="nf">pos</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>   <span class="kr">return</span> <span class="n">t</span><span class="p">[</span> <span class="n">fl</span><span class="p">(</span><span class="n">p</span> <span class="o">*</span> <span class="o">#</span><span class="n">t</span><span class="p">)</span> <span class="p">]</span> <span class="kr">end</span>
+  <span class="kd">local</span> <span class="kr">function</span> <span class="nf">place</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> 
+    <span class="kr">return</span> <span class="n">fl</span><span class="p">(</span> <span class="n">the</span><span class="p">.</span><span class="n">width</span><span class="o">*</span><span class="p">(</span><span class="n">x</span><span class="o">-</span> <span class="n">the</span><span class="p">.</span><span class="n">lo</span><span class="p">)</span><span class="o">/</span>
+               <span class="p">(</span><span class="n">the</span><span class="p">.</span><span class="n">hi</span> <span class="o">-</span> <span class="n">the</span><span class="p">.</span><span class="n">lo</span><span class="o">+</span><span class="mi">10</span><span class="o">^-</span><span class="mi">32</span><span class="p">)</span> <span class="p">)</span> <span class="kr">end</span>
+  <span class="kd">local</span> <span class="kr">function</span> <span class="nf">whats</span><span class="p">(</span><span class="n">chops</span><span class="p">,</span><span class="n">out</span><span class="p">)</span>
+    <span class="kr">for</span> <span class="n">_</span><span class="p">,</span><span class="n">chop</span> <span class="kr">in</span> <span class="nb">pairs</span><span class="p">(</span><span class="n">chops</span><span class="p">)</span> <span class="kr">do</span>
+       <span class="n">out</span><span class="p">[</span><span class="o">#</span><span class="n">out</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">pos</span><span class="p">(</span><span class="n">chop</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="kr">end</span><span class="p">;</span> <span class="kr">return</span> <span class="n">out</span>
+  <span class="kr">end</span>
+  <span class="kd">local</span> <span class="kr">function</span> <span class="nf">wheres</span><span class="p">(</span><span class="n">what</span><span class="p">,</span><span class="n">out</span><span class="p">)</span> 
+     <span class="kr">for</span> <span class="n">_</span><span class="p">,</span><span class="n">x</span> <span class="kr">in</span> <span class="nb">pairs</span><span class="p">(</span><span class="n">what</span><span class="p">)</span> <span class="kr">do</span>
+      <span class="n">out</span><span class="p">[</span><span class="o">#</span><span class="n">out</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">place</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="kr">end</span><span class="p">;</span> <span class="kr">return</span> <span class="n">out</span>
+  <span class="kr">end</span>
+  <span class="kd">local</span> <span class="kr">function</span> <span class="nf">suffix</span><span class="p">(</span><span class="n">what</span><span class="p">,</span><span class="n">s</span><span class="p">,</span><span class="n">sep</span><span class="p">)</span>
+    <span class="kr">for</span> <span class="n">_</span><span class="p">,</span><span class="n">x</span> <span class="kr">in</span> <span class="nb">pairs</span><span class="p">(</span><span class="n">what</span><span class="p">)</span> <span class="kr">do</span>
+      <span class="n">s</span><span class="o">=</span> <span class="n">s</span><span class="o">..</span><span class="n">sep</span><span class="o">..</span><span class="nb">string.format</span><span class="p">(</span><span class="n">the</span><span class="p">.</span><span class="n">num</span><span class="p">,</span><span class="n">x</span><span class="p">)</span>
+      <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;,&quot;</span> <span class="kr">end</span><span class="p">;</span> <span class="kr">return</span> <span class="n">s</span>
+  <span class="kr">end</span>
+  <span class="n">what</span>   <span class="o">=</span> <span class="n">whats</span><span class="p">(</span><span class="n">the</span><span class="p">.</span><span class="n">chops</span><span class="p">,{})</span>
+  <span class="n">where</span>  <span class="o">=</span> <span class="n">wheres</span><span class="p">(</span><span class="n">what</span><span class="p">,{})</span>
+  <span class="n">out</span><span class="o">=</span><span class="p">{}</span>
+  <span class="kr">for</span> <span class="n">i</span><span class="o">=</span><span class="mi">1</span><span class="p">,(</span><span class="n">the</span><span class="p">.</span><span class="n">width</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="kr">do</span> <span class="n">out</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span> <span class="kr">end</span>
+  <span class="n">b4</span><span class="o">=</span><span class="mi">1</span>
+  <span class="kr">for</span> <span class="n">k</span><span class="p">,</span><span class="n">now</span> <span class="kr">in</span> <span class="nb">pairs</span><span class="p">(</span><span class="n">where</span><span class="p">)</span> <span class="kr">do</span>
+    <span class="kr">if</span> <span class="n">k</span><span class="o">&gt;</span> <span class="mi">1</span> <span class="kr">then</span>
+      <span class="kr">for</span> <span class="n">i</span> <span class="o">=</span> <span class="n">b4</span><span class="p">,</span><span class="n">now</span>  <span class="kr">do</span>
+        <span class="n">out</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">the</span><span class="p">.</span><span class="n">chops</span><span class="p">[</span><span class="n">k</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span> <span class="kr">end</span>  <span class="kr">end</span>
+    <span class="n">b4</span><span class="o">=</span> <span class="n">now</span>  <span class="kr">end</span>
+  <span class="n">out</span><span class="p">[</span><span class="nb">math.floor</span><span class="p">(</span><span class="n">the</span><span class="p">.</span><span class="n">width</span><span class="o">/</span><span class="mi">2</span><span class="p">)]</span> <span class="o">=</span> <span class="n">the</span><span class="p">.</span><span class="n">bar</span>
+  <span class="n">out</span><span class="p">[</span><span class="n">place</span><span class="p">(</span><span class="n">pos</span><span class="p">(</span><span class="mf">0.5</span><span class="p">))]</span>    <span class="o">=</span> <span class="n">the</span><span class="p">.</span><span class="n">star</span>
+  <span class="kr">return</span>  <span class="n">cat</span><span class="p">(</span><span class="n">out</span><span class="p">)</span><span class="o">..</span><span class="s2">&quot;,&quot;</span><span class="o">..</span><span class="n">suffix</span><span class="p">(</span><span class="n">what</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">)</span> 
+<span class="kr">end</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-1'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-1'>#</a>
+      </div>
+      <p>assumes everyone is sorted first
+(all flat lists)</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="kr">function</span> <span class="nf">xtiles</span><span class="p">(</span><span class="n">ts</span><span class="p">,</span> <span class="n">the</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span> 
+  <span class="kr">function</span> <span class="nf">med</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>    <span class="kr">return</span> <span class="n">t</span><span class="p">[</span><span class="n">int</span><span class="p">(</span><span class="o">#</span><span class="n">t</span><span class="o">/</span><span class="mi">2</span><span class="p">)]</span> <span class="kr">end</span>
+  <span class="kr">function</span> <span class="nf">sort</span><span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="n">u</span><span class="p">)</span> <span class="kr">return</span> <span class="n">med</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">med</span><span class="p">(</span><span class="n">u</span><span class="p">)</span> <span class="kr">end</span>
+  <span class="n">n</span><span class="o">=</span><span class="n">num</span><span class="p">()</span>
+  <span class="kr">for</span> <span class="n">_</span><span class="p">,</span><span class="n">t</span> <span class="kr">in</span> <span class="nb">pairs</span><span class="p">(</span><span class="n">ts</span><span class="p">)</span> <span class="kr">do</span>
+    <span class="n">numInc</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">t</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> 
+    <span class="n">numInc</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">t</span><span class="p">[</span><span class="o">#</span><span class="n">t</span><span class="p">])</span> <span class="kr">end</span> 
+  <span class="n">the</span> <span class="o">=</span> <span class="n">complete</span><span class="p">(</span><span class="n">the</span><span class="p">,</span> <span class="p">{</span><span class="n">lo</span><span class="o">=</span><span class="n">n</span><span class="p">.</span><span class="n">lo</span><span class="p">,</span> <span class="n">hi</span><span class="o">=</span><span class="n">n</span><span class="p">.</span><span class="n">hi</span><span class="p">})</span>
+  <span class="kr">for</span> <span class="n">_</span><span class="p">,</span><span class="n">t</span> <span class="kr">in</span> <span class="nb">pairs</span><span class="p">(</span><span class="n">sorted</span><span class="p">(</span><span class="n">ts</span><span class="p">,</span> <span class="n">sort</span><span class="p">))</span> <span class="kr">do</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">xtile</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">the</span><span class="p">))</span> <span class="kr">end</span>
+<span class="kr">end</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-2'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-2'>#</a>
+      </div>
+      <p>assumes everyone is sorted first
+(all flat lists)</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="kr">function</span> <span class="nf">xtileSamples</span><span class="p">(</span><span class="n">samples</span><span class="p">,</span> <span class="n">the</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span> 
+  <span class="n">n</span><span class="o">=</span><span class="n">num</span><span class="p">()</span>
+  <span class="kr">for</span> <span class="n">_</span><span class="p">,</span><span class="n">s</span> <span class="kr">in</span> <span class="nb">pairs</span><span class="p">(</span><span class="n">samples</span><span class="p">)</span> <span class="kr">do</span>
+    <span class="n">numInc</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">nth</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+    <span class="n">numInc</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">nth</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span> <span class="kr">end</span>
+  <span class="n">the</span> <span class="o">=</span> <span class="n">complete</span><span class="p">(</span><span class="n">the</span><span class="p">,</span> <span class="p">{</span><span class="n">lo</span><span class="o">=</span><span class="n">n</span><span class="p">.</span><span class="n">lo</span><span class="p">,</span> <span class="n">hi</span><span class="o">=</span><span class="n">n</span><span class="p">.</span><span class="n">hi</span><span class="p">})</span>
+  <span class="kr">for</span> <span class="n">_</span><span class="p">,</span><span class="n">s</span> <span class="kr">in</span> <span class="nb">pairs</span><span class="p">(</span><span class="n">sorted</span><span class="p">(</span><span class="n">samples</span><span class="p">,</span> <span class="n">sampleLt</span><span class="p">))</span> <span class="kr">do</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;#&quot;</span><span class="o">..</span><span class="n">s</span><span class="p">.</span><span class="n">rank</span><span class="o">..</span><span class="s2">&quot;, &quot;</span><span class="o">..</span>
+          <span class="n">xtile</span><span class="p">(</span><span class="n">sampleSorted</span><span class="p">(</span><span class="n">s</span><span class="p">),</span> <span class="n">the</span><span class="p">)</span><span class="o">..</span><span class="s2">&quot; ,&quot;</span><span class="o">..</span>
+          <span class="n">s</span><span class="p">.</span><span class="n">txt</span><span class="p">)</span> <span class="kr">end</span>
+<span class="kr">end</span>
+
+</pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+</div>
+</body>

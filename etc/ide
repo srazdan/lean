@@ -1,12 +1,13 @@
+# vim: ft=sh:ts=2 sw=2 sts=2 expandtab:cindent:formatoptions+=cro 
+
 pathmunge () {
-        if ! echo "$PATH" | grep -Eq "(^|:)$1($|:)" ; then
-           if [ "$2" = "after" ] ; then
-              PATH="$PATH:$1"
-           else
-              PATH="$1:$PATH"
-           fi
-        fi
-}
+  if ! echo "$PATH" | grep -Eq "(^|:)$1($|:)" ; then
+    if [ "$2" = "after" ] 
+      then PATH="$PATH:$1"
+      else PATH="$1:$PATH"
+    fi 
+  fi
+}   
 
 pathmunge $PWD/bin after
 
@@ -16,8 +17,8 @@ alias push="git commit -am pushing; git push"
 html() {
   pycco -d ../docs $1.lua 
 }
-
-htmls() {
+ 
+htmls() {  
   for f in *.lua; do
     g=$(basename "$f" .lua)
     echo "-- - [$g]($g.html)"
@@ -25,8 +26,8 @@ htmls() {
   for f in *.lua; do pycco -d ../docs $f; done 
 }
 
-para() {
-    gawk 'BEGIN {FS="\n"; RS=""} NR=='$1
+para() { # comment
+  gawk 'BEGIN {FS="\n"; RS=""} NR=='$1
 }
 
 cols()  {

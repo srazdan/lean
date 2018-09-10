@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <title>sk.lua</title>
+  <link rel="stylesheet" href="pycco.css">
+</head>
+<body>
+<div id='container'>
+  <div id="background"></div>
+  <div class='section'>
+    <div class='docs'><h1>sk.lua</h1></div>
+  </div>
+  <div class='clearall'>
+  <div class='section' id='section-0'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-0'>#</a>
+      </div>
+      <p>vim: ts=2 sw=2 sts=2 expandtab:cindent:formatoptions+=cro  </p>
+<hr />
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span></span><span class="nb">require</span> <span class="s2">&quot;lib&quot;</span>
+<span class="nb">require</span> <span class="s2">&quot;num&quot;</span>
+<span class="nb">require</span> <span class="s2">&quot;sample&quot;</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-1'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-1'>#</a>
+      </div>
+      <hr />
+<p>Simple utils</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="kd">local</span> <span class="kr">function</span> <span class="nf">nth</span><span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="n">n</span><span class="p">)</span> <span class="kr">return</span> <span class="n">t</span><span class="p">.</span><span class="n">_all</span><span class="p">[</span>  <span class="nb">math.floor</span><span class="p">(</span><span class="o">#</span><span class="n">t</span><span class="p">.</span><span class="n">_all</span><span class="o">*</span><span class="n">n</span><span class="p">)</span> <span class="p">]</span> <span class="kr">end</span>
+<span class="kd">local</span> <span class="kr">function</span> <span class="nf">mid</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>   <span class="kr">return</span> <span class="n">nth</span><span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="mf">0.5</span><span class="p">)</span> <span class="kr">end</span>
+<span class="kd">local</span> <span class="kr">function</span> <span class="nf">iqr</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>   <span class="kr">return</span> <span class="n">nth</span><span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="mf">0.75</span><span class="p">)</span> <span class="o">-</span> <span class="n">nth</span><span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="mf">0.25</span><span class="p">)</span> <span class="kr">end</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-2'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-2'>#</a>
+      </div>
+      <hr />
+<p>Here's a simple counter, used to track  <code>mu</code> and <code>all</code>.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="kd">local</span> <span class="kr">function</span> <span class="nf">create</span><span class="p">()</span> <span class="kr">return</span> <span class="p">{</span>
+  <span class="n">_all</span><span class="o">=</span><span class="p">{},</span> <span class="n">sum</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">n</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">mu</span><span class="o">=</span><span class="mi">0</span><span class="p">}</span> <span class="kr">end</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-3'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-3'>#</a>
+      </div>
+      <p>Here how to update a counter with one value <code>x</code>.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="kd">local</span> <span class="kr">function</span> <span class="nf">update</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">x</span><span class="p">)</span> 
+  <span class="n">i</span><span class="p">.</span><span class="n">_all</span><span class="p">[</span><span class="o">#</span><span class="n">i</span><span class="p">.</span><span class="n">_all</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span><span class="o">=</span><span class="n">x</span>
+  <span class="n">i</span><span class="p">.</span><span class="n">sum</span> <span class="o">=</span> <span class="n">i</span><span class="p">.</span><span class="n">sum</span> <span class="o">+</span> <span class="n">x</span>
+  <span class="n">i</span><span class="p">.</span><span class="n">n</span>   <span class="o">=</span> <span class="n">i</span><span class="p">.</span><span class="n">n</span> <span class="o">+</span> <span class="mi">1</span> 
+  <span class="n">i</span><span class="p">.</span><span class="n">mu</span>  <span class="o">=</span> <span class="n">i</span><span class="p">.</span><span class="n">sum</span><span class="o">/</span><span class="n">i</span><span class="p">.</span><span class="n">n</span> <span class="kr">end</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-4'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-4'>#</a>
+      </div>
+      <p>Here how to update a counter with many values from <code>t</code>.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="kd">local</span> <span class="kr">function</span> <span class="nf">updates</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">counter</span><span class="p">)</span>
+  <span class="n">counter</span> <span class="o">=</span> <span class="n">counter</span> <span class="ow">or</span> <span class="n">create</span><span class="p">()</span>
+  <span class="kr">for</span> <span class="n">j</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="o">#</span><span class="n">t</span> <span class="kr">do</span> 
+    <span class="n">update</span><span class="p">(</span><span class="n">counter</span><span class="p">,</span><span class="n">t</span><span class="p">[</span><span class="n">j</span><span class="p">])</span> <span class="kr">end</span> 
+  <span class="kr">return</span> <span class="n">counter</span> <span class="kr">end</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-5'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-5'>#</a>
+      </div>
+      <hr />
+<p>This code is always counting left and right within
+the list of samples. To save time, memo all those 
+"peeks".</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="kd">local</span> <span class="kr">function</span> <span class="nf">memo</span><span class="p">(</span><span class="n">samples</span><span class="p">,</span><span class="n">here</span><span class="p">,</span><span class="n">stop</span><span class="p">,</span><span class="n">_memo</span><span class="p">,</span>    <span class="n">b4</span><span class="p">,</span><span class="n">inc</span><span class="p">)</span>
+  <span class="kr">if</span> <span class="n">stop</span> <span class="o">&gt;</span> <span class="n">here</span> <span class="kr">then</span> <span class="n">inc</span><span class="o">=</span><span class="mi">1</span> <span class="kr">else</span> <span class="n">inc</span><span class="o">=-</span><span class="mi">1</span> <span class="kr">end</span>
+  <span class="kr">if</span> <span class="n">here</span> <span class="o">~=</span> <span class="n">stop</span> <span class="kr">then</span>  
+     <span class="n">b4</span><span class="o">=</span>  <span class="n">lst</span><span class="p">.</span><span class="n">copy</span><span class="p">(</span> <span class="n">memo</span><span class="p">(</span><span class="n">samples</span><span class="p">,</span><span class="n">here</span><span class="o">+</span><span class="n">inc</span><span class="p">,</span> <span class="n">stop</span><span class="p">,</span> <span class="n">_memo</span><span class="p">))</span> <span class="kr">end</span>
+  <span class="n">_memo</span><span class="p">[</span><span class="n">here</span><span class="p">]</span> <span class="o">=</span> <span class="n">updates</span><span class="p">(</span><span class="n">samples</span><span class="p">[</span><span class="n">here</span><span class="p">].</span><span class="n">_all</span><span class="p">,</span>  <span class="n">b4</span><span class="p">)</span>
+  <span class="kr">return</span> <span class="n">_memo</span><span class="p">[</span><span class="n">here</span><span class="p">]</span> <span class="kr">end</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-6'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-6'>#</a>
+      </div>
+      <hr />
+<p>Seek a split that maximizes the expected value
+of the square of the difference in means before
+and after the split. At that point, if the two
+splits are not statistically the same, then
+recurse into each part of the split.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="kr">return</span> <span class="kr">function</span> <span class="p">(</span><span class="n">samples</span><span class="p">,</span><span class="n">epsilon</span><span class="p">,</span><span class="n">same</span><span class="p">)</span>
+  <span class="n">epsilon</span> <span class="o">=</span> <span class="n">epsilon</span> <span class="ow">or</span> <span class="n">the</span><span class="p">.</span><span class="n">sample</span><span class="p">.</span><span class="n">epsilon</span>
+    <span class="kd">local</span> <span class="kr">function</span> <span class="nf">split</span><span class="p">(</span><span class="n">lo</span><span class="p">,</span><span class="n">hi</span><span class="p">,</span><span class="n">all</span><span class="p">,</span><span class="n">rank</span><span class="p">,</span><span class="n">lvl</span><span class="p">)</span>   
+      <span class="kd">local</span> <span class="n">best</span><span class="p">,</span><span class="n">lmemo</span><span class="p">,</span><span class="n">rmemo</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,{},{}</span>
+      <span class="n">memo</span><span class="p">(</span><span class="n">samples</span><span class="p">,</span><span class="n">hi</span><span class="p">,</span><span class="n">lo</span><span class="p">,</span> <span class="n">lmemo</span><span class="p">)</span> <span class="c1">-- summarize i+1 using i</span>
+      <span class="n">memo</span><span class="p">(</span><span class="n">samples</span><span class="p">,</span><span class="n">lo</span><span class="p">,</span><span class="n">hi</span><span class="p">,</span> <span class="n">rmemo</span><span class="p">)</span> <span class="c1">-- summarize i using i+1</span>
+      <span class="kd">local</span> <span class="n">cut</span><span class="p">,</span> <span class="n">lbest</span><span class="p">,</span> <span class="n">rbest</span>
+      <span class="kr">for</span> <span class="n">j</span><span class="o">=</span><span class="n">lo</span><span class="p">,</span><span class="n">hi</span><span class="o">-</span><span class="mi">1</span> <span class="kr">do</span> <span class="c1">-- step1: look for the best cut</span>
+        <span class="kd">local</span> <span class="n">l</span> <span class="o">=</span> <span class="n">lmemo</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+        <span class="kd">local</span> <span class="n">r</span> <span class="o">=</span> <span class="n">rmemo</span><span class="p">[</span><span class="n">j</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+        <span class="kr">if</span> <span class="n">mid</span><span class="p">(</span><span class="n">l</span><span class="p">)</span><span class="o">*</span><span class="n">the</span><span class="p">.</span><span class="n">sample</span><span class="p">.</span><span class="n">epsilon</span> <span class="o">&lt;</span> <span class="n">mid</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="kr">then</span>
+          <span class="kr">if</span> <span class="ow">not</span> <span class="n">same</span><span class="p">(</span><span class="n">l</span><span class="p">,</span><span class="n">r</span><span class="p">)</span> <span class="kr">then</span>
+            <span class="kd">local</span> <span class="n">tmp</span><span class="o">=</span> <span class="n">l</span><span class="p">.</span><span class="n">n</span><span class="o">/</span><span class="n">all</span><span class="p">.</span><span class="n">n</span><span class="o">*</span><span class="p">(</span><span class="n">l</span><span class="p">.</span><span class="n">mu</span> <span class="o">-</span> <span class="n">all</span><span class="p">.</span><span class="n">mu</span><span class="p">)</span><span class="o">^</span><span class="mi">2</span> <span class="o">+</span> 
+                       <span class="n">r</span><span class="p">.</span><span class="n">n</span><span class="o">/</span><span class="n">all</span><span class="p">.</span><span class="n">n</span><span class="o">*</span><span class="p">(</span><span class="n">r</span><span class="p">.</span><span class="n">mu</span> <span class="o">-</span> <span class="n">all</span><span class="p">.</span><span class="n">mu</span><span class="p">)</span><span class="o">^</span><span class="mi">2</span>
+            <span class="kr">if</span> <span class="n">tmp</span> <span class="o">&gt;</span> <span class="n">best</span> <span class="kr">then</span>
+              <span class="n">cut</span>   <span class="o">=</span> <span class="n">j</span>
+              <span class="n">best</span>  <span class="o">=</span> <span class="n">tmp</span>
+              <span class="n">lbest</span> <span class="o">=</span> <span class="n">lst</span><span class="p">.</span><span class="n">copy</span><span class="p">(</span><span class="n">l</span><span class="p">)</span>
+              <span class="n">rbest</span> <span class="o">=</span> <span class="n">lst</span><span class="p">.</span><span class="n">copy</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="kr">end</span> <span class="kr">end</span> <span class="kr">end</span> <span class="kr">end</span>
+      <span class="kr">if</span> <span class="n">cut</span> <span class="kr">then</span> <span class="c1">-- step2a: use the cut (if you found it)</span>
+        <span class="n">rank</span> <span class="o">=</span> <span class="n">split</span><span class="p">(</span><span class="n">lo</span><span class="p">,</span>   <span class="n">cut</span><span class="p">,</span> <span class="n">lbest</span><span class="p">,</span> <span class="n">rank</span><span class="p">,</span> <span class="n">lvl</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="n">rank</span> <span class="o">=</span> <span class="n">split</span><span class="p">(</span><span class="n">cut</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">hi</span><span class="p">,</span> <span class="n">rbest</span><span class="p">,</span> <span class="n">rank</span><span class="p">,</span> <span class="n">lvl</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+      <span class="kr">else</span> <span class="c1">-- step2b: otherwise, all samples get same rank</span>
+        <span class="kr">for</span> <span class="n">j</span><span class="o">=</span><span class="n">lo</span><span class="p">,</span><span class="n">hi</span> <span class="kr">do</span>
+          <span class="n">samples</span><span class="p">[</span><span class="n">j</span><span class="p">].</span><span class="n">rank</span> <span class="o">=</span> <span class="n">rank</span> <span class="kr">end</span> <span class="kr">end</span>
+      <span class="kr">return</span> <span class="n">rank</span> 
+    <span class="kr">end</span> 
+  <span class="nb">table.sort</span><span class="p">(</span><span class="n">samples</span><span class="p">,</span> <span class="kr">function</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)</span> <span class="kr">return</span> 
+             <span class="n">mid</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">mid</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="kr">end</span><span class="p">)</span>
+  <span class="n">split</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="o">#</span><span class="n">samples</span><span class="p">,</span> <span class="n">memo</span><span class="p">(</span><span class="n">samples</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="o">#</span><span class="n">samples</span><span class="p">,{}),</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>  
+  <span class="kr">return</span> <span class="n">samples</span> <span class="kr">end</span>
+<span class="kr">end</span>
+
+ 
+<span class="kr">function</span> <span class="nf">cliffsDelta</span><span class="p">(</span><span class="n">lst1</span><span class="p">,</span><span class="n">lst2</span><span class="p">,</span> <span class="n">threshold</span><span class="p">)</span>
+  <span class="n">threshold</span> <span class="o">=</span> <span class="n">threshold</span> <span class="ow">or</span> <span class="n">Lean</span><span class="p">.</span><span class="n">lib</span><span class="p">.</span><span class="n">cf</span>
+  <span class="kd">local</span> <span class="kr">function</span> <span class="nf">bsearch</span><span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="n">val</span><span class="p">,</span><span class="n">f</span><span class="p">)</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="n">f</span> <span class="ow">or</span> <span class="kr">function</span> <span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="n">x</span><span class="p">)</span> <span class="kr">return</span> <span class="n">t</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="kr">end</span>
+    <span class="kd">local</span> <span class="n">lo</span><span class="p">,</span><span class="n">hi</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="o">#</span><span class="n">t</span>
+    <span class="kr">while</span> <span class="n">lo</span> <span class="o">&lt;=</span> <span class="n">hi</span> <span class="kr">do</span>
+      <span class="kd">local</span> <span class="n">mid</span> <span class="o">=</span> <span class="p">(</span><span class="n">lo</span><span class="o">+</span><span class="n">hi</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span>
+      <span class="n">mid</span> <span class="o">=</span> <span class="nb">math.floor</span><span class="p">(</span><span class="n">mid</span><span class="p">)</span>
+      <span class="kr">if</span> <span class="n">f</span><span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="n">mid</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">val</span> <span class="kr">then</span>
+        <span class="n">hi</span> <span class="o">=</span> <span class="n">mid</span> <span class="o">-</span> <span class="mi">1</span>
+      <span class="kr">else</span>
+        <span class="n">lo</span> <span class="o">=</span> <span class="n">mid</span> <span class="o">+</span> <span class="mi">1</span> <span class="kr">end</span> <span class="kr">end</span>
+    <span class="kr">return</span> <span class="nb">math.min</span><span class="p">(</span><span class="n">lo</span><span class="p">,</span><span class="o">#</span><span class="n">t</span><span class="p">)</span>  <span class="kr">end</span>
+  
+  <span class="kd">local</span> <span class="n">lt</span><span class="p">,</span><span class="n">gt</span><span class="p">,</span><span class="n">max</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="o">#</span><span class="n">lst2</span>
+  <span class="kr">for</span> <span class="n">_</span><span class="p">,</span><span class="n">one</span> <span class="kr">in</span> <span class="nb">pairs</span><span class="p">(</span><span class="n">lst1</span><span class="p">)</span> <span class="kr">do</span>
+    <span class="kd">local</span> <span class="n">pos0</span> <span class="o">=</span> <span class="n">bsearch</span><span class="p">(</span><span class="n">lst2</span><span class="p">,</span><span class="n">one</span><span class="p">)</span>
+    <span class="kd">local</span> <span class="n">pos</span> <span class="o">=</span> <span class="n">pos0</span>
+    <span class="kr">while</span> <span class="n">pos</span> <span class="o">&lt;</span> <span class="n">max</span> <span class="ow">and</span> <span class="n">lst2</span><span class="p">[</span><span class="n">pos</span><span class="p">]</span> <span class="o">==</span> <span class="n">lst2</span><span class="p">[</span><span class="n">pos</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="kr">do</span> <span class="n">pos</span> <span class="o">=</span> <span class="n">pos</span> <span class="o">+</span> <span class="mi">1</span> <span class="kr">end</span>
+    <span class="n">gt</span> <span class="o">=</span> <span class="n">gt</span> <span class="o">+</span> <span class="n">max</span> <span class="o">-</span> <span class="n">pos</span>
+    <span class="kd">local</span> <span class="n">pos</span> <span class="o">=</span> <span class="n">pos0</span>
+    <span class="kr">while</span> <span class="n">pos</span> <span class="o">&gt;</span> <span class="mi">1</span>   <span class="ow">and</span> <span class="n">lst2</span><span class="p">[</span><span class="n">pos</span><span class="p">]</span> <span class="o">==</span> <span class="n">lst2</span><span class="p">[</span><span class="n">pos</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="kr">do</span> <span class="n">pos</span> <span class="o">=</span> <span class="n">pos</span> <span class="o">-</span> <span class="mi">1</span> <span class="kr">end</span>
+    <span class="n">lt</span> <span class="o">=</span> <span class="n">lt</span> <span class="o">+</span> <span class="n">pos</span> <span class="kr">end</span>
+  <span class="kr">return</span> <span class="nb">math.abs</span><span class="p">(</span><span class="n">gt</span> <span class="o">-</span> <span class="n">lt</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="o">#</span><span class="n">lst1</span> <span class="o">*</span> <span class="o">#</span><span class="n">lst2</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">threshold</span> <span class="kr">end</span>
+
+<span class="kr">function</span> <span class="nf">clifdsDeltaSample</span><span class="p">(</span><span class="n">s1</span><span class="p">,</span><span class="n">s2</span><span class="p">)</span>
+  <span class="kr">return</span> <span class="n">cliffsDelta</span><span class="p">(</span> <span class="n">sampleSorted</span><span class="p">(</span><span class="n">s1</span><span class="p">),</span> <span class="n">sampleSorted</span><span class="p">(</span><span class="n">s2</span><span class="p">)</span> <span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-7'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-7'>#</a>
+      </div>
+      <hr />
+<h3>Statistical significance test (non-parametric)</h3>
+<p>The bootstrap hypothesis test from 220 to 223 of Efron's book
+'An introduction to the boostrap'.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="kd">local</span> <span class="kr">function</span> <span class="nf">bootstrap</span><span class="p">(</span><span class="n">y0</span><span class="p">,</span><span class="n">z0</span><span class="p">)</span>
+     <span class="kd">local</span> <span class="kr">function</span> <span class="nf">sampleWithReplacement</span><span class="p">(</span><span class="n">lst</span><span class="p">)</span>
+       <span class="kd">local</span> <span class="kr">function</span> <span class="nf">n</span><span class="p">()</span>   <span class="kr">return</span> <span class="nb">math.floor</span><span class="p">(</span><span class="n">R</span><span class="p">.</span><span class="n">r</span><span class="p">()</span> <span class="o">*</span> <span class="o">#</span><span class="n">lst</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span> <span class="kr">end</span>
+       <span class="kd">local</span> <span class="kr">function</span> <span class="nf">one</span><span class="p">()</span> <span class="kr">return</span> <span class="n">lst</span><span class="p">[</span><span class="n">n</span><span class="p">()]</span> <span class="kr">end</span>
+       <span class="kd">local</span> <span class="n">out</span><span class="o">=</span><span class="p">{}</span>
+       <span class="kr">for</span> <span class="n">i</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="o">#</span><span class="n">lst</span> <span class="kr">do</span> <span class="n">out</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">one</span><span class="p">()</span> <span class="kr">end</span>
+       <span class="kr">return</span> <span class="n">out</span>
+     <span class="kr">end</span>
+     <span class="kd">local</span> <span class="kr">function</span> <span class="nf">delta</span><span class="p">(</span><span class="n">y</span><span class="p">,</span><span class="n">z</span><span class="p">)</span>
+       <span class="kr">return</span> <span class="p">(</span><span class="n">y</span><span class="p">.</span><span class="n">mu</span> <span class="o">-</span> <span class="n">z</span><span class="p">.</span><span class="n">mu</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">10</span><span class="o">^-</span><span class="mi">64</span> <span class="o">+</span> <span class="p">(</span><span class="n">y</span><span class="p">.</span><span class="n">sd</span><span class="o">/</span><span class="n">y</span><span class="p">.</span><span class="n">n</span> <span class="o">+</span> <span class="n">z</span><span class="p">.</span><span class="n">sd</span><span class="o">/</span><span class="n">z</span><span class="p">.</span><span class="n">n</span><span class="p">)</span><span class="o">^</span><span class="mf">0.5</span><span class="p">)</span>
+     <span class="kr">end</span>
+     <span class="kd">local</span> <span class="kr">function</span> <span class="nf">updates</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">lst</span><span class="p">)</span>
+       <span class="kr">for</span> <span class="n">j</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="o">#</span><span class="n">lst</span> <span class="kr">do</span>
+         <span class="kd">local</span> <span class="n">x</span> <span class="o">=</span> <span class="n">lst</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+         <span class="n">i</span><span class="p">.</span><span class="n">all</span><span class="p">[</span><span class="o">#</span><span class="n">i</span><span class="p">.</span><span class="n">all</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">x</span>
+         <span class="n">i</span><span class="p">.</span><span class="n">n</span>  <span class="o">=</span> <span class="n">i</span><span class="p">.</span><span class="n">n</span> <span class="o">+</span> <span class="mi">1</span>
+         <span class="kd">local</span> <span class="n">delta</span> <span class="o">=</span> <span class="n">x</span> <span class="o">-</span> <span class="n">i</span><span class="p">.</span><span class="n">mu</span>
+         <span class="n">i</span><span class="p">.</span><span class="n">mu</span> <span class="o">=</span> <span class="n">i</span><span class="p">.</span><span class="n">mu</span> <span class="o">+</span> <span class="n">delta</span> <span class="o">/</span> <span class="n">i</span><span class="p">.</span><span class="n">n</span>
+         <span class="n">i</span><span class="p">.</span><span class="n">m2</span> <span class="o">=</span> <span class="n">i</span><span class="p">.</span><span class="n">m2</span> <span class="o">+</span> <span class="n">delta</span> <span class="o">*</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">i</span><span class="p">.</span><span class="n">mu</span><span class="p">)</span>
+         <span class="kr">if</span> <span class="n">i</span><span class="p">.</span><span class="n">n</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="kr">then</span>
+           <span class="n">i</span><span class="p">.</span><span class="n">sd</span> <span class="o">=</span> <span class="p">(</span><span class="n">i</span><span class="p">.</span><span class="n">m2</span> <span class="o">/</span> <span class="p">(</span><span class="n">i</span><span class="p">.</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span><span class="o">^</span><span class="mf">0.5</span> <span class="kr">end</span> <span class="kr">end</span>
+       <span class="kr">return</span> <span class="n">i</span>
+     <span class="kr">end</span>
+     <span class="kd">local</span> <span class="kr">function</span> <span class="nf">create</span><span class="p">(</span><span class="n">lst</span><span class="p">)</span>
+       <span class="kr">return</span> <span class="n">updates</span><span class="p">({</span><span class="n">sum</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">mu</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">all</span><span class="o">=</span><span class="p">{},</span><span class="n">m2</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">sd</span><span class="o">=</span><span class="mi">0</span><span class="p">},</span> <span class="n">lst</span><span class="p">)</span>
+     <span class="kr">end</span>
+     <span class="kd">local</span> <span class="kr">function</span> <span class="nf">add</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">)</span>
+       <span class="kr">return</span> <span class="n">updates</span><span class="p">(</span> <span class="n">LST</span><span class="p">.</span><span class="n">copy</span><span class="p">(</span><span class="n">i</span><span class="p">),</span> <span class="n">j</span><span class="p">)</span>
+     <span class="kr">end</span>
+  <span class="kd">local</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span> <span class="o">=</span> <span class="n">create</span><span class="p">(</span><span class="n">y0</span><span class="p">),</span> <span class="n">create</span><span class="p">(</span><span class="n">z0</span><span class="p">)</span>
+  <span class="kd">local</span> <span class="n">x</span>    <span class="o">=</span> <span class="n">add</span><span class="p">(</span><span class="n">y</span><span class="p">,</span><span class="n">z</span><span class="p">)</span>
+  <span class="kd">local</span> <span class="n">tobs</span> <span class="o">=</span> <span class="n">delta</span><span class="p">(</span><span class="n">y</span><span class="p">,</span><span class="n">z</span><span class="p">)</span>
+  <span class="kd">local</span> <span class="n">yhat</span><span class="p">,</span> <span class="n">zhat</span> <span class="o">=</span> <span class="p">{},</span> <span class="p">{}</span>
+  <span class="kr">for</span> <span class="n">i</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="o">#</span><span class="n">y</span><span class="p">.</span><span class="n">all</span> <span class="kr">do</span> <span class="n">yhat</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">y</span><span class="p">.</span><span class="n">all</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">y</span><span class="p">.</span><span class="n">mu</span> <span class="o">+</span> <span class="n">x</span><span class="p">.</span><span class="n">mu</span> <span class="kr">end</span>
+  <span class="kr">for</span> <span class="n">i</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="o">#</span><span class="n">z</span><span class="p">.</span><span class="n">all</span> <span class="kr">do</span> <span class="n">zhat</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">z</span><span class="p">.</span><span class="n">all</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">z</span><span class="p">.</span><span class="n">mu</span> <span class="o">+</span> <span class="n">x</span><span class="p">.</span><span class="n">mu</span> <span class="kr">end</span>
+  <span class="kd">local</span> <span class="n">bigger</span> <span class="o">=</span> <span class="mi">0</span>
+  <span class="kr">for</span> <span class="n">_</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span><span class="n">the</span><span class="p">.</span><span class="n">sample</span><span class="p">.</span><span class="n">b</span> <span class="kr">do</span>
+    <span class="kr">if</span> <span class="n">delta</span><span class="p">(</span><span class="n">create</span><span class="p">(</span><span class="n">sampleWithReplacement</span><span class="p">(</span><span class="n">yhat</span><span class="p">)),</span>
+             <span class="n">create</span><span class="p">(</span><span class="n">sampleWithReplacement</span><span class="p">(</span><span class="n">zhat</span><span class="p">)))</span> <span class="o">&gt;</span> <span class="n">tobs</span> <span class="kr">then</span>
+      <span class="n">bigger</span> <span class="o">=</span> <span class="n">bigger</span> <span class="o">+</span> <span class="mi">1</span> <span class="kr">end</span> <span class="kr">end</span>
+  <span class="kr">return</span> <span class="n">bigger</span> <span class="o">/</span> <span class="n">the</span><span class="p">.</span><span class="n">sample</span><span class="p">.</span><span class="n">b</span> <span class="o">&gt;</span> <span class="n">the</span><span class="p">.</span><span class="n">num</span><span class="p">.</span><span class="n">conf</span><span class="o">/</span><span class="mi">100</span> <span class="kr">end</span>
+
+<span class="kd">local</span> <span class="kr">function</span> <span class="nf">same</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">)</span>
+  <span class="kr">return</span> <span class="ow">not</span><span class="p">(</span><span class="n">cliffsDelta</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">)</span> <span class="ow">and</span> <span class="n">bootstrap</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">))</span> <span class="kr">end</span>
+
+</pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+</div>
+</body>
