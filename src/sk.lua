@@ -16,7 +16,8 @@ function sk(samples,  epsilon)
     return l.n/all.n * (all.mu - l.mu)^2 + 
            r.n/all.n * (all.mu - r.mu)^2 end
 
-  local function argmax(lo,hi,       all,l,r,cut,best,tmp)
+  local function argmax(lo,hi,rank,
+                        all,l,r,cut,best,tmp)
     all, l, r = num(), num(), num()
     for i=lo,hi do inc(r,i); inc(all,i) end
     epsilon = epsilon or Lean.sk.cohen * all.sd
@@ -27,13 +28,16 @@ function sk(samples,  epsilon)
       if l.mu + epsilon < r.mu then
         tmp = prediction(all,l,r) * Lean.unsuper.margin
         if tmp > best then
-          if different(l._some, r._some) then
-            cut,best = i, tmp end end end end
+          --print(2)
+          --o(">>>",#all._some)
+          --if different(l._some, r._some) then
+            --print(3)
+            cut,best = i, tmp end end end
     return cut end
 
   local function cuts(lo,hi,rank, pre,            cut,txt)
-    txt= pre .. nth(samples[lo],.5) .. nth(samples[hi],.5)
-    cut= argmax(lo,hi)
+    txt= pre..nth(samples[lo],.5)..':'..nth(samples[hi],.5)
+    cut= argmax(lo,hi,rank)
     if cut then
       fyi(txt)
       rank = cuts(lo,    cut, rank, pre.."|.. ") + 1
@@ -45,6 +49,6 @@ function sk(samples,  epsilon)
     return rank end
 
   samples = sorted(samples, sampleLt)
-  cuts(1, #samples,1,"|.. ")
+  cuts(1, #samples,1,"")
   return samples
 end
