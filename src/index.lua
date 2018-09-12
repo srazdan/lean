@@ -15,6 +15,7 @@
 -- - [rows](rows.html)
 -- - [sample](sample.html)
 -- - [sk](sk.html)
+-- - [sparkline](sparkline.html)
 -- - [stats](stats.html)
 -- - [super](super.html)
 -- - [sym](sym.html)

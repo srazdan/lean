@@ -41,7 +41,7 @@ function unsuper(data,  enough,rows, most)
       cuts(c,lo,   cut, pre.."|.. ")
       cuts(c,cut+1, hi, pre.."|.. ")
     else
-      b= band(c,lo,hi
+      b= band(c,lo,hi)
       fyi(txt.." ("..b..")")
       for r=lo,hi do
         rows[r][c]=b end end
@@ -54,11 +54,10 @@ function unsuper(data,  enough,rows, most)
 
   for _,c  in pairs(data.indeps) do
     if data.nums[c] then
-      if c==3 then
-        ksort(c,rows)
-        most = stop(c,rows)
-        fyi("\n-- ".. data.name[c] .. most .. "----------")
-        cuts(c,1,most,"|.. ") end end end
+      ksort(c,rows)
+      most = stop(c,rows)
+      fyi("\n-- ".. data.name[c] .. most .. "----------")
+      cuts(c,1,most,"|.. ") end end
   print(gsub( cat(data.name,", "), "%$","")) 
   dump(rows)
 end
