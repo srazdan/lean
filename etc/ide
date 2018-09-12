@@ -23,7 +23,12 @@ htmls() {
     g=$(basename "$f" .lua)
     echo "-- - [$g]($g.html)"
   done > index.lua
-  for f in *.lua; do pycco -d ../docs $f; done 
+  for f in *.lua; do 
+    g=$(basename "$f" .lua)
+    if [ "$f" -nt "../docs/$f.html" ]; then
+      echo "-- $f ... "
+      pycco -d ../docs $f; fi
+  done 
 }
 
 para() { # comment

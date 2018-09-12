@@ -33,9 +33,8 @@ function super(data,goal,enough,       rows,most)
   enough = enough or (#rows)^Lean.super.enough 
 
 -- -------------------------------------------
--- Some low level details. If the `lo`, `hi`
--- points of a range are `?` then search inwards
--- for the most and least none `?` values.
+-- This generates a print string for a band
+-- that streches from `lo` to `hi`.
 
 
   local function band(c,lo,hi)
@@ -122,15 +121,16 @@ function super(data,goal,enough,       rows,most)
   end
 
 -- For all numeric indpendent columns, sort it and 
--- try to cut it. Dump the results to standard output.
+-- try to cut it. Then `dump` the results to standard output.
 
   for _,c  in pairs(data.indeps) do
     if data.nums[c] then
-      ksort(c,rows)
+      ksort(c,rows) -- sorts the rows on column `c`.
       most = stop(c,rows)
       fyi("\n-- ".. data.name[c] .. " ----------")
       cuts(c,1,most,"|.. ") end end
-  print(gsub( cat(data.name,", "), "%$",""))
+  print(gsub( cat(data.name,", "), 
+              "%$","")) -- dump dollars since no more nums
   dump(rows)
 end
 
