@@ -46,4 +46,5 @@ function sk(samples,  epsilon)
 
   samples = sorted(samples, sampleLt)
   cuts(1, #samples,1,"|.. ")
+  return samples
 end
