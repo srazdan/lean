@@ -1,6 +1,38 @@
 -- vim: ts=2 sw=2 sts=2 expandtab:cindent:formatoptions+=cro  
 --------- --------- --------- --------- --------- ---------  
 
+[[--
+local function memo(samples,here,stop,_memo,    b4,inc)
+  if stop > here then inc=1 else inc=-1 end
+  if here ~= stop then
+     b4=  lst.copy( memo(samples,here+inc, stop, _memo)) end
+  _memo[here] = updates(samples[here]._all,  b4)
+  return _memo[here] end
+---------------------------------------------
+-- Seek a split that maximizes the expected value
+-- of the square of the difference in means before
+-- and after the split. At that point, if the two
+-- splits are not statistically the same, then
+-- recurse into each part of the split.
+
+return function (samples,epsilon,same)
+  epsilon = epsilon or the.sample.epsilon
+    local function split(lo,hi,all,rank,lvl)
+      local best,lmemo,rmemo = 0,{},{}
+      memo(samples,hi,lo, lmemo) -- summarize i+1 using i
+      memo(samples,lo,hi, rmemo) -- summarize i using i+1
+      local cut, lbest, rbest
+      for j=lo,hi-1 do -- step1: look for the best cut
+        local l = lmemo[j]
+        local r = rmemo[j+1]
+        if mid(l)*the.sample.epsilon < mid(r) then
+          if not same(l,r) then
+            local tmp= l.n/all.n*(l.mu - all.mu)^2 +
+                       r.n/all.n*(r.mu - all.mu)^2
+            if tmp > best then
+
+--]]
+
 require "lib"
 require "num"
 require "sample"
