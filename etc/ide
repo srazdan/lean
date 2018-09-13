@@ -27,9 +27,7 @@ htmls() {
   done > index.lua
   for f in *.lua; do 
     g=$(basename "$f" .lua)
-    if [ "$f" -nt "../docs/$f.html" ]; then
-      echo "-- $f ... "
-      pycco -d ../docs $f; fi
+    pycco -d ../docs $f; 
   done 
 }
 
