@@ -26,7 +26,6 @@ function sk(samples,  epsilon)
            r.n/all.n * (all.mu - r.mu)^2 end
 
   local function stasticallyDifferent(l,r)
-    --return true 
     return different(sampleSorted(l._some), sampleSorted(r._some)) 
   end
 
