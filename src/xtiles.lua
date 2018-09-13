@@ -57,14 +57,16 @@ end
 
 -- assumes everyone is sorted first
 -- (all flat lists)
-function xtileSamples(samples, the, n) 
+function xtileSamples(samples, the, n,b4,pre) 
   n=num()
   for _,s in pairs(samples) do
     numInc(n, nth(s, 0))
     numInc(n, nth(s, 1)) end
   the = complete(the, {lo=n.lo, hi=n.hi})
   for _,s in pairs(sorted(samples, sampleLt)) do
-    print("#"..s.rank..", "..
+    pre = b4 ~= s.rank and "#"..s.rank or "  "
+    b4  = s.rank
+    print(pre..", "..
           xtile(sampleSorted(s), the).." ,"..
           s.txt) end
 end
