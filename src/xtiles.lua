@@ -68,5 +68,3 @@ function xtileSamples(samples, the, n)
           xtile(sampleSorted(s), the).." ,"..
           s.txt) end
 end
-
-

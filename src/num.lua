@@ -82,6 +82,10 @@ function numNorm(t,x,     y)
   return x=="?" and 0.5 or (x-t.lo) / (t.hi-t.lo + 10^-32)
 end
 
+-- Medians
+
+function numMedian(t) return nth(t._some, .5) end
+
 -- Misc
 
 function numXpect(i,j,   n)  

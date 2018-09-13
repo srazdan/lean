@@ -13,8 +13,7 @@ function sk(samples,  epsilon)
     n = n or num()
     f = f or numInc
     for _,x in pairs(samples[i].some) do f(n,x) end 
-    return n
-  end
+    return n end
 
   local function accumulate(i, j, k, t,      b4)
     if i ~= j then b4 = accumulate(i+k, j, k, t) end
@@ -26,24 +25,23 @@ function sk(samples,  epsilon)
            r.n/all.n * (all.mu - r.mu)^2 end
 
   local function stasticallyDifferent(l,r)
-    return different(sampleSorted(l._some), sampleSorted(r._some)) 
-  end
+    return different(sampleSorted(l._some), 
+                     sampleSorted(r._some)) end
 
-  local function argmax(lo,hi,rank, 
-                        all,l,ls,r,rs,cut,best,tmp)
-      rs,ls ={},{} 
-      accumulate(lo, hi,  1, rs)
-      accumulate(hi, lo, -1, ls)
-      epsilon = epsilon or Lean.sk.cohen * ls[hi].sd
-      best = 0
-      for i=lo,hi-1 do
-        l = ls[i]
-        r = rs[i+1]
-        if nth(l._some, .5)  + epsilon < nth(r._some, .5) then
-          tmp = improvement(ls[hi],l,r) * Lean.unsuper.margin
-          if tmp > best then
-            if stasticallyDifferent(l,r) then
-              cut,best = i, tmp end end end end
+  local function argmax(lo,hi,rank,    l,ls,r,rs,cut,best,x)
+    rs,ls ={},{} 
+    accumulate(lo, hi,  1, rs)
+    accumulate(hi, lo, -1, ls)
+    epsilon = epsilon or Lean.sk.cohen * ls[hi].sd
+    best = 0
+    for i=lo,hi-1 do
+      l = ls[i]
+      r = rs[i+1]
+      if numMedian(l) + epsilon < numMedian(r) then
+        x = improvement(ls[hi],l,r) * Lean.unsuper.margin
+        if x > best then
+          if stasticallyDifferent(l,r) then
+            cut,best = i,x end end end end
     return cut end
 
   local function cuts(lo,hi,rank, pre,            cut,txt)
