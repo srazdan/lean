@@ -189,6 +189,3 @@ function rows(file,t,f0,f,      stream,txt,cells,r,line)
 --     for _,cells in pairs(old.rows) do
 --        if cells[#cells] == 'happy' then
 --            row(new, cells) end end
---
-
-

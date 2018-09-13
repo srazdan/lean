@@ -1,3 +1,4 @@
+exe=luajit
 all : dirs datas bins
 
 B=bin
@@ -12,7 +13,7 @@ dirs:
 
 bins: 
 	@$(foreach f,$(subst .lua,,$(luas)),\
-		echo "#!$L lua" > $B/$f;\
+		echo "#!$L $(exe)" > $B/$f;\
 		echo "package.path = package.path .. ';../$S/?.lua'" >> $B/$f;\
 	        echo "require('lib')" >>$B/$f; \
 	        echo "main(require('$f'))" >>$B/$f; \

@@ -77,9 +77,10 @@ set hidden
 nnoremap <C-N> :bnext<CR>
 nnoremap <C-P> :bprev<CR>
 set vb
-colorscheme slate
-"autocmd VimEnter * NERDTree
-autocmd VimEnter * wincmd w
-autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
+colorscheme desert
 set nofoldenable    " disable folding
+"set fillchars=""
 
+hi VertSplit guifg=#202020 guibg=#202020 gui=NONE ctermfg=DarkGray ctermbg=DarkGray cterm=NONE
+
+map - :Explore<cr>

@@ -1,5 +1,7 @@
 # vim: ft=sh:ts=2 sw=2 sts=2 expandtab:cindent:formatoptions+=cro 
 
+exe=luajit
+
 pathmunge () {
   if ! echo "$PATH" | grep -Eq "(^|:)$1($|:)" ; then
     if [ "$2" = "after" ] 
@@ -39,11 +41,17 @@ cols()  {
   column -t -s, "$@" | less -F -S -X -K
 }
 
-make -f etc/setup.mk
+make -f etc/setup.mk exe=$exe
 
 ok() {
-  (cd ../tests; lua $1.lua)
+  (cd ../tests; $exe $1.lua)
 }
-
+ed() { 
+  ## ed FILE       : Edit a file with my vim bindings.
+  vim -u ../etc/vimrc $1
+}
+vim0() {
+  vim -u ../etc/vimrc -c 'PluginInstall' -c 'qa!'
+}
 echo "# Changing to src"
 cd src
