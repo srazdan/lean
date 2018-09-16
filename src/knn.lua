@@ -43,13 +43,13 @@ function knns(data,   want,got,s,all)
         want = row[#data.name]
         got  = knn(data,row, #data.name) 
         if type(want) == 'number' then
-           sampleInc(s, int(100*(want-got)/(want+10^-32)))
+           sampleInc(s, int(100*(want-got)))
         else
           fy(want == got and "." or "X") 
         end
       end 
     end end
-	xtileSamples(sk(all))
+	xtileSamples(sk(all),{num="%5s"})
   Lean=Lean0()
 end
 
