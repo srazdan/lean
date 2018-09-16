@@ -16,7 +16,7 @@ require "sample"
 
 function num(max)  
   return {n=0, mu=0, m2=0, sd=0, 
-          lo=10^32, hi=-10^32, _some=sample(max),
+          lo=10^32, hi=-1*10^32, _some=sample(max),
           w=1}
 end
 

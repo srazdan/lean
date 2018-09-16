@@ -2,22 +2,20 @@
 --------- --------- --------- --------- --------- --------- 
 require "config"
 
-function rogues(    ignore,match)
-  ignore = {
-           jit=true, utf8=true, math=true, package=true, table=true, 
-           coroutine=true, bit=true, os=true, io=true, 
-           bit32=true, string=true, arg=true, debug=true, 
-           _VERSION=true, _G=true }
+function rogues(    ignore)
+  ignore = {jit=true, utf8=true, math=true, package=true, 
+            table=true, coroutine=true, bit=true, os=true, 
+            io=true, bit32=true, string=true, arg=true, 
+            debug=true, _VERSION=true, _G=true }
   for k,v in pairs( _G ) do
-    if type(v) ~= "function" and not ignore[k] then
-       if k:match("^[^A-Z]") then
-         print("-- warning, rogue local ["..k.."]") 
-  end end end 
+   if type(v) ~= "function" and not ignore[k] then
+    if k:match("^[^A-Z]") then
+     print("-- warning, rogue local ["..k.."]") end end end 
 end 
 
 function off(t) return t end
 
-function ok(t,  n,score)
+function ok(t,  n,score,      passed,err,s)
   s=function() return math.floor(0.5 + 100*(1- 
                         ((Lean.ok.tries-Lean.ok.fails)/
                         Lean.ok.tries))) end
@@ -25,7 +23,8 @@ function ok(t,  n,score)
     Lean.ok.tries = Lean.ok.tries + 1
     print("-- Test #" .. Lean.ok.tries .. 
           " (oops=".. s() .."%). Checking ".. x .."... ")
-    local passed,err = pcall(f)
+    Lean = Lean0()
+    passed,err = pcall(f)
     if not passed then
       Lean.ok.fails = Lean.ok.fails + 1
       print("-- E> Failure " .. Lean.ok.fails .. " of " 

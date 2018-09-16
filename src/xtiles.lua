@@ -9,13 +9,16 @@ local function xtile(t,the,lo,hi,      what,where,out,b4)
   the.lo = lo or the.lo or t[1]
   the.hi = hi or the.hi or t[#t]
   local function fl(x)    return 1+ math.floor(x) end
-  local function pos(p)   return t[ fl(p * #t) ] end
+  local function pos(p)   return t[ int(p * #t) ] end
   local function place(x) 
     return fl( the.width*(x- the.lo)/
                (the.hi - the.lo+10^-32) ) end
   local function whats(chops,out)
     for _,chop in pairs(chops) do
-       out[#out+1] = pos(chop[1]) end; return out
+       --print(chop[1])
+       out[#out+1] = pos(chop[1]) 
+       --print(chop[1], out[#out])
+       end; return out
   end
   local function wheres(what,out) 
      for _,x in pairs(what) do
@@ -57,11 +60,12 @@ end
 
 -- assumes everyone is sorted first
 -- (all flat lists)
-function xtileSamples(samples, the, n,b4,pre) 
-  n=num()
+function xtileSamples(samples, the, n,b4,pre,all) 
+  n = num()
   for _,s in pairs(samples) do
-    numInc(n, nth(s, 0))
-    numInc(n, nth(s, 1)) end
+    all = sampleSorted(s)
+    numInc(n,  all[1])
+    numInc(n,  all[#all]) end
   the = complete(the, {lo=n.lo, hi=n.hi})
   for _,s in pairs(sorted(samples, sampleLt)) do
     pre = b4 ~= s.rank and "#"..s.rank or "  "

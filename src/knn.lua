@@ -4,6 +4,8 @@
 require "lib"
 require "distance"
 require "rows"
+require "sk"
+require "xtiles"
 
 function knn(data,row1,  goal,rows,cols) 
   local function klass(x) return first(x)[goal or data.class] end
@@ -13,7 +15,7 @@ function knn(data,row1,  goal,rows,cols)
     for i=1,Lean.distance.k do 
       d   = gap(t[i])
       sum = sum + klass(t[i]) / d
-      ds   = ds + 1/d
+      ds  = ds + 1/d
     end
     return sum/ds
   end 
@@ -27,13 +29,16 @@ function knn(data,row1,  goal,rows,cols)
   return combine( around(data, row1, rows,cols) ) 
 end  
 
-function knnDemo(data,   want,got,s)
+function knns(data,   want,got,s,all)
+  all={}
   for _,samples in pairs{16,32,64,128} do
     for _,k in pairs{1,2,4,8} do
       Lean = Lean0()
       Lean.distance.samples= samples
       Lean.distance.k      = k
-      s=sample()
+      s = sample(samples)
+      s.txt= "k"..k..",s"..samples
+      all[ #all+1 ] = s
       for _,row in pairs(data.rows) do
         want = row[#data.name]
         got  = knn(data,row, #data.name) 
@@ -43,10 +48,9 @@ function knnDemo(data,   want,got,s)
           fy(want == got and "." or "X") 
         end
       end 
-      if s.n > 0 then print(samples..","..
-  	                  k..","..cat(nths(s),",")) end
     end end
+	xtileSamples(sk(all))
   Lean=Lean0()
 end
 
-return {main = function() knnDemo(rows()) end}
+return {main = function() knns(rows()) end}

@@ -71,6 +71,5 @@ function nths(t, ns,out)
   return out
 end
 
-function sampleLt(s1,s2)
-  return nth(s1,0.5) < nth(s2,0.5) 
-end
+function sampleLt(s1,s2) 
+  return nth(s1,0.5) < nth(s2,0.5) end
