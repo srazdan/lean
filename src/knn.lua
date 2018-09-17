@@ -37,13 +37,13 @@ function knns(data,   want,got,s,all)
       Lean.distance.samples= samples
       Lean.distance.k      = k
       s = sample(math.huge)
-      s.txt= "k"..k..",s"..samples
+      s.txt= k..","..samples
       all[ #all+1 ] = s
       for _,row in pairs(data.rows) do
         want = row[#data.name]
         got  = knn(data,row, #data.name) 
         if type(want) == 'number' then
-           sampleInc(s, abs(int(100*(want-got))))
+           sampleInc(s, abs(want-got))
         else
           fy(want == got and "." or "X") 
         end
