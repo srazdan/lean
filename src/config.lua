@@ -14,7 +14,7 @@ function Lean0() return  {
   ok       = {tries = 0, fails  =0},
   random   = {seed = 10013},
   sample   = {max=512}, 
-  sk       = {cohen=0.3,
+  sk       = {cohen=0.2,
               conf = 95}, 
   stats    = {conf = 95,
               bootstraps = 375,
