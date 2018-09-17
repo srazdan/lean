@@ -4,7 +4,7 @@
 
 function Lean0() return  {
   cohen    = 0.2,
-  distance = {k=1, p=2, kernel="first", samples=64},
+  distance = {k=1, p=2, kernel="triangle", samples=64},
   dom      = {samples=100}, 
   domtree  = {enough=0.5},
   enough   = 100,
