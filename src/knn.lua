@@ -7,6 +7,35 @@ require "rows"
 require "sk"
 require "xtiles"
 
+--<tiny><pre style="font-size: 10px; line-height:10px;">
+--  rank                                        5     25     50     75     95   k  samples
+--  ----  -----------                           -     --     --     --     --   -  -------
+--  #1     - *   ------- |                      1      3      7     15     31   8  512
+--         - *  -------  |                      1      3      7     14     27   4  256
+--         - *  -------  |                      1      3      7     14     28   4  512
+--         - *  ------   |                      1      3      7     14     26   1  512
+--         -  *  -----   |                      1      3      8     15     26   2  512
+--         -  * -------- |                      1      3      8     14     30   8  256
+--         -  * -------- |                      1      3      8     14     29   2  256
+--         -  *  ------- |                      1      3      8     15     31   1  256
+--         -  *  --------|                      1      4      8     15     32   2  128
+--         -  *  ------- |                      1      4      9     15     29   8  128
+--         -  *   -------|                      1      4      9     17     32   4  128
+--         -  *  ------- |                      1      4      9     15     29   1  128
+--         -- *   -------|-                     1      5      9     18     38   1  32
+--         -  *  --------|-                     1      4      9     16     36   2  64
+--         -   *  -------|                      1      4     10     18     34   4  64
+--         -   *  -------|                      1      4     10     18     35   2  32
+--         --  *  -------|                      1      5     10     18     35   4  32
+--         -   *  -------|-                     1      4     10     17     38   8  64
+--         -   * --------|-                     1      4     10     16     36   1  64
+--         --  *  -------|-                     1      5     10     19     37   8  32
+--         --  *  -------|--                    1      6     11     18     40   8  16
+--         --  *  -------|---                   1      6     11     19     41   2  16
+--         --  *   ------|--                    1      5     11     20     40   4  16
+--  #2     --   *  ------|---                   1      6     12     20     41   1  16
+--</pre></tiny>
+
 function knn(data,row1,  goal,rows,cols) 
   local function klass(x) return first(x)[goal or data.class] end
   local function gap(x)   return second(x) end
@@ -43,13 +72,15 @@ function knns(data,   want,got,s,all)
         want = row[#data.name]
         got  = knn(data,row, #data.name) 
         if type(want) == 'number' then
-           sampleInc(s, abs(want-got))
+           sampleInc(s, 100*abs(want-got))
         else
           fy(want == got and "." or "X") 
         end
       end 
     end end
-	xtileSamples(sk(all),{num="%5s"})
+  print("rank, ,    5,   25,   50,   75,   95,k,samples")
+  print("----,----------- ,    -,   --,   --,   --,   --,-,-------")
+	xtileSamples(sk(all),{num="%5s",width=30})
   Lean=Lean0()
 end
 
