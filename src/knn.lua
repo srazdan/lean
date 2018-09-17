@@ -31,19 +31,19 @@ end
 
 function knns(data,   want,got,s,all)
   all={}
-  for _,samples in pairs{16,32,64,128} do
+  for _,samples in pairs{16,32,64,128,256,512} do
     for _,k in pairs{1,2,4,8} do
       Lean = Lean0()
       Lean.distance.samples= samples
       Lean.distance.k      = k
-      s = sample(samples)
+      s = sample(math.huge)
       s.txt= "k"..k..",s"..samples
       all[ #all+1 ] = s
       for _,row in pairs(data.rows) do
         want = row[#data.name]
         got  = knn(data,row, #data.name) 
         if type(want) == 'number' then
-           sampleInc(s, int(100*(want-got)))
+           sampleInc(s, abs(int(100*(want-got))))
         else
           fy(want == got and "." or "X") 
         end

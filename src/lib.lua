@@ -113,6 +113,8 @@ end
 --------- --------- --------- --------- --------- --------- 
 -- ## Num Stuff
 
+function abs(x) return x<0 and -1*x or x end
+
 function close(x,y,  c)
   c=c or 0.01
   return math.abs((x-y)/x) < c
