@@ -55,6 +55,13 @@ function ksort(k,t,  f)
   return t
 end  
 
+function shuffle( t )
+  for i= 1,#t do
+    local j = i + math.floor((#t - i) * rand() + 0.5)
+    t[i],t[j] = t[j], t[i] end
+  return t
+end
+
 function sorted(t,f)
   table.sort(t,f)
   return t
