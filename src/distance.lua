@@ -4,14 +4,16 @@
 require "rows"
 require "lib"
 
+-- Based on Aha et al. [Instance-based Learning Algorithms](https://link.springer.com/content/pdf/10.1007/BF00153759.pdf) -- (see top of p42).
+
 function dist(t,row1,row2,cols,  p,   d,n,x,y,f,d1,n1)
   cols = cols or t.indeps
   p    = p    or Lean.distance.p
   function symDist(x,y)
-    if     x=="?" and y=="?" then return 0,0 
-    elseif x=="?" or  y=="?" then return 1,1 
-    elseif x==y              then return 0,1
-    else                          return 1,1
+    if     x=="?" and y=="?" then return 1 
+    elseif x=="?" or  y=="?" then return 1 
+    elseif x==y              then return 0
+    else                          return 1
     end
   end
   
@@ -27,17 +29,17 @@ function dist(t,row1,row2,cols,  p,   d,n,x,y,f,d1,n1)
     else 
       x,y = numNorm(t,x), numNorm(t,y) 
     end
-    return (x-y)^p, 1
+    return (x-y)^p
   end
 
   d,n = 0,0
   for _,c in pairs(cols) do
     x, y  = row1[c], row2[c]
     if t.nums[c] 
-      then d1,n1 = numDist(t.nums[c],x,y) 
-      else d1,n1 = symDist(x,y)
+      then d1 = numDist(t.nums[c],x,y) 
+      else d1 = symDist(x,y)
     end
-    d, n = d + d1, n + n1 
+    d, n = d + d1, n + 1 
   end
   return (d/n) ^ (1/p) 
 end

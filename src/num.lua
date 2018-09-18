@@ -82,6 +82,14 @@ function numNorm(t,x,     y)
   return x=="?" and 0.5 or (x-t.lo) / (t.hi-t.lo + 10^-32)
 end
 
+-- Likiehood
+
+function numPdf(t,x)
+  return math.exp(-1*(x - t.mu)^2/(2*t.sd^2)) *
+         1 / (t.sd * ((2*math.pi)^0.5))
+end
+
+
 -- Medians
 
 function numMedian(t) return nth(t._some, .5) end

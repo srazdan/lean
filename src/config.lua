@@ -10,6 +10,7 @@ function Lean0() return  {
   enough   = 100,
   fft      = {min=4},
   margin   = 1.02,
+  nb       = {m=2, k=1,enough=20},
   num      = {p=2},
   ok       = {tries = 0, fails  =0},
   random   = {seed = 10013},
