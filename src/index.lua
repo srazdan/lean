@@ -9,6 +9,7 @@
 -- - [knn](knn.html)
 -- - [lib](lib.html)
 -- - [meta](meta.html)
+-- - [nb](nb.html)
 -- - [num](num.html)
 -- - [ok](ok.html)
 -- - [random](random.html)
