@@ -29,14 +29,8 @@ html() {
 }
  
 htmls() {  
-  for f in $lean/src/*.lua; do
-    g=$(basename "$f" .lua)
-    echo "-- - [$g]($g.html)"
-  done > $lean/src/index.lua
-  for f in $lean/src/*.lua; do 
-    g=$(basename "$f" .lua)
-    pycco -d $lean/docs $f; 
-  done 
+  cd $lean/src
+  pycco -i -d $lean/docs *.lua
 }
 
 para() { # comment
