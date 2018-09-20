@@ -9,7 +9,7 @@ require "random"
 require "abcd"
 
 function nb(data,cells,      klasses,goal,rows,cols,
-	                         m,k,fi,guess) 
+	                         m,k,f,guess,n) 
   data._klasses = data._klasses and data._klasses or {}
   goal = goal or data.class or data.name[#data.name]
   rows = rows or data.rows
@@ -24,22 +24,24 @@ function nb(data,cells,      klasses,goal,rows,cols,
     for _,c in pairs(cols) do
       x,inc = cells[c],0
       if x ~= "?" then
-	      if data.nums[c] then
-	        inc = math.log(numPdf(data.nums[c],x))
+	      if klass.nums[c] then
+	        inc = math.log(numPdf(klass.nums[c],x))
 	     else
-	        y = data.syms[c].counts[x] or 0
+	        y = klass.syms[c].counts[x] or 0
 	        inc = (y + m*prior) / (#klass.rows + m)
 	     end
        like = like + math.log(inc) end end 
     return like
   end
 
-  function predict(      k,likes,max,l) 
+  function predict(      h,max,l) 
     max = - math.huge
     for k,klass in pairs(data._klasses) do
+      h = h or k
       l = likelihood(klass) 
+      print(l,max)
       if l > max then max,h = l,k end end 
-    return k
+    return h
   end
 
   function learn(cells,  x)
@@ -48,7 +50,10 @@ function nb(data,cells,      klasses,goal,rows,cols,
     row(data._klasses[x], cells)
   end
 
-  guess = predict()
+  print(#data.rows)
+  if #data.rows > Lean.nb.enough then 
+    fyi("."); guess = predict() 
+  end
   learn(cells)
   return guess
 end
@@ -64,7 +69,7 @@ function nbs(data,   want,got,log)
       for _,cells in pairs(data.rows) do
         want = cells[#data.name]
         got  = nb(data,cells) 
-        print(want,got)
+        --print(want,got)
         if got then
           abcdInc(log, want, got) end end end end
   abcdShow(log)
@@ -79,22 +84,18 @@ end
 
 function nbInc(data,   data1,want,got,s,all,k,samples,p,kernel)
   s = sample(math.huge)
-  k, samples, p,kernel = 2, 32, 2,"triangle"
+  k, samples, p,kernel = 2, 20, 2,"triangle"
   s.txt= k..","..samples..","..tostring(p)..","..kernel
   rseed(1)
   for _=1,20 do 
     Lean = Lean0()
     data1 = header(data.name)
-    Lean.distance.p = p
-    Lean.distance.k = k
-    Lean.distance.kernal = kernel
-    Lean.distance.samples = samples
     for n,cells in pairs(shuffle(data.rows)) do
       row(data1, cells)
       if n > samples*2 then
          want = cells[#data.name]
          got  = nb(data1,cells, #data.name) 
-         print(want,got)
+         --print(want,got)
          if type(want) == 'number' then
            sampleInc(s, abs(100*(want-got)))
          else

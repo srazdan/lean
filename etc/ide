@@ -4,9 +4,11 @@ lean=${1:-$PWD}
 exe=luajit
 
 lean0() {
-  make -f $lean/etc/setup.mk exe=$exe
-  sudo pip install pycco
-  vim -u $lean/etc/vimrc -c 'PluginInstall' -c 'qa!'
+  mkdir -p $lean/src $lean/data $lean/bin
+  cd $lean; make -f $lean/etc/setup.mk exe=$exe
+  sudo -H pip -q install pycco
+  vim -u $lean/etc/vimrc vim +PlugInstall +qall
+ # -c 'PluginInstall' -c 'qa!'
 }
 pathmunge () {
   if ! echo "$PATH" | grep -Eq "(^|:)$1($|:)" ; then
