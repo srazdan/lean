@@ -6,7 +6,16 @@ exe=luajit
 lean0() {
   mkdir -p $lean/src $lean/data $lean/bin
   cd $lean; make -f $lean/etc/setup.mk exe=$exe
-  sudo -H pip -q install pycco
+  if ! hash pycco 2> /dev/null; then
+    echo "Installing pycco..."
+    sudo -H pip -q install pycco
+  fi
+  if  [ ! -d "$HOME/.vim/bundle/Vundle.vim" ]; then
+    echo "Installing vundle to $HOME/.vim/bundle/"
+    mkdir -p $HOME/.vim/bundle
+    git clone https://github.com/VundleVim/Vundle.vim.git \
+              $HOME/.vim/bundle/Vundle.vim
+  fi
   vim -u $lean/etc/vimrc vim +PlugInstall +qall
  # -c 'PluginInstall' -c 'qa!'
 }

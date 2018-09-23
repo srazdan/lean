@@ -8,12 +8,12 @@ require "xtiles"
 require "random"
 require "abcd"
 
-function nb(data,cells,      klasses,goal,rows,cols,
-	                         m,k,f,guess,n) 
+function nb(data,cells,enough,   klasses,goal,rows,cols,
+	                               m,k,f,guess,n) 
   data._klasses = data._klasses and data._klasses or {}
   goal = goal or data.class or data.name[#data.name]
   rows = rows or data.rows
-  cols = rows or data.indeps
+  cols = cols or data.indeps
   m    = Lean.nb.m
   k    = Lean.nb.k
   f    = #data.rows + k * #data._klasses
@@ -25,7 +25,8 @@ function nb(data,cells,      klasses,goal,rows,cols,
       x,inc = cells[c],0
       if x ~= "?" then
 	      if klass.nums[c] then
-	        inc = math.log(numPdf(klass.nums[c],x))
+	        inc = numPdf(klass.nums[c],x)
+          --print(c,inc)
 	     else
 	        y = klass.syms[c].counts[x] or 0
 	        inc = (y + m*prior) / (#klass.rows + m)
@@ -39,42 +40,66 @@ function nb(data,cells,      klasses,goal,rows,cols,
     for k,klass in pairs(data._klasses) do
       h = h or k
       l = likelihood(klass) 
-      print(l,max)
       if l > max then max,h = l,k end end 
     return h
   end
 
-  function learn(cells,  x)
+  function learn(    x)
     x = cells[goal]
     data._klasses[x] = data._klasses[x] or header(data.name)
     row(data._klasses[x], cells)
   end
 
-  print(#data.rows)
-  if #data.rows > Lean.nb.enough then 
-    fyi("."); guess = predict() 
-  end
-  learn(cells)
+  if enough then guess = predict() end
+  learn()
   return guess
-end
+end 
 
-function nbs(data,   want,got,log)
-  for m=2,2,1 do
-   for k=1,1,1 do
+function nbs(data,   all,want,got,log,enough,abcds)
+  all={}
+  for m=1,4,1 do
+    for k=1,4,1 do
       Lean = Lean0()
       Lean.nb.m= m
       Lean.nb.k = k
-      log = abcd("",m..","..k)
-      o(log)
-      for _,cells in pairs(data.rows) do
-        want = cells[#data.name]
-        got  = nb(data,cells) 
-        --print(want,got)
-        if got then
-          abcdInc(log, want, got) end end end end
-  abcdShow(log)
+      log = sample(math.huge)
+      log.txt = k.."."..m
+      all[ #all+1 ] = log
+      for r=1,20 do
+        abcds = abcd()
+        for n,cells in pairs(shuffle(data.rows)) do
+          enough = n >= Lean.nb.enough
+          want = cells[#data.name]
+          if enough then
+            got = nb(data,cells, enough) 
+            abcdInc(abcds, want, got) 
+          else 
+            nb(data,cells, enough) 
+          end 
+        end
+        sampleInc(log,
+          abcdReport(abcds)["tested_positive"].pd)
+      end
+    end
+  end
+	xtileSamples(sk(all),{num="%5.0f",width=30})
   Lean=Lean0()
 end
+
+--       s.txt= k..","..samples..","..tostring(p)..","..kernel
+--       all[ #all+1 ] = s
+--       for _,row in pairs(data.rows) do
+--         want = row[#data.name]
+--         got  = knn(data,row, #data.name) 
+--         if type(want) == 'number' then
+--            sampleInc(s, abs(100*(want-got)))
+--         else
+--           fy(want == got and "." or "X") 
+--   print("rank, ,    5,   25,   50,   75,   95,k,samples,p,kernel")
+--   print("----, ,    -,   --,   --,   --,   --,-,-------,---,------")
+--   Lean=Lean0()
+-- end
+-- 
 
 --<tiny><pre style="font-size: 8px; line-height:8px;">
 --     rank                                              5     25     50     75     95   k  samples  p          kernel
@@ -95,7 +120,6 @@ function nbInc(data,   data1,want,got,s,all,k,samples,p,kernel)
       if n > samples*2 then
          want = cells[#data.name]
          got  = nb(data1,cells, #data.name) 
-         --print(want,got)
          if type(want) == 'number' then
            sampleInc(s, abs(100*(want-got)))
          else
