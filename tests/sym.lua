@@ -5,6 +5,8 @@ package.path = '../src/?.lua;' .. package.path
 require "lib"
 require "ok"
 require "sym"
+require "random"
+require "meta"
 
 ok  { baseSym=function(  s)
 	s=syms{ 'y','y','y','y','y','y','y','y','y',
@@ -13,3 +15,20 @@ ok  { baseSym=function(  s)
 	print(symEnt(s))
 end }
 
+ok { inc=function(        s,all,one,datas,data,syms,kept) 
+  datas,kept,all = {},{},{}
+  syms={"a","b","c","d","e","f","g","h","i","j","k","l"}
+  for i=1,20 do
+    data={}
+    datas[ i ] = data
+    for j=1,20 do data[j] = any(syms) end end
+  s= sym()
+  for i=1,20 do
+    map(datas[i], function (z) symInc(s, z) end)
+    kept[i] = symEnt(s)
+  end
+  for i=20,3,-1 do
+    assert(symEnt(s) == kept[i])
+    map(datas[i], function (z) symDec(s, z) end)
+  end
+end }

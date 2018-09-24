@@ -15,15 +15,6 @@ function sym()
   return {counts={},mode=nil,most=0,n=0,_ent=nil}
 end
 
--- Buld add to a `sym`:
-
-function syms(t,f,       s)
-  f=f or function(x) return x end
-  s=sym()
-  for _,x in pairs(t) do symInc(s, f(x)) end
-  return s
-end
-
 -- Add `x` to a `sym`:
 
 function symInc(t,x,   new,old)
@@ -47,6 +38,15 @@ function symDec(t,x)
     t.counts[x] = t.counts[x] - 1
   end
   return x
+end
+
+-- Buld add to a `sym`:
+
+function syms(t,f,       s)
+  f=f or function(x) return x end
+  s=sym()
+  for _,x in pairs(t) do symInc(s, f(x)) end
+  return s
 end
 
 -- Computing the entropy: don't recompute if you've
