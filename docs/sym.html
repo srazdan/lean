@@ -71,23 +71,6 @@
       <div class='octowrap'>
         <a class='octothorpe' href='#section-4'>#</a>
       </div>
-      <p>Buld add to a <code>sym</code>:</p>
-    </div>
-    <div class='code'>
-      <div class="highlight"><pre><span class="kr">function</span> <span class="nf">syms</span><span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="n">f</span><span class="p">,</span>       <span class="n">s</span><span class="p">)</span>
-  <span class="n">f</span><span class="o">=</span><span class="n">f</span> <span class="ow">or</span> <span class="kr">function</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="kr">return</span> <span class="n">x</span> <span class="kr">end</span>
-  <span class="n">s</span><span class="o">=</span><span class="n">sym</span><span class="p">()</span>
-  <span class="kr">for</span> <span class="n">_</span><span class="p">,</span><span class="n">x</span> <span class="kr">in</span> <span class="nb">pairs</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="kr">do</span> <span class="n">symInc</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">))</span> <span class="kr">end</span>
-  <span class="kr">return</span> <span class="n">s</span>
-<span class="kr">end</span></pre></div>
-    </div>
-  </div>
-  <div class='clearall'></div>
-  <div class='section' id='section-5'>
-    <div class='docs'>
-      <div class='octowrap'>
-        <a class='octothorpe' href='#section-5'>#</a>
-      </div>
       <p>Add <code>x</code> to a <code>sym</code>:</p>
     </div>
     <div class='code'>
@@ -105,10 +88,10 @@
     </div>
   </div>
   <div class='clearall'></div>
-  <div class='section' id='section-6'>
+  <div class='section' id='section-5'>
     <div class='docs'>
       <div class='octowrap'>
-        <a class='octothorpe' href='#section-6'>#</a>
+        <a class='octothorpe' href='#section-5'>#</a>
       </div>
       <p>Remove <code>x</code> from a <code>sym</code>.</p>
     </div>
@@ -124,12 +107,29 @@
     </div>
   </div>
   <div class='clearall'></div>
+  <div class='section' id='section-6'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-6'>#</a>
+      </div>
+      <p>Buld add to a <code>sym</code>:</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="kr">function</span> <span class="nf">syms</span><span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="n">f</span><span class="p">,</span>       <span class="n">s</span><span class="p">)</span>
+  <span class="n">f</span><span class="o">=</span><span class="n">f</span> <span class="ow">or</span> <span class="kr">function</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="kr">return</span> <span class="n">x</span> <span class="kr">end</span>
+  <span class="n">s</span><span class="o">=</span><span class="n">sym</span><span class="p">()</span>
+  <span class="kr">for</span> <span class="n">_</span><span class="p">,</span><span class="n">x</span> <span class="kr">in</span> <span class="nb">pairs</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="kr">do</span> <span class="n">symInc</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">))</span> <span class="kr">end</span>
+  <span class="kr">return</span> <span class="n">s</span>
+<span class="kr">end</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
   <div class='section' id='section-7'>
     <div class='docs'>
       <div class='octowrap'>
         <a class='octothorpe' href='#section-7'>#</a>
       </div>
-      <p>Computing the entropy: don&rsquo;t recompute if you&rsquo;ve
+      <p>Computing the entropy: don't recompute if you've
 already done it before.</p>
     </div>
     <div class='code'>

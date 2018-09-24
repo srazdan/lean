@@ -61,7 +61,7 @@
       </div>
       <p><tiny><pre style="font-size: 8px; line-height:8px;">
     rank                                              5     25     50     75     95   k  samples  p    kernel
-    ----                                              -     &ndash;     &ndash;     &ndash;     &ndash;   -  -------  &mdash;  ------
+    ----                                              -     --     --     --     --   -  -------  ---  ------
     #1             <em>-----      |                      0      3      7     13     23   4  512      4    triangle
                    * ----      |                      1      3      7     14     26   4  512      4    median
                    * ----      |                      1      3      7     14     26   1  512      4    triangle
@@ -140,7 +140,7 @@
                  -  *  --------|                      1      5     11     20     44   2  128      3    median
                  -  *  ------  |                      1      5     11     20     38   8  128      4    median
                  -  *  ------- |                      1      5     11     21     40   8  128      2    median
-    #3           -  *   -------|&ndash;                    1      5     12     26     55   1  32       3    triangle
+    #3           -  *   -------|--                    1      5     12     26     55   1  32       3    triangle
                  -  *  --------|                      2      6     12     22     45   4  32       2    median
                  -  *  --------|                      1      5     12     22     44   8  512      3    median
                  -  *  --------|                      1      6     12     21     48   4  128      3    median
@@ -151,43 +151,43 @@
                  -  *   -------|                      1      6     13     26     49   1  128      1    median
                  -  *   -------|-                     1      6     13     24     51   2  32       3    median
                  -  *   -------|-                     1      6     13     26     52   8  128      3    median
-                 -  *    ------|&ndash;                    1      6     13     27     55   2  256      1    median
-                 -  *    ------|&ndash;                    1      6     13     28     55   4  512      1    median
-                 -  *    ------|&mdash;                   1      6     13     28     57   8  256      1    median
+                 -  *    ------|--                    1      6     13     27     55   2  256      1    median
+                 -  *    ------|--                    1      6     13     28     55   4  512      1    median
+                 -  *    ------|---                   1      6     13     28     57   8  256      1    median
                  -  *   -------|-                     1      6     13     24     53   2  32       3    triangle
                  -  *    ------|----                  1      6     13     28     62   4  256      1    median
                  -  *   -------|-                     1      6     13     24     50   8  512      1    triangle
                  -  *   -------|                      1      5     13     25     45   8  256      1    triangle
-                 -   *  -------|&mdash;                   1      6     13     26     57   2  256      1    triangle
-                 &ndash;  *  -------|                      1      7     14     25     46   8  32       3    triangle
+                 -   *  -------|---                   1      6     13     26     57   2  256      1    triangle
+                 --  *  -------|                      1      7     14     25     46   8  32       3    triangle
                  -   *   ------|-                     1      6     14     28     51   2  512      1    triangle
                  -   *  -------|                      1      6     14     25     47   4  128      1    triangle
-                 &ndash;  *  -------|                      1      7     14     24     47   8  128      1    triangle
+                 --  *  -------|                      1      7     14     24     47   8  128      1    triangle
                  -   *  -------|                      1      6     14     25     49   4  512      1    triangle
-                 -   *  -------|&ndash;                    1      6     14     26     53   2  32       1    triangle
+                 -   *  -------|--                    1      6     14     26     53   2  32       1    triangle
                  -   *  -------|-                     1      6     14     26     50   1  512      1    triangle
                  -   *  -------|                      1      6     14     25     46   8  32       4    median
                  -   *  -------|----                  1      6     14     26     62   8  512      1    median
-                 -   *   ------|&mdash;                   1      6     14     28     59   1  128      1    triangle
+                 -   *   ------|---                   1      6     14     28     59   1  128      1    triangle
                  -   *   ------|----                  1      6     14     28     62   4  128      1    median
                  -   *    -----|----                  1      6     14     30     60   8  128      1    median
-                 &ndash;  *   ------|&mdash;                   1      7     14     27     59   1  32       3    median
-                 &ndash;  *   ------|&mdash;                   1      7     14     26     57   2  128      1    triangle
-                 &ndash;  *   ------|&ndash;                    1      7     15     29     53   1  32       1    triangle
-                 -   *    -----|&mdash;                   2      6     15     30     57   1  256      1    median
-                 -   *    -----|&ndash;                    2      6     15     30     53   2  512      1    median
+                 --  *   ------|---                   1      7     14     27     59   1  32       3    median
+                 --  *   ------|---                   1      7     14     26     57   2  128      1    triangle
+                 --  *   ------|--                    1      7     15     29     53   1  32       1    triangle
+                 -   *    -----|---                   2      6     15     30     57   1  256      1    median
+                 -   *    -----|--                    2      6     15     30     53   2  512      1    median
                  -   *   ------|                      1      6     15     27     49   4  32       1    triangle
-                 &ndash;  *   ------|                      1      8     16     29     49   8  32       1    triangle
-                 &ndash;  *   ------|-                     1      8     16     28     51   1  512      1    median
-                 &ndash;  *    -----|&mdash;                   1      7     16     31     58   1  256      1    triangle
-                 &ndash;  *   ------|-                     1      7     16     28     52   2  128      1    median
-                 &ndash;  *    -----|&mdash;                   1      7     16     31     58   1  32       1    median
-                 &ndash;  *    -----|&mdash;                   1      8     16     32     59   2  32       1    median
-                 &ndash;   *    ----|-----                 1      8     17     34     63   4  32       1    median
-    #4           &ndash;   *    ----|----                  2      7     17     34     62   4  32       3    median
-                 &ndash;   *     &mdash;|------                2      9     19     39     69   8  32       1    median
-                 &mdash;   *     &ndash;|-------               3     10     22     41     71   8  32       3    median
-    &ndash; warning   rogue local [k]
+                 --  *   ------|                      1      8     16     29     49   8  32       1    triangle
+                 --  *   ------|-                     1      8     16     28     51   1  512      1    median
+                 --  *    -----|---                   1      7     16     31     58   1  256      1    triangle
+                 --  *   ------|-                     1      7     16     28     52   2  128      1    median
+                 --  *    -----|---                   1      7     16     31     58   1  32       1    median
+                 --  *    -----|---                   1      8     16     32     59   2  32       1    median
+                 --   *    ----|-----                 1      8     17     34     63   4  32       1    median
+    #4           --   *    ----|----                  2      7     17     34     62   4  32       3    median
+                 --   *     ---|------                2      9     19     39     69   8  32       1    median
+                 ---   *     --|-------               3     10     22     41     71   8  32       3    median
+    -- warning   rogue local [k]
 </pre></tiny></p>
     </div>
     <div class='code'>
@@ -227,7 +227,7 @@
       </div>
       <p><tiny><pre style="font-size: 8px; line-height:8px;">
     rank                                              5     25     50     75     95   k  samples  p          kernel
-    ----                                              -     &ndash;     &ndash;     &ndash;     &ndash;   -  -------  &mdash;       ------
+    ----                                              -     --     --     --     --   -  -------  ---       ------
     #1           -   *  -------|-                     1      4      9     17     34   2  32       2          triangle
 </pre></tiny></p>
     </div>
