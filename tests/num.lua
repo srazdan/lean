@@ -20,6 +20,7 @@ end}
 ok { inc=function(        tmp,n,all,one,
                           datas,data,syms,kept) 
   datas,kept,all = {},{},{}
+  rseed(1)
   for i=1,20 do
     data={}
     datas[ i ] = data

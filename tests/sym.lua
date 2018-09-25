@@ -17,6 +17,7 @@ end }
 
 ok { inc=function(        s,all,one,datas,data,syms,kept) 
   datas,kept,all = {},{},{}
+  rseed(1)
   syms={"a","b","c","d","e","f","g","h","i","j","k","l"}
   for i=1,20 do
     data={}

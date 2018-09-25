@@ -19,6 +19,20 @@ function mdl(data,goal,enough,       rows,most)
       return rows[lo][c]..".."..rows[hi][c] end
   end
 
+  local function ke(s,     _,k)
+    k=0
+    for _ in pairs(s.counts) do k=k+1 end
+    return symEnt(s) * k
+  end
+
+--  local function kes(l,r) 
+--     k0,e0,ke0 = ke(r)  symEnt(r) yrhs.ent(), ke(yrhs)
+--                    gain   = e0 - score1
+--                    delta  = math.log(3**k0-2,2)-(ke0- ke(yrhs)-ke(ylhs))
+--                    border = (math.log(n-1,2) + delta)/n
+--                    if gain >= border:
+--  end
+--
   local function argmin(c,lo,hi,     
                           x,xl,xr,bestx,tmpx,
                           y,yl,yr,besty,tmpy,
@@ -30,7 +44,7 @@ function mdl(data,goal,enough,       rows,most)
         numInc(xr, rows[i][c]) 
         symInc(yr, rows[i][goal]) end
       bestx = xr.sd
-      besty = yr.ent()
+      besty = symEnt(yr)
       for i=lo,hi do
         x = rows[i][c]
         y = rows[i][goal]
@@ -47,8 +61,8 @@ function mdl(data,goal,enough,       rows,most)
   end
 
   local function cuts(c,lo,hi,pre,       cut,txt,s)
-    txt = pre..rows[lo][c]..".."..rows[hi][c]
-    cut = argmin(c,lo,hi)
+    txt=pre..rows[lo][c]..".."..rows[hi][c].." :"..(hi - lo)
+    cut=argmin(c,lo,hi)
     if cut then
       fyi(txt)
       cuts(c,lo,   cut, pre.."|.. ")

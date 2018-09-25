@@ -26,7 +26,6 @@ function nb(data,cells,enough,   klasses,goal,rows,cols,
       if x ~= "?" then
 	      if klass.nums[c] then
 	        inc = numPdf(klass.nums[c],x)
-          --print(c,inc)
 	     else
 	        y = klass.syms[c].counts[x] or 0
 	        inc = (y + m*prior) / (#klass.rows + m)
@@ -78,7 +77,7 @@ function nbs(data,   all,want,got,log,enough,abcds)
           end 
         end
         sampleInc(log,
-          abcdReport(abcds)["tested_positive"].pd)
+          abcdReport(abcds)["tested_negative"].pd)
       end
     end
   end
@@ -86,48 +85,27 @@ function nbs(data,   all,want,got,log,enough,abcds)
   Lean=Lean0()
 end
 
---       s.txt= k..","..samples..","..tostring(p)..","..kernel
---       all[ #all+1 ] = s
---       for _,row in pairs(data.rows) do
---         want = row[#data.name]
---         got  = knn(data,row, #data.name) 
---         if type(want) == 'number' then
---            sampleInc(s, abs(100*(want-got)))
---         else
---           fy(want == got and "." or "X") 
---   print("rank, ,    5,   25,   50,   75,   95,k,samples,p,kernel")
---   print("----, ,    -,   --,   --,   --,   --,-,-------,---,------")
---   Lean=Lean0()
--- end
--- 
-
---<tiny><pre style="font-size: 8px; line-height:8px;">
---     rank                                              5     25     50     75     95   k  samples  p          kernel
---     ----                                              -     --     --     --     --   -  -------  ---       ------
---     #1           -   *  -------|-                     1      4      9     17     34   2  32       2          triangle
---</pre></tiny>
-
-function nbInc(data,   data1,want,got,s,all,k,samples,p,kernel)
+function nbInc(data,   enough,abcds,data1,want,got,s,all,k,samples,p,kernel)
   s = sample(math.huge)
-  k, samples, p,kernel = 2, 20, 2,"triangle"
-  s.txt= k..","..samples..","..tostring(p)..","..kernel
+  s.txt= "nb"
   rseed(1)
+  samples = 20
+  abcds = abcd()
   for _=1,20 do 
-    Lean = Lean0()
     data1 = header(data.name)
     for n,cells in pairs(shuffle(data.rows)) do
       row(data1, cells)
-      if n > samples*2 then
-         want = cells[#data.name]
-         got  = nb(data1,cells, #data.name) 
-         if type(want) == 'number' then
-           sampleInc(s, abs(100*(want-got)))
-         else
-           fy(want == got and "." or "X") end end end end
-  print("rank, ,    5,   25,   50,   75,   95,k,samples,p,kernel")
-  print("----, ,    -,   --,   --,   --,   --,-,-------,---","------")
-  xtileSamples(sk({s}),{num="%5.0f",width=30})
-  Lean=Lean0()
+      enough =  n > samples 
+      want = cells[#data.name]
+      if enough then
+         got  = nb(data1,cells, true)
+         abcdInc(abcds, want, got) 
+      else
+        nb(data1,cells,false)
+  end end end 
+  abcdShow(abcds)
 end
 
-return {main = function() nbs(rows()) end}
+return {main = function(   r) r=rows()
+                 nbs(r);
+                 nbInc(r) end}

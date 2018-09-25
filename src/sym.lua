@@ -61,4 +61,9 @@ function symEnt(t,  p)
   return t._ent
 end
 
+function symXpect(i,j,   n)  
+  n = i.n + j.n +0.0001
+  return i.n/n * symEnt(i) + j.n/n * symEnt(j)
+end
+
 
