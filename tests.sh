@@ -4,7 +4,7 @@ set -e
 
 . assert.sh 
 
-number=4
+number=400
 assert "echo $(($number >= 2 && $number <= 5)) #gofetch" 1  
 assert "echo"                           # no output expected
 assert "echo foo" "foo"                 # output expected
