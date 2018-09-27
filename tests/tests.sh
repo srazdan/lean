@@ -2,7 +2,7 @@
 
 set -e
 
-. assert.sh 
+. etc/assert.sh 
 
 number=4
 assert "echo $(($number >= 2 && $number <= 5)) #gofetch" 1  
