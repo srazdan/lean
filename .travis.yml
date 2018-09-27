@@ -1,2 +1,2 @@
 language: bash
-script: bash tests/tests.sh
+script: cd tests; bash tests.sh
