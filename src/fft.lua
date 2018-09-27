@@ -15,7 +15,7 @@ end
 
 function numBreaks(c,t,     lo,mid,hi)
   t = ksort(c,t)
-  lo,mid,hi = 1, #t//2, #t
+  lo,mid,hi = 1, math.floor(#t/2), #t
   return t[lo][c], t[mid][c], t[hi][c]
 end
 

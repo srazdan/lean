@@ -41,22 +41,25 @@ function domTree(data0,show,goal,enough,    out)
 -- TODO: if N siblisngs are small in part but large enoguh together
 -- then report otherwise. also, add counts to parents
 
-  local function recurse(data,kids,cols,    best) 
+  local function recurse(data,kids,cols,    best,rest,other) 
     for i,c in pairs(data.indeps) do 
       cols[i] = col(data,c) end
       cols = ksort("score", cols)
       best = cols[1]
+      rest={}
       for i,val in pairs(best.vals) do
         if #(val.data.rows) < #(data.rows) then
-          if #(val.data.rows) > enough then
-            kids[ #kids+1 ]= {col=val.col, 
-                              name=data.name[val.col],
-                              val=val.val, 
-                              mu=val.n.mu,
-                              sub=recurse(val.data,{},{})} 
-      end end end 
-      return {_data=data, kids=kids}
+          if #(val.data.rows) > enough 
+            then kids[ #kids+1 ]= {col=val.col, name=data.name[val.col], val=val.val, mu=val.n.mu, sub=recurse(val.data,{},{})} 
+            else for _,cells in pairs(val.data.rows) do rest[#rest+1] = cells 
+          end 
+          other=clone(data, rest)
+          kids[ #kids+1 ] = {col=val.col, name=data.name[val.col], val=val.val, mu=other.nums[goal].mu, sub=recurse(other,{},{})} 
+        end
+      end
     end
+    return {_data=data, kids=kids} -- otherwise= recurse(other,{},{})}
+  end
 
 -- Print the tree
 
@@ -65,7 +68,7 @@ function domTree(data0,show,goal,enough,    out)
     for _,kid in pairs(ksort("mu",t.kids)) do
       s= pre..kid.name.."="..kid.val
       if #kid.sub.kids == 0 then
-        s= s.." --> "..math.floor(100*kid.mu) end
+        s= s.." ==> ["..math.floor(100*kid.mu).."]" end
       print(s) 
       display(kid.sub,"|.. " .. pre) end 
   end

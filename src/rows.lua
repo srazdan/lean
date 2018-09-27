@@ -68,7 +68,7 @@ function dep(t,c)   return not indep(t,c) end
 -- - '!' is a class column (and is not numeric).
 --
 
-function header(cells,t,     c,w)
+function header(cells,t,       c,w)
   t = t or data()
   t.indeps = {}
   for c0,x in pairs(cells) do
@@ -148,6 +148,13 @@ function row(t,cells,     x,r)
     t.rows[r][c] = x  end
   return t
 end  
+
+function clone(data0, rows,   data1)
+   data1 = header(headers)
+   for _,cells in pairs(rows or data0.rows) do 
+     row(data1, cells) end
+   return data1
+end
 
 -- ## Making `data` from Ram 
 --

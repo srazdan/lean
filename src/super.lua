@@ -106,7 +106,7 @@ function super(data,goal,enough,       rows,most)
       cuts(c,cut+1, hi, pre.."|.. ")
     else
       s = band(c,lo,hi)
-      fyi(txt.." = "..math.floor(100*mu))
+      fyi(txt.." ==> "..math.floor(100*mu))
       for r=lo,hi do
         rows[r][c]=s end end
   end
