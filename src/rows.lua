@@ -66,7 +66,6 @@ function dep(t,c)   return not indep(t,c) end
 -- - '>' is a dependent goal to be minimized (it is also numeric);
 -- - '$' is an independent  numeric colum;
 -- - '!' is a class column (and is not numeric).
---
 
 function header(cells,t,       c,w)
   t = t or data()

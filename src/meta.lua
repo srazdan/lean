@@ -4,10 +4,19 @@
 function same(x) return x end
 
 function map(t,f,    out)
-  out = {}
+ out = {}
   if t ~= nil then
     for i,v in pairs(t) do out[i] = f(v) end end
   return out
+end
+ 
+function sum(t,f,     out,n)
+  n,out = 10^-64,{}
+  if t ~= nil then
+    for i,v in pairs(t) do 
+      n = n + 1
+      out = out +  f(v) end end
+  return out/n
 end
 
 function copy(t) return map(t,same) end

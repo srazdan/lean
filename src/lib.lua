@@ -67,6 +67,11 @@ function sorted(t,f)
   return t
 end
 
+function member(x,t)
+  for _,y in pairs(t) do if y==x then return true end end
+  return false
+end
+
 function ordered(t,  i,keys)
   i,keys = 0,{}
   for key,_ in pairs(t) do keys[#keys+1] = key end
