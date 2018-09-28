@@ -150,7 +150,7 @@ function row(t,cells,     x,r)
 end  
 
 function clone(data0, rows,   data1)
-   data1 = header(headers)
+   data1 = header(data0.name)
    for _,cells in pairs(rows or data0.rows) do 
      row(data1, cells) end
    return data1
