@@ -1,20 +1,11 @@
-language: python
+language: C
 
-matrix:
-  include:
-    - os: linux
-      sudo: false
-      python: 2.7
-    - os: linux
-      sudo: false
-      python: 3.5
-    - os: osx
-      language: generic
+sudo: true
 
 install:
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then sudo pip2 install pyflakes pycodestyle coverage coveralls nose --ignore-installed; fi
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then pip install pyflakes pycodestyle coverage coveralls nose; fi
+   - curl -R -O http://www.lua.org/ftp/lua-5.3.5.tar.gz
+   - tar zxf lua-5.3.5.tar.gz
+   - cd lua-5.3.5; sudo -H make linux test install
 
 script:
   - lua -v
-  - type -p luarocks || true
