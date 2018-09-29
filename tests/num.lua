@@ -36,3 +36,4 @@ ok { inc=function(        tmp,n,all,one,
     map(datas[i], function (z) numDec(n, z) end)
   end
 end }
+return Lean.ok.tries, Lean.ok.fails

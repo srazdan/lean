@@ -33,3 +33,4 @@ ok { inc=function(        s,all,one,datas,data,syms,kept)
     map(datas[i], function (z) symDec(s, z) end)
   end
 end }
+return Lean.ok.tries, Lean.ok.fails

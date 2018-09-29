@@ -24,7 +24,10 @@ function ok(t,  n,score,      passed,err,s)
     Lean.ok.tries = Lean.ok.tries + 1
     print("-- Test #" .. Lean.ok.tries .. 
           " (oops=".. okReport() .."%). Checking ".. x .."... ")
+    local y,n = Lean.ok.tries, Lean.ok.fails
     Lean = Lean0()
+    Lean.ok.tries = Lean.ok.tries+ y
+    Lean.ok.fails = Lean.ok.fails+ n
     passed,err = pcall(f)
     if not passed then
       Lean.ok.fails = Lean.ok.fails + 1

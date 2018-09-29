@@ -70,5 +70,4 @@ ok { sk100 = function(   s,ss,r,f)
 	xtileSamples(sk(ss),
                {num="%4s",width=25})
              end }
-
-
+return Lean.ok.tries, Lean.ok.fails

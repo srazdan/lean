@@ -23,3 +23,4 @@ ok { stats = function(    t,u,r,inc,n)
     print(d, different(t,u))
 end  end }
 
+return Lean.ok.tries, Lean.ok.fails

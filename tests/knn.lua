@@ -6,3 +6,4 @@ require "lib"
 require "knn"
 
 
+return Lean.ok.tries, Lean.ok.fails

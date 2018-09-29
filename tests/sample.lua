@@ -40,3 +40,6 @@ ok { samples = function(    s,y)
     assert( close( nth(t,0.5), 0.5, 0.33))
   end
 end }
+
+
+return Lean.ok.tries, Lean.ok.fails

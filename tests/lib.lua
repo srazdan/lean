@@ -46,3 +46,4 @@ ok { cols = function()
                {"jane", 2.312211, 20 } }
      cols(t, "%5.2f")
 end}
+return Lean.ok.tries, Lean.ok.fails

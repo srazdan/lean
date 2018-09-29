@@ -34,3 +34,5 @@ end }
 --                  0.833     0          1         0.833     0.909      0.875    maybe
 -- Weighted Avg.    0.929     0.012      0.952     0.929     0.932      0.938
 --
+return Lean.ok.tries, Lean.ok.fails
+--

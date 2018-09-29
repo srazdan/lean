@@ -14,4 +14,4 @@ install:
 
 script:
   - cd tests
-  - exit 0 #luajit ../src/tests.lua *.lua
+  - luajit ../src/tests.lua *.lua

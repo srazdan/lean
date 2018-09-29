@@ -11,3 +11,4 @@ o(rows("../data/weatherLong.csv"))
 o(header({'outlook', '$temp', '<humid', 'wind', '!play'}))
 rogues()
 
+return Lean.ok.tries, Lean.ok.fails

@@ -32,3 +32,4 @@ ok { samples = function(  s1,s2,s2)
   xtileSamples({s1,s2,s3},
                {num="%8.2f",width=20})
 end }
+return Lean.ok.tries, Lean.ok.fails
