@@ -1,5 +1,6 @@
 language: lua
 
+sudo:  true
 
 install:
   -  apt-get install lua luajit
