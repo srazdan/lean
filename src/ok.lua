@@ -15,14 +15,16 @@ end
 
 function off(t) return t end
 
+function okReport()
+  return math.floor(0.5 + 100*(1- 
+               ((Lean.ok.tries-Lean.ok.fails)/
+             Lean.ok.tries))) end
+
 function ok(t,  n,score,      passed,err,s)
-  s=function() return math.floor(0.5 + 100*(1- 
-                        ((Lean.ok.tries-Lean.ok.fails)/
-                        Lean.ok.tries))) end
   for x,f in pairs(t) do
     Lean.ok.tries = Lean.ok.tries + 1
     print("-- Test #" .. Lean.ok.tries .. 
-          " (oops=".. s() .."%). Checking ".. x .."... ")
+          " (oops=".. okReport() .."%). Checking ".. x .."... ")
     Lean = Lean0()
     passed,err = pcall(f)
     if not passed then
