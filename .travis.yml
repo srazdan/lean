@@ -1,8 +1,50 @@
-language: lua
+language: c
 
-sudo: true
+# Select container based VM (no sudo available).
+sudo: false
 
+# Use gcc as the C compiler.
+compiler: gcc
+
+# Specify operating systems to test on (linux and/or osx).
+os:
+  - linux
+
+# Environment variables for the build.
+env:
+  matrix:
+    - LUA=LuaJIT-2.0.4   LUAROCKS=LuaRocks-2.2.2
+    -                    LUAROCKS=2.2.2   # LUA has a default
+    - LUA=Lua-5.2.4                       # LUAROCKS is optional
+    - LUA=xyz            LUAROCKS=2.2.2   # invalid Lua version
+    - LUA=100.0.0        LUAROCKS=2.2.2   # non-existent Lua version
+    - LUA=luajit-100.0.0 LUAROCKS=2.2.2   # non-existent LuaJIT version
+    - LUA=lua-5.1.5      LUAROCKS=xyz     # invalid LuaRocks version
+    - LUA=5.3.2          LUAROCKS=100.0.0 # non-existent LuaRocks version
+
+matrix:
+  allow_failures:
+    - env: LUA=xyz            LUAROCKS=2.2.2
+    - env: LUA=100.0.0        LUAROCKS=2.2.2
+    - env: LUA=luajit-100.0.0 LUAROCKS=2.2.2
+    - env: LUA=lua-5.1.5      LUAROCKS=xyz
+    - env: LUA=5.3.2          LUAROCKS=100.0.0
+
+# Only test changes to the master branch.
+branches:
+  only:
+    - master
+
+# Disable email notifications.
+notifications:
+  email: false
+
+# Install dependencies (Lua, LuaRocks, ...).
 install:
-  - apt-get install lua5.2
+  - . ./install.sh
+
+# "Build and test" this project. The important steps already happened
+# in the install section!
 script:
-  - lua demo1.lua
+  - lua -v
+  - type -p luarocks || true
