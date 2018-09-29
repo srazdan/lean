@@ -3,4 +3,4 @@ language: lua
 
 
 script:
-  - luajit demo1.lua
+  - lua demo1.lua
