@@ -1,2 +1,19 @@
-language: bash
-script: cd tests; bash tests.sh
+language: python
+
+sudo: false
+
+env:
+  matrix:
+    - LUA="lua=5.3"
+    - LUA="lua=5.2"
+    - LUA="lua=5.1"
+    - LUA="luajit=2.1"
+    - LUA="luajit=2.0"
+
+before_install:
+  - pip install hererocks
+  - hererocks here -r^ --$LUA --patch
+  - export PATH=$PWD/here/bin:$PATH
+
+script:
+  - luajit demo1.lua
