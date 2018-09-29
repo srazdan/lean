@@ -13,4 +13,5 @@ install:
    - cd ..
 
 script:
-  - luajit demo1.lua
+  - cd tests
+  - luajit lib.lua
