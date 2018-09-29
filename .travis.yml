@@ -1,20 +1,15 @@
-language: python
-sudo: false
+language: C # does not really matter
 
 env:
-  - LUA="lua=5.1"
-  - LUA="lua=5.2"
-  - LUA="lua=5.3"
-  - LUA="luajit=2.0"
-  - LUA="luajit=2.1"
+  - LUA=lua5.1
+  - LUA=lua5.2
+  - LUA=lua5.3
+  - LUA=luajit2.0
+  - LUA=luajit2.1
 
 before_install:
-  - pip install hererocks
-  - hererocks lua_install -r^ --$LUA
-  - export PATH=$PATH:$PWD/lua_install/bin
+  - source etc/install_lua.sh
 
-# "Build and test" this project. The important steps already happened
-# in the install section!
 script:
   - lua -v
   - type -p luarocks || true
