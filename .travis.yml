@@ -14,4 +14,4 @@ install:
 
 script:
   - cd tests
-  - luajit lib.lua
+  - for f in *.lua do luajit $f; done  
