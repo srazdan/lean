@@ -1,2 +1,2 @@
 
-os.exit(1)
+os.exit(0)
