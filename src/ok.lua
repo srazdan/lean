@@ -15,10 +15,9 @@ end
 
 function off(t) return t end
 
-function okReport()
-  return math.floor(0.5 + 100*(1- 
-               ((Lean.ok.tries-Lean.ok.fails)/
-             Lean.ok.tries))) end
+function okReport( x)
+  x = (Lean.ok.tries-Lean.ok.fails)/ (Lean.ok.tries+10^-64)
+  return math.floor(0.5 + 100*(1- x)) end
 
 function ok(t,  n,score,      passed,err,s)
   for x,f in pairs(t) do
