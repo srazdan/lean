@@ -8,4 +8,4 @@ install:
    - cd lua-5.3.5; sudo -H make linux test install
 
 script:
-  - lua -v
+  - lua demo1.lua
