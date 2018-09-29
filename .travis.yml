@@ -1,14 +1,19 @@
-language: C # does not really matter
+language: python
 
-env:
-  - LUA=lua5.1
-  - LUA=lua5.2
-  - LUA=lua5.3
-  - LUA=luajit2.0
-  - LUA=luajit2.1
+matrix:
+  include:
+    - os: linux
+      sudo: false
+      python: 2.7
+    - os: linux
+      sudo: false
+      python: 3.5
+    - os: osx
+      language: generic
 
-before_install:
-  - source etc/install_lua.sh
+install:
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then sudo pip2 install pyflakes pycodestyle coverage coveralls nose --ignore-installed; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then pip install pyflakes pycodestyle coverage coveralls nose; fi
 
 script:
   - lua -v
