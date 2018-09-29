@@ -1,6 +1,8 @@
 language: lua
 
+sudo: true
 
-
+install:
+  - apt-get install lua5.2
 script:
   - lua demo1.lua
