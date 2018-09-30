@@ -135,7 +135,7 @@ function nb(file,      t,stream, seen)
   t = {n=-1,  header={}, klasses={}, h=0, attr={}, f={}}
   seen = {} -- esoterica. used to track unique symbols per column
  
- -- Some Lua esoterica here. Nested tables are initialized as a side effect
+-- Must change this bit-- far too esoteric. Nested tables are initialized as a side effect
 -- of traversing subtable of `t.f[klass][col][val]`. Also, at some points,
 -- we also recognize that we have a never-before-seen class or never-before-seen-val-in-col.
 -- At those points we update `t.h` (number of klasses) and `t.attr` (number of unique symbols
