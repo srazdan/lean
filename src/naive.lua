@@ -131,7 +131,7 @@
 -- - `f[klass][col][val]` = frequency of val in col of klass
 -- 
 
-function nb(files,      t,stream, seen)
+function nb(file,      t,stream, seen)
   t = {n=-1,  header={}, klasses={}, h=0, attr={}, f={}}
   seen = {} -- esoterica. used to track unique symbols per column
  
