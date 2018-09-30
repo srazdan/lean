@@ -85,17 +85,17 @@ Sunny         Cool          High        True          ?%%
 </code></pre>
 <p>First find the likelihood of the two classes</p>
 <ul>
-<li>For "yes" = 2/9 * 3/9 * 3/9 * 3/9 * 9/14 = 0.0053</li>
-<li>For "no" = 3/5 * 1/5 * 4/5 * 3/5 * 5/14 = 0.0206</li>
+<li>For &ldquo;yes&rdquo; = 2/9 * 3/9 * 3/9 * 3/9 * 9/14 = 0.0053</li>
+<li>For &ldquo;no&rdquo; = 3/5 * 1/5 * 4/5 * 3/5 * 5/14 = 0.0206</li>
 </ul>
 <p>Conversion into a probability by normalization:</p>
 <ul>
-<li>P("yes") = 0.0053 / (0.0053 + 0.0206) = 0.205</li>
-<li>P("no") = 0.0206 / (0.0053 + 0.0206) = 0.795</li>
+<li>P(&ldquo;yes&rdquo;) = 0.0053 / (0.0053 + 0.0206) = 0.205</li>
+<li>P(&ldquo;no&rdquo;) = 0.0206 / (0.0053 + 0.0206) = 0.795</li>
 </ul>
-<p>So, we aren't playing golf today.</p>
-<h2>Bayes' rule</h2>
-<p>More generally, the above is just an application of Bayes' Theorem.</p>
+<p>So, we aren&rsquo;t playing golf today.</p>
+<h2>Bayes&rsquo; rule</h2>
+<p>More generally, the above is just an application of Bayes&rsquo; Theorem.</p>
 <p>Probability of event H given evidence E:</p>
 <pre><code>              Pr[E | H ] * Pr[H]
 Pr[H | E] =  -------------------
@@ -109,7 +109,7 @@ Pr[H | E] =  -------------------
 <ul>
 <li>Probability of event after evidence has been seen</li>
 </ul>
-<p>Classification learning: what's the probability of the class given an instance?</p>
+<p>Classification learning: what&rsquo;s the probability of the class given an instance?</p>
 <ul>
 <li>Evidence E = instance</li>
 <li>Event H = class value for instance</li>
@@ -119,11 +119,11 @@ Pr[H | E] =  -------------------
 Pr[H | E] = ---------------------------------------------------
                                Pr[E]
 </code></pre>
-<p>We used this above. Here's our evidence:</p>
+<p>We used this above. Here&rsquo;s our evidence:</p>
 <pre><code>Outlook       Temp.         Humidity    Windy         Play
 Sunny         Cool          High        True          ?
 </code></pre>
-<p>Here's the probability for "yes":</p>
+<p>Here&rsquo;s the probability for &ldquo;yes&rdquo;:</p>
 <pre><code>Pr[ yes | E] = Pr[Outlook     = Sunny | yes] *
                Pr[Temperature = Cool  | yes] *
                Pr[Humidity     = High  | yes] * Pr[ yes]
@@ -178,17 +178,13 @@ per column).</p>
     <span class="n">tc</span> <span class="o">=</span> <span class="n">seen</span><span class="p">[</span><span class="n">col</span><span class="p">]</span>
     <span class="kr">if</span> <span class="ow">not</span> <span class="n">tc</span> <span class="kr">then</span> <span class="n">tc</span><span class="o">=</span><span class="p">{}</span> <span class="p">;</span> <span class="n">seen</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">tc</span> <span class="kr">end</span>
     <span class="n">tcv</span> <span class="o">=</span> <span class="n">tc</span><span class="p">[</span><span class="n">val</span><span class="p">]</span>
-    <span class="kr">if</span> <span class="ow">not</span> <span class="n">tcv</span> <span class="kr">then</span>   
-      <span class="n">tc</span><span class="p">[</span><span class="n">val</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>  
-      <span class="n">t</span><span class="p">.</span><span class="n">attr</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">t</span><span class="p">.</span><span class="n">attr</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="ow">or</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="n">inc</span> 
-    <span class="kr">end</span> 
+    <span class="kr">if</span> <span class="ow">not</span> <span class="n">tcv</span> <span class="kr">then</span> <span class="n">tc</span><span class="p">[</span><span class="n">val</span><span class="p">]</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span> <span class="n">t</span><span class="p">.</span><span class="n">attr</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">=</span><span class="p">(</span><span class="n">t</span><span class="p">.</span><span class="n">attr</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="ow">or</span> <span class="mi">0</span><span class="p">)</span><span class="o">+</span><span class="n">inc</span> <span class="kr">end</span> 
     <span class="n">tk</span> <span class="o">=</span> <span class="n">t</span><span class="p">.</span><span class="n">f</span><span class="p">[</span><span class="n">klass</span><span class="p">]</span>
     <span class="kr">if</span> <span class="ow">not</span> <span class="n">tk</span> <span class="kr">then</span> <span class="n">t</span><span class="p">.</span><span class="n">h</span> <span class="o">=</span> <span class="n">t</span><span class="p">.</span><span class="n">h</span> <span class="o">+</span> <span class="n">inc</span><span class="p">;</span> <span class="n">tk</span><span class="o">=</span><span class="p">{};</span> <span class="n">t</span><span class="p">.</span><span class="n">f</span><span class="p">[</span><span class="n">klass</span><span class="p">]</span> <span class="o">=</span> <span class="n">tk</span> <span class="kr">end</span>
     <span class="n">tkc</span> <span class="o">=</span> <span class="n">tk</span><span class="p">[</span><span class="n">col</span><span class="p">]</span>
     <span class="kr">if</span> <span class="ow">not</span> <span class="n">tkc</span> <span class="kr">then</span> <span class="n">tkc</span><span class="o">=</span><span class="p">{};</span> <span class="n">tk</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">tkc</span> <span class="kr">end</span>
     <span class="n">tkcv</span> <span class="o">=</span> <span class="n">tkc</span><span class="p">[</span><span class="n">val</span><span class="p">];</span>
-    <span class="kr">if</span> <span class="ow">not</span> <span class="n">tkcv</span> <span class="kr">then</span> <span class="n">tkc</span><span class="p">[</span><span class="n">val</span><span class="p">]</span><span class="o">=</span><span class="mi">1</span> <span class="kr">else</span> <span class="n">tkc</span><span class="p">[</span><span class="n">val</span><span class="p">]</span><span class="o">=</span><span class="n">tkc</span><span class="p">[</span><span class="n">val</span><span class="p">]</span><span class="o">+</span><span class="n">inc</span> 
-    <span class="kr">end</span>
+    <span class="kr">if</span> <span class="ow">not</span> <span class="n">tkcv</span> <span class="kr">then</span> <span class="n">tkc</span><span class="p">[</span><span class="n">val</span><span class="p">]</span><span class="o">=</span><span class="mi">1</span> <span class="kr">else</span> <span class="n">tkc</span><span class="p">[</span><span class="n">val</span><span class="p">]</span><span class="o">=</span><span class="n">tkc</span><span class="p">[</span><span class="n">val</span><span class="p">]</span><span class="o">+</span><span class="n">inc</span> <span class="kr">end</span>
     <span class="kr">return</span> <span class="n">tkc</span><span class="p">[</span><span class="n">val</span><span class="p">]</span> <span class="kr">end</span></pre></div>
     </div>
   </div>
@@ -254,7 +250,7 @@ it the most.</p>
       <div class='octowrap'>
         <a class='octothorpe' href='#section-7'>#</a>
       </div>
-      <p>Main function. <code>train</code> on each row. If we've seen enough data (say, 20 rows)
+      <p>Main function. <code>train</code> on each row. If we&rsquo;ve seen enough data (say, 20 rows)
 then before we train, we try to classifiy.</p>
     </div>
     <div class='code'>

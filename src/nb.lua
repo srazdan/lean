@@ -56,8 +56,8 @@ end
 
 function nbs(data,   all,want,got,log,enough,abcds)
   all={}
-  for m=1,4,1 do
-    for k=1,4,1 do
+  for m=0,4,1 do
+    for k=0,4,1 do
       Lean = Lean0()
       Lean.nb.m= m
       Lean.nb.k = k

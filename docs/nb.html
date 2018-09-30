@@ -45,19 +45,8 @@
       <span class="n">x</span><span class="p">,</span><span class="n">inc</span> <span class="o">=</span> <span class="n">cells</span><span class="p">[</span><span class="n">c</span><span class="p">],</span><span class="mi">0</span>
       <span class="kr">if</span> <span class="n">x</span> <span class="o">~=</span> <span class="s2">&quot;?&quot;</span> <span class="kr">then</span>
 	      <span class="kr">if</span> <span class="n">klass</span><span class="p">.</span><span class="n">nums</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="kr">then</span>
-	        <span class="n">inc</span> <span class="o">=</span> <span class="n">numPdf</span><span class="p">(</span><span class="n">klass</span><span class="p">.</span><span class="n">nums</span><span class="p">[</span><span class="n">c</span><span class="p">],</span><span class="n">x</span><span class="p">)</span></pre></div>
-    </div>
-  </div>
-  <div class='clearall'></div>
-  <div class='section' id='section-1'>
-    <div class='docs'>
-      <div class='octowrap'>
-        <a class='octothorpe' href='#section-1'>#</a>
-      </div>
-      <p>print(c,inc)</p>
-    </div>
-    <div class='code'>
-      <div class="highlight"><pre>	     <span class="kr">else</span>
+	        <span class="n">inc</span> <span class="o">=</span> <span class="n">numPdf</span><span class="p">(</span><span class="n">klass</span><span class="p">.</span><span class="n">nums</span><span class="p">[</span><span class="n">c</span><span class="p">],</span><span class="n">x</span><span class="p">)</span>
+	     <span class="kr">else</span>
 	        <span class="n">y</span> <span class="o">=</span> <span class="n">klass</span><span class="p">.</span><span class="n">syms</span><span class="p">[</span><span class="n">c</span><span class="p">].</span><span class="n">counts</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="ow">or</span> <span class="mi">0</span>
 	        <span class="n">inc</span> <span class="o">=</span> <span class="p">(</span><span class="n">y</span> <span class="o">+</span> <span class="n">m</span><span class="o">*</span><span class="n">prior</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="o">#</span><span class="n">klass</span><span class="p">.</span><span class="n">rows</span> <span class="o">+</span> <span class="n">m</span><span class="p">)</span>
 	     <span class="kr">end</span>
@@ -87,8 +76,8 @@
 
 <span class="kr">function</span> <span class="nf">nbs</span><span class="p">(</span><span class="n">data</span><span class="p">,</span>   <span class="n">all</span><span class="p">,</span><span class="n">want</span><span class="p">,</span><span class="n">got</span><span class="p">,</span><span class="n">log</span><span class="p">,</span><span class="n">enough</span><span class="p">,</span><span class="n">abcds</span><span class="p">)</span>
   <span class="n">all</span><span class="o">=</span><span class="p">{}</span>
-  <span class="kr">for</span> <span class="n">m</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">1</span> <span class="kr">do</span>
-    <span class="kr">for</span> <span class="n">k</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">1</span> <span class="kr">do</span>
+  <span class="kr">for</span> <span class="n">m</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">1</span> <span class="kr">do</span>
+    <span class="kr">for</span> <span class="n">k</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">1</span> <span class="kr">do</span>
       <span class="n">Lean</span> <span class="o">=</span> <span class="n">Lean0</span><span class="p">()</span>
       <span class="n">Lean</span><span class="p">.</span><span class="n">nb</span><span class="p">.</span><span class="n">m</span><span class="o">=</span> <span class="n">m</span>
       <span class="n">Lean</span><span class="p">.</span><span class="n">nb</span><span class="p">.</span><span class="n">k</span> <span class="o">=</span> <span class="n">k</span>
@@ -108,77 +97,38 @@
           <span class="kr">end</span> 
         <span class="kr">end</span>
         <span class="n">sampleInc</span><span class="p">(</span><span class="n">log</span><span class="p">,</span>
-          <span class="n">abcdReport</span><span class="p">(</span><span class="n">abcds</span><span class="p">)[</span><span class="s2">&quot;tested_positive&quot;</span><span class="p">].</span><span class="n">pd</span><span class="p">)</span>
+          <span class="n">abcdReport</span><span class="p">(</span><span class="n">abcds</span><span class="p">)[</span><span class="s2">&quot;tested_negative&quot;</span><span class="p">].</span><span class="n">pd</span><span class="p">)</span>
       <span class="kr">end</span>
     <span class="kr">end</span>
   <span class="kr">end</span>
 	<span class="n">xtileSamples</span><span class="p">(</span><span class="n">sk</span><span class="p">(</span><span class="n">all</span><span class="p">),{</span><span class="n">num</span><span class="o">=</span><span class="s2">&quot;%5.0f&quot;</span><span class="p">,</span><span class="n">width</span><span class="o">=</span><span class="mi">30</span><span class="p">})</span>
   <span class="n">Lean</span><span class="o">=</span><span class="n">Lean0</span><span class="p">()</span>
-<span class="kr">end</span></pre></div>
-    </div>
-  </div>
-  <div class='clearall'></div>
-  <div class='section' id='section-2'>
-    <div class='docs'>
-      <div class='octowrap'>
-        <a class='octothorpe' href='#section-2'>#</a>
-      </div>
-      <pre><code>  s.txt= k..","..samples..","..tostring(p)..","..kernel
-  all[ #all+1 ] = s
-  for _,row in pairs(data.rows) do
-    want = row[#data.name]
-    got  = knn(data,row, #data.name) 
-    if type(want) == 'number' then
-       sampleInc(s, abs(100*(want-got)))
-    else
-      fy(want == got and "." or "X")
-</code></pre>
-<p>print("rank, ,    5,   25,   50,   75,   95,k,samples,p,kernel")
-  print("----, ,    -,   --,   --,   --,   --,-,-------,---,------")
-  Lean=Lean0()
-end</p>
-    </div>
-    <div class='code'>
-      <div class="highlight"><pre></pre></div>
-    </div>
-  </div>
-  <div class='clearall'></div>
-  <div class='section' id='section-3'>
-    <div class='docs'>
-      <div class='octowrap'>
-        <a class='octothorpe' href='#section-3'>#</a>
-      </div>
-      <p><tiny><pre style="font-size: 8px; line-height:8px;">
-    rank                                              5     25     50     75     95   k  samples  p          kernel
-    ----                                              -     --     --     --     --   -  -------  ---       ------
-    #1           -   *  -------|-                     1      4      9     17     34   2  32       2          triangle
-</pre></tiny></p>
-    </div>
-    <div class='code'>
-      <div class="highlight"><pre><span class="kr">function</span> <span class="nf">nbInc</span><span class="p">(</span><span class="n">data</span><span class="p">,</span>   <span class="n">data1</span><span class="p">,</span><span class="n">want</span><span class="p">,</span><span class="n">got</span><span class="p">,</span><span class="n">s</span><span class="p">,</span><span class="n">all</span><span class="p">,</span><span class="n">k</span><span class="p">,</span><span class="n">samples</span><span class="p">,</span><span class="n">p</span><span class="p">,</span><span class="n">kernel</span><span class="p">)</span>
+<span class="kr">end</span>
+
+<span class="kr">function</span> <span class="nf">nbInc</span><span class="p">(</span><span class="n">data</span><span class="p">,</span>   <span class="n">enough</span><span class="p">,</span><span class="n">abcds</span><span class="p">,</span><span class="n">data1</span><span class="p">,</span><span class="n">want</span><span class="p">,</span><span class="n">got</span><span class="p">,</span><span class="n">s</span><span class="p">,</span><span class="n">all</span><span class="p">,</span><span class="n">k</span><span class="p">,</span><span class="n">samples</span><span class="p">,</span><span class="n">p</span><span class="p">,</span><span class="n">kernel</span><span class="p">)</span>
   <span class="n">s</span> <span class="o">=</span> <span class="n">sample</span><span class="p">(</span><span class="nb">math.huge</span><span class="p">)</span>
-  <span class="n">k</span><span class="p">,</span> <span class="n">samples</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span><span class="n">kernel</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span><span class="s2">&quot;triangle&quot;</span>
-  <span class="n">s</span><span class="p">.</span><span class="n">txt</span><span class="o">=</span> <span class="n">k</span><span class="o">..</span><span class="s2">&quot;,&quot;</span><span class="o">..</span><span class="n">samples</span><span class="o">..</span><span class="s2">&quot;,&quot;</span><span class="o">..</span><span class="nb">tostring</span><span class="p">(</span><span class="n">p</span><span class="p">)</span><span class="o">..</span><span class="s2">&quot;,&quot;</span><span class="o">..</span><span class="n">kernel</span>
+  <span class="n">s</span><span class="p">.</span><span class="n">txt</span><span class="o">=</span> <span class="s2">&quot;nb&quot;</span>
   <span class="n">rseed</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+  <span class="n">samples</span> <span class="o">=</span> <span class="mi">20</span>
+  <span class="n">abcds</span> <span class="o">=</span> <span class="n">abcd</span><span class="p">()</span>
   <span class="kr">for</span> <span class="n">_</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="mi">20</span> <span class="kr">do</span> 
-    <span class="n">Lean</span> <span class="o">=</span> <span class="n">Lean0</span><span class="p">()</span>
     <span class="n">data1</span> <span class="o">=</span> <span class="n">header</span><span class="p">(</span><span class="n">data</span><span class="p">.</span><span class="n">name</span><span class="p">)</span>
     <span class="kr">for</span> <span class="n">n</span><span class="p">,</span><span class="n">cells</span> <span class="kr">in</span> <span class="nb">pairs</span><span class="p">(</span><span class="n">shuffle</span><span class="p">(</span><span class="n">data</span><span class="p">.</span><span class="n">rows</span><span class="p">))</span> <span class="kr">do</span>
       <span class="n">row</span><span class="p">(</span><span class="n">data1</span><span class="p">,</span> <span class="n">cells</span><span class="p">)</span>
-      <span class="kr">if</span> <span class="n">n</span> <span class="o">&gt;</span> <span class="n">samples</span><span class="o">*</span><span class="mi">2</span> <span class="kr">then</span>
-         <span class="n">want</span> <span class="o">=</span> <span class="n">cells</span><span class="p">[</span><span class="o">#</span><span class="n">data</span><span class="p">.</span><span class="n">name</span><span class="p">]</span>
-         <span class="n">got</span>  <span class="o">=</span> <span class="n">nb</span><span class="p">(</span><span class="n">data1</span><span class="p">,</span><span class="n">cells</span><span class="p">,</span> <span class="o">#</span><span class="n">data</span><span class="p">.</span><span class="n">name</span><span class="p">)</span> 
-         <span class="kr">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">want</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;number&#39;</span> <span class="kr">then</span>
-           <span class="n">sampleInc</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">abs</span><span class="p">(</span><span class="mi">100</span><span class="o">*</span><span class="p">(</span><span class="n">want</span><span class="o">-</span><span class="n">got</span><span class="p">)))</span>
-         <span class="kr">else</span>
-           <span class="n">fy</span><span class="p">(</span><span class="n">want</span> <span class="o">==</span> <span class="n">got</span> <span class="ow">and</span> <span class="s2">&quot;.&quot;</span> <span class="ow">or</span> <span class="s2">&quot;X&quot;</span><span class="p">)</span> <span class="kr">end</span> <span class="kr">end</span> <span class="kr">end</span> <span class="kr">end</span>
-  <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;rank, ,    5,   25,   50,   75,   95,k,samples,p,kernel&quot;</span><span class="p">)</span>
-  <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;----, ,    -,   --,   --,   --,   --,-,-------,---&quot;</span><span class="p">,</span><span class="s2">&quot;------&quot;</span><span class="p">)</span>
-  <span class="n">xtileSamples</span><span class="p">(</span><span class="n">sk</span><span class="p">({</span><span class="n">s</span><span class="p">}),{</span><span class="n">num</span><span class="o">=</span><span class="s2">&quot;%5.0f&quot;</span><span class="p">,</span><span class="n">width</span><span class="o">=</span><span class="mi">30</span><span class="p">})</span>
-  <span class="n">Lean</span><span class="o">=</span><span class="n">Lean0</span><span class="p">()</span>
+      <span class="n">enough</span> <span class="o">=</span>  <span class="n">n</span> <span class="o">&gt;</span> <span class="n">samples</span> 
+      <span class="n">want</span> <span class="o">=</span> <span class="n">cells</span><span class="p">[</span><span class="o">#</span><span class="n">data</span><span class="p">.</span><span class="n">name</span><span class="p">]</span>
+      <span class="kr">if</span> <span class="n">enough</span> <span class="kr">then</span>
+         <span class="n">got</span>  <span class="o">=</span> <span class="n">nb</span><span class="p">(</span><span class="n">data1</span><span class="p">,</span><span class="n">cells</span><span class="p">,</span> <span class="kc">true</span><span class="p">)</span>
+         <span class="n">abcdInc</span><span class="p">(</span><span class="n">abcds</span><span class="p">,</span> <span class="n">want</span><span class="p">,</span> <span class="n">got</span><span class="p">)</span> 
+      <span class="kr">else</span>
+        <span class="n">nb</span><span class="p">(</span><span class="n">data1</span><span class="p">,</span><span class="n">cells</span><span class="p">,</span><span class="kc">false</span><span class="p">)</span>
+  <span class="kr">end</span> <span class="kr">end</span> <span class="kr">end</span> 
+  <span class="n">abcdShow</span><span class="p">(</span><span class="n">abcds</span><span class="p">)</span>
 <span class="kr">end</span>
 
-<span class="kr">return</span> <span class="p">{</span><span class="n">main</span> <span class="o">=</span> <span class="kr">function</span><span class="p">()</span> <span class="n">nbs</span><span class="p">(</span><span class="n">rows</span><span class="p">())</span> <span class="kr">end</span><span class="p">}</span>
+<span class="kr">return</span> <span class="p">{</span><span class="n">main</span> <span class="o">=</span> <span class="kr">function</span><span class="p">(</span>   <span class="n">r</span><span class="p">)</span> <span class="n">r</span><span class="o">=</span><span class="n">rows</span><span class="p">()</span>
+                 <span class="n">nbs</span><span class="p">(</span><span class="n">r</span><span class="p">);</span>
+                 <span class="n">nbInc</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="kr">end</span><span class="p">}</span>
 
 </pre></div>
     </div>

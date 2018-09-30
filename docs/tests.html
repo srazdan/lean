@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <title>tests.lua</title>
+  <link rel="stylesheet" href="pycco.css">
+</head>
+<body>
+<div id='container'>
+  <div id="background"></div>
+  <div class='section'>
+    <div class='docs'><h1>tests.lua</h1></div>
+  </div>
+  <div class='clearall'>
+  <div class='section' id='section-0'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-0'>#</a>
+      </div>
+      <p>to be run from tests as</p>
+<pre><code>  luajit ../src/tests.lua *.lua
+</code></pre>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span></span><span class="nb">package.path</span> <span class="o">=</span> <span class="s1">&#39;../src/?.lua;&#39;</span> <span class="o">..</span> <span class="nb">package.path</span>
+
+<span class="kr">for</span> <span class="n">i</span><span class="p">,</span><span class="n">f</span> <span class="kr">in</span> <span class="nb">pairs</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span> <span class="kr">do</span> <span class="kr">if</span> <span class="n">i</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="kr">then</span> 
+  <span class="nb">dofile</span><span class="p">(</span><span class="n">f</span><span class="p">)</span> 
+  <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n\n\n</span><span class="s2">###### &quot;</span><span class="o">..</span><span class="n">f</span><span class="o">..</span><span class="s2">&quot; ################&quot;</span><span class="p">)</span>
+  <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;#</span><span class="se">\n</span><span class="s2">#</span><span class="se">\n</span><span class="s2">#</span><span class="se">\t</span><span class="s2">pass= &quot;</span><span class="o">..</span><span class="n">Lean</span><span class="p">.</span><span class="n">ok</span><span class="p">.</span><span class="n">tries</span><span class="o">..</span> <span class="s2">&quot; fails= &quot;</span> <span class="o">..</span> <span class="n">Lean</span><span class="p">.</span><span class="n">ok</span><span class="p">.</span><span class="n">fails</span><span class="p">)</span>
+  <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;#</span><span class="se">\n</span><span class="s2">#</span><span class="se">\n</span><span class="s2">#################################&quot;</span><span class="p">)</span>
+<span class="kr">end</span> <span class="kr">end</span>
+<span class="nb">os.exit</span><span class="p">(</span><span class="n">Lean</span><span class="p">.</span><span class="n">ok</span><span class="p">.</span><span class="n">fails</span> <span class="o">&lt;</span> <span class="mi">2</span> <span class="ow">and</span> <span class="mi">0</span> <span class="ow">or</span> <span class="mi">1</span><span class="p">)</span>
+
+</pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+</div>
+</body>

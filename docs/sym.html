@@ -129,7 +129,7 @@
       <div class='octowrap'>
         <a class='octothorpe' href='#section-7'>#</a>
       </div>
-      <p>Computing the entropy: don't recompute if you've
+      <p>Computing the entropy: don&rsquo;t recompute if you&rsquo;ve
 already done it before.</p>
     </div>
     <div class='code'>
@@ -140,6 +140,11 @@ already done it before.</p>
       <span class="n">p</span>      <span class="o">=</span> <span class="n">n</span><span class="o">/</span><span class="n">t</span><span class="p">.</span><span class="n">n</span>
       <span class="n">t</span><span class="p">.</span><span class="n">_ent</span> <span class="o">=</span> <span class="n">t</span><span class="p">.</span><span class="n">_ent</span> <span class="o">-</span> <span class="n">p</span> <span class="o">*</span> <span class="nb">math.log</span><span class="p">(</span><span class="n">p</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span> <span class="kr">end</span> <span class="kr">end</span>
   <span class="kr">return</span> <span class="n">t</span><span class="p">.</span><span class="n">_ent</span>
+<span class="kr">end</span>
+
+<span class="kr">function</span> <span class="nf">symXpect</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span>   <span class="n">n</span><span class="p">)</span>  
+  <span class="n">n</span> <span class="o">=</span> <span class="n">i</span><span class="p">.</span><span class="n">n</span> <span class="o">+</span> <span class="n">j</span><span class="p">.</span><span class="n">n</span> <span class="o">+</span><span class="mf">0.0001</span>
+  <span class="kr">return</span> <span class="n">i</span><span class="p">.</span><span class="n">n</span><span class="o">/</span><span class="n">n</span> <span class="o">*</span> <span class="n">symEnt</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">+</span> <span class="n">j</span><span class="p">.</span><span class="n">n</span><span class="o">/</span><span class="n">n</span> <span class="o">*</span> <span class="n">symEnt</span><span class="p">(</span><span class="n">j</span><span class="p">)</span>
 <span class="kr">end</span>
 
 </pre></div>

@@ -145,17 +145,13 @@ function nb(file,      t,stream, seen)
     tc = seen[col]
     if not tc then tc={} ; seen[col] = tc end
     tcv = tc[val]
-    if not tcv then   
-      tc[val] = 1  
-      t.attr[col] = (t.attr[col] or 0) + inc 
-    end 
+    if not tcv then tc[val]=1; t.attr[col]=(t.attr[col] or 0)+inc end 
     tk = t.f[klass]
     if not tk then t.h = t.h + inc; tk={}; t.f[klass] = tk end
     tkc = tk[col]
     if not tkc then tkc={}; tk[col] = tkc end
     tkcv = tkc[val];
-    if not tkcv then tkc[val]=1 else tkc[val]=tkc[val]+inc 
-    end
+    if not tkcv then tkc[val]=1 else tkc[val]=tkc[val]+inc end
     return tkc[val] end
 
 -- Training is simple: just update the `t.f[klass][col][val]` counts. 
