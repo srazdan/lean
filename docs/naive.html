@@ -147,8 +147,24 @@ last column and that data is on some csv file, the first line of which is the co
       </div>
       <hr />
 <h3>Support Code</h3>
-<p>Here's a simel csv reader.
-Read rows of comma seperated data either from standard input or from a file.</p>
+<p>Here's a simple ierator over csv files.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-3'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-3'>#</a>
+      </div>
+      <ul>
+<li>Read rows of comma seperated data either from standard input or from a file.</li>
+<li>Kills all whitespace.</li>
+<li>Converts some strings to numbers, as appropriate.</li>
+<li>Returns the <code>row</code>, the row number <code>n</code> and the number of fields in that row <code>#row</code>.</li>
+</ul>
     </div>
     <div class='code'>
       <div class="highlight"><pre><span class="kr">function</span> <span class="nf">csv</span><span class="p">(</span><span class="n">file</span><span class="p">,</span>           <span class="n">n</span><span class="p">,</span><span class="n">str</span><span class="p">,</span><span class="n">row</span><span class="p">,</span><span class="n">stream</span><span class="p">)</span>
@@ -169,10 +185,10 @@ Read rows of comma seperated data either from standard input or from a file.</p>
     </div>
   </div>
   <div class='clearall'></div>
-  <div class='section' id='section-3'>
+  <div class='section' id='section-4'>
     <div class='docs'>
       <div class='octowrap'>
-        <a class='octothorpe' href='#section-3'>#</a>
+        <a class='octothorpe' href='#section-4'>#</a>
       </div>
       <hr />
 <h3>Main NB stuff.</h3>
@@ -182,10 +198,10 @@ Read rows of comma seperated data either from standard input or from a file.</p>
     </div>
   </div>
   <div class='clearall'></div>
-  <div class='section' id='section-4'>
+  <div class='section' id='section-5'>
     <div class='docs'>
       <div class='octowrap'>
-        <a class='octothorpe' href='#section-4'>#</a>
+        <a class='octothorpe' href='#section-5'>#</a>
       </div>
       <p>Working memory is the data structure <code>t</code>:</p>
 <ul>
@@ -199,14 +215,14 @@ Read rows of comma seperated data either from standard input or from a file.</p>
     <div class='code'>
       <div class="highlight"><pre><span class="kr">function</span> <span class="nf">nb</span><span class="p">(</span><span class="n">file</span><span class="p">,</span>      <span class="n">t</span><span class="p">,</span><span class="n">seen</span><span class="p">)</span>
   <span class="n">t</span> <span class="o">=</span> <span class="p">{</span><span class="n">n</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>  <span class="n">header</span><span class="o">=</span><span class="p">{},</span> <span class="n">klasses</span><span class="o">=</span><span class="p">{},</span> <span class="n">attr</span><span class="o">=</span><span class="p">{},</span> <span class="n">f</span><span class="o">=</span><span class="p">{}}</span>
-  <span class="n">seen</span> <span class="o">=</span> <span class="p">{}</span></pre></div>
+  <span class="n">seen</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1">-- esoterica: temporary used to know when to inc t.attr</span></pre></div>
     </div>
   </div>
   <div class='clearall'></div>
-  <div class='section' id='section-5'>
+  <div class='section' id='section-6'>
     <div class='docs'>
       <div class='octowrap'>
-        <a class='octothorpe' href='#section-5'>#</a>
+        <a class='octothorpe' href='#section-6'>#</a>
       </div>
       <p>Training is simple: just update the <code>t.f[klass][col][val]</code> counts. 
 Also, if this is the first time we've seen this value in  this
@@ -224,10 +240,10 @@ column, incremeent the count of unique symbols in this column.</p>
     </div>
   </div>
   <div class='clearall'></div>
-  <div class='section' id='section-6'>
+  <div class='section' id='section-7'>
     <div class='docs'>
       <div class='octowrap'>
-        <a class='octothorpe' href='#section-6'>#</a>
+        <a class='octothorpe' href='#section-7'>#</a>
       </div>
       <p>Classification is simple: for each <code>klass</code> do, ask how much
 it <em>likes</em> some symbol in a column. Return the <code>klass</code> that likes
@@ -252,12 +268,27 @@ problems with numerical precision.</p>
     </div>
   </div>
   <div class='clearall'></div>
-  <div class='section' id='section-7'>
+  <div class='section' id='section-8'>
     <div class='docs'>
       <div class='octowrap'>
-        <a class='octothorpe' href='#section-7'>#</a>
+        <a class='octothorpe' href='#section-8'>#</a>
       </div>
-      <p>When we see a new class, add another nested table to <code>t.f</code>.</p>
+      <h3>Nested Table Management</h3>
+<p>In Lua, nested table do not auto-initialize.
+So here we run ahead and initialize our nested tables in
+anticipation of what values they might get in the future.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-9'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-9'>#</a>
+      </div>
+      <p>e.g. when we see a new class, add another nested table to <code>t.f</code>.</p>
     </div>
     <div class='code'>
       <div class="highlight"><pre>  <span class="kr">function</span> <span class="nf">klasses</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
@@ -268,12 +299,12 @@ problems with numerical precision.</p>
     </div>
   </div>
   <div class='clearall'></div>
-  <div class='section' id='section-8'>
+  <div class='section' id='section-10'>
     <div class='docs'>
       <div class='octowrap'>
-        <a class='octothorpe' href='#section-8'>#</a>
+        <a class='octothorpe' href='#section-10'>#</a>
       </div>
-      <p>When we see new headers, intialize <code>seen</code> and <code>t.attr</code>.</p>
+      <p>e.g. when we see new headers, add nested tables to <code>seen</code> and <code>t.attr</code>.</p>
     </div>
     <div class='code'>
       <div class="highlight"><pre>  <span class="kr">function</span> <span class="nf">headers</span><span class="p">(</span><span class="n">row</span><span class="p">)</span> 
@@ -282,12 +313,13 @@ problems with numerical precision.</p>
     </div>
   </div>
   <div class='clearall'></div>
-  <div class='section' id='section-9'>
+  <div class='section' id='section-11'>
     <div class='docs'>
       <div class='octowrap'>
-        <a class='octothorpe' href='#section-9'>#</a>
+        <a class='octothorpe' href='#section-11'>#</a>
       </div>
-      <p>When we read a new row, always train on it. Sometimes classify it.</p>
+      <h3>Training and Incremental Classification</h3>
+<p>When we read a new row, always train on it. Sometimes classify it.</p>
     </div>
     <div class='code'>
       <div class="highlight"><pre>  <span class="kr">function</span> <span class="nf">data</span><span class="p">(</span><span class="n">row</span><span class="p">,</span><span class="n">k</span><span class="p">,</span>       <span class="n">klass</span><span class="p">)</span>
@@ -298,12 +330,13 @@ problems with numerical precision.</p>
     </div>
   </div>
   <div class='clearall'></div>
-  <div class='section' id='section-10'>
+  <div class='section' id='section-12'>
     <div class='docs'>
       <div class='octowrap'>
-        <a class='octothorpe' href='#section-10'>#</a>
+        <a class='octothorpe' href='#section-12'>#</a>
       </div>
-      <p>And finally, the main loop. Set headers from row1. Read the rest as data.</p>
+      <h3>Main loop</h3>
+<p>Set headers from row1. Read the rest as data.</p>
     </div>
     <div class='code'>
       <div class="highlight"><pre>  <span class="kr">for</span> <span class="n">row</span><span class="p">,</span> <span class="n">nr</span><span class="p">,</span> <span class="n">nf</span> <span class="kr">in</span> <span class="n">csv</span><span class="p">(</span><span class="n">file</span><span class="p">)</span> <span class="kr">do</span>

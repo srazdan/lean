@@ -123,8 +123,13 @@
 
 ----------------------------------------------------
 -- ### Support Code 
--- Here's a simel csv reader.
--- Read rows of comma seperated data either from standard input or from a file.
+-- Here's a simple ierator over csv files.
+
+-- - Read rows of comma seperated data either from standard input or from a file.
+-- - Kills all whitespace.
+-- - Converts some strings to numbers, as appropriate.
+-- - Returns the `row`, the row number `n` and the number of fields in that row `#row`.
+
 function csv(file,           n,str,row,stream)
   stream = file and io.input(file) or io.input()
   n,str  = 0, io.read()
@@ -153,7 +158,7 @@ end
 
 function nb(file,      t,seen)
   t = {n=-1,  header={}, klasses={}, attr={}, f={}}
-  seen = {} 
+  seen = {}  -- esoterica: temporary used to know when to inc t.attr
  
 -- Training is simple: just update the `t.f[klass][col][val]` counts. 
 -- Also, if this is the first time we've seen this value in  this
@@ -188,7 +193,13 @@ function nb(file,      t,seen)
         like,out = tmp,k end end
     return out,like end
 
--- When we see a new class, add another nested table to `t.f`.
+-- ### Nested Table Management
+-- In Lua, nested table do not auto-initialize.
+-- So here we run ahead and initialize our nested tables in
+-- anticipation of what values they might get in the future.
+
+-- e.g. when we see a new class, add another nested table to `t.f`.
+--
 
   function klasses(k)
     if not t.f[k] then
@@ -196,20 +207,23 @@ function nb(file,      t,seen)
       for c,_ in pairs(t.header) do t.f[k][c] = {} end end 
     return k end
 
--- When we see new headers, intialize `seen` and `t.attr`.
+-- e.g. when we see new headers, add nested tables to `seen` and `t.attr`.
 
   function headers(row) 
     for c,_ in pairs(row) do seen[c], t.attr[c] = {},0 end
     t.header = row end 
 
+-- ### Training and Incremental Classification
 -- When we read a new row, always train on it. Sometimes classify it.
+
   function data(row,k,       klass)
     klasses(k)
     if t.n > 20 then 
       print(k,  classify(row) ) end
     train(row, k ) end
 
--- And finally, the main loop. Set headers from row1. Read the rest as data.
+-- ### Main loop
+-- Set headers from row1. Read the rest as data.
 
   for row, nr, nf in csv(file) do
     t.n = nr
