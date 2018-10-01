@@ -294,9 +294,19 @@ problems with numerical precision.</p>
     <span class="n">klasses</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
     <span class="kr">if</span> <span class="n">t</span><span class="p">.</span><span class="n">n</span> <span class="o">&gt;</span> <span class="mi">20</span> <span class="kr">then</span> 
       <span class="nb">print</span><span class="p">(</span><span class="n">k</span><span class="p">,</span>  <span class="n">classify</span><span class="p">(</span><span class="n">row</span><span class="p">)</span> <span class="p">)</span> <span class="kr">end</span>
-    <span class="n">train</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">k</span> <span class="p">)</span> <span class="kr">end</span>
-
-  <span class="kr">for</span> <span class="n">row</span><span class="p">,</span> <span class="n">nr</span><span class="p">,</span> <span class="n">nf</span> <span class="kr">in</span> <span class="n">csv</span><span class="p">(</span><span class="n">file</span><span class="p">)</span> <span class="kr">do</span>
+    <span class="n">train</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">k</span> <span class="p">)</span> <span class="kr">end</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-10'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-10'>#</a>
+      </div>
+      <p>And finally, the main loop. Set headers from row1. Read the rest as data.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>  <span class="kr">for</span> <span class="n">row</span><span class="p">,</span> <span class="n">nr</span><span class="p">,</span> <span class="n">nf</span> <span class="kr">in</span> <span class="n">csv</span><span class="p">(</span><span class="n">file</span><span class="p">)</span> <span class="kr">do</span>
     <span class="n">t</span><span class="p">.</span><span class="n">n</span> <span class="o">=</span> <span class="n">nr</span>
     <span class="kr">if</span> <span class="n">t</span><span class="p">.</span><span class="n">n</span> <span class="o">==</span> <span class="mi">1</span> <span class="kr">then</span> <span class="n">headers</span><span class="p">(</span><span class="n">row</span><span class="p">)</span> <span class="kr">else</span> <span class="n">data</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">row</span><span class="p">[</span><span class="n">nf</span><span class="p">])</span> <span class="kr">end</span> <span class="kr">end</span>
 <span class="kr">end</span>

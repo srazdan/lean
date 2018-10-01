@@ -209,6 +209,8 @@ function nb(file,      t,seen)
       print(k,  classify(row) ) end
     train(row, k ) end
 
+-- And finally, the main loop. Set headers from row1. Read the rest as data.
+
   for row, nr, nf in csv(file) do
     t.n = nr
     if t.n == 1 then headers(row) else data(row, row[nf]) end end
