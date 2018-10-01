@@ -15,7 +15,7 @@ function N(txt, t)
   return {txt= txt,
           lo = t.lo  or 0, 
           hi = t.hi  or 1, 
-	  ok = t.ok  or okN,
+	        ok = t.ok  or okN,
           get= t.get or someN } end
 function D(txt,lst,t)   
   return {txt= txt,
@@ -39,27 +39,33 @@ function repeats(t,r,     n,data,t1)
 	  return cells, data end end end 
 end
 
-function fonseca(txt,r,   m,e)
-  m,e = 3,2.71828
-  local add=function (x,y) return x+y end
-  local dec=function (x,y) return x-y end
-  local f0=function(t,f,z) 
-    for _,c in pairs(data.indeps) do
-      z = z+(f(t[c], 1/math.sqrt(m)))^2 end
-    return 1 - e^(-1*z)
-  end
-  all = {N("x"  , {lo= -4, hi= 4}),
-         N("y"  , {lo= -4, hi= 4}),
- 	 N("z"  , {lo= -4, hi= 4}),
-	 N("<f1", {get=function(t) return f0(t, dec, 0) end}),
-	 N("<f2", {get=function(t) return f0(t, inc, 0) end})}
+yes= function (...)  return true end
+add= function (x,y) return x+y end
+dec= function (x,y) return x-y end
 
-  return function()
-    if r > 0 then
-      r = r - 1
-      return ["x","y","z","<f1","<f2" ]
+function fonseca(txt,r,   m,e)
+  m, e = 3, 2.71828
+  local f0=function(t,f,z) 
+    return function(t)
+      for _,c in pairs(data.indeps) do
+        z = z+( f(t[c], 1/math.sqrt(m)) )^2 end
+      return 1 - e^(-1*z) end
   end
-end
+  return {ok=yes,
+          all={N("x"  , {lo=  -4, hi= 4}),
+               N("y"  , {lo=  -4, hi= 4}),
+ 	             N("z"  , {lo=  -4, hi= 4}),
+	             N("<f1", {get= f0(t, dec, 0) }),
+	             N("<f2", {get= f0(t, inc, 0) })}}
+             end
+
+function  prep(t,  t1)
+  t1 = {}
+  for _,x in pairs(t) do t1[ #t1+1 ] = x end
+  data = header(t1)
+  for r=1,100 do
+
+
   def abouts(i):
     def f1(row):
       z = sum([( row[col.pos] - 1/math.sqrt(Fonseca.n))**2
