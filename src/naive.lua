@@ -121,92 +121,97 @@
 -- The following code assumes discrete independent and depedent variables, and the class is the
 -- last column and that data is on some csv file, the first line of which is the column names.
 
+----------------------------------------------------
+-- ### Support Code 
+-- Here's a simel csv reader.
+-- Read rows of comma seperated data either from standard input or from a file.
+function csv(file,           n,str,row,stream)
+  stream = file and io.input(file) or io.input()
+  n,str  = 0, io.read()
+  return function ()
+    while str do
+      n   = n + 1
+      row = {} 
+      str = str:gsub("[\n\t\r ]*","")
+      for word in string.gmatch(str, '([^,]+)') do 
+        row[ #row+1 ] = tonumber(word) or word end
+      str   = io.read()
+      return row, n, #row 
+    end 
+    io.close(stream) end 
+end
+----------------------------------------------------
+-- ### Main NB stuff.
+
 -- Working memory is the data structure `t`:
 --
 -- - `t.n` is  number of rows (excluding the header on row 1)
 -- - `t.header` is the  first row of data file
 -- -  `t.klasses[x]` is number of rows of class x
--- -  `t.h` is the  number of classes
 -- -  `t.attrs[col]`  is number of unique symbols in a column
 -- - `f[klass][col][val]` = frequency of val in col of klass
--- 
 
-function nb(file,      t,stream, seen)
-  t = {n=-1,  header={}, klasses={}, h=0, attr={}, f={}}
-  seen = {} -- esoterica. used to track unique symbols per column
+function nb(file,      t,seen)
+  t = {n=-1,  header={}, klasses={}, attr={}, f={}}
+  seen = {} 
  
--- Must change this bit-- far too esoteric. Nested tables are initialized as a side effect
--- of traversing subtable of `t.f[klass][col][val]`. Also, at some points,
--- we also recognize that we have a never-before-seen class or never-before-seen-val-in-col.
--- At those points we update `t.h` (number of klasses) and `t.attr` (number of unique symbols
--- per column).
-
-  function freq(t,klass,col,val,inc,    tk,tkc,tkcv,tcv,tc)  
-    tc = seen[col]
-    if not tc then tc={} ; seen[col] = tc end
-    tcv = tc[val]
-    if not tcv then tc[val]=1; t.attr[col]=(t.attr[col] or 0)+inc end 
-    tk = t.f[klass]
-    if not tk then t.h = t.h + inc; tk={}; t.f[klass] = tk end
-    tkc = tk[col]
-    if not tkc then tkc={}; tk[col] = tkc end
-    tkcv = tkc[val];
-    if not tkcv then tkc[val]=1 else tkc[val]=tkc[val]+inc end
-    return tkc[val] end
-
 -- Training is simple: just update the `t.f[klass][col][val]` counts. 
+-- Also, if this is the first time we've seen this value in  this
+-- column, incremeent the count of unique symbols in this column.
 
-  function train(t, cells, klass)
-    t.klasses[klass] = (t.klasses[klass] or 0) + 1
-    for col,val in pairs(cells) do
-      if val ~= "?" then
-        freq(t, klass, col, val, 1) end end end
+  function train(row, k)
+    t.klasses[k] = (t.klasses[k] or 0) + 1
+    for c,v in pairs(row) do
+      if v ~= "?" then
+        t.f[k][c][v] = (t.f[k][c][v] or 0) + 1 
+        if not seen[c][v]  then
+          seen[c][v]  = 1       
+          t.attr[c] = t.attr[c] + 1 end end end end
 
 -- Classification is simple: for each `klass` do, ask how much
 -- it _likes_ some symbol in a column. Return the `klass` that likes
--- it the most.
+-- it the most.  Using log addition not raw multiplication to avoid
+-- problems with numerical precision.
 
-  function classify(t,cells,         out,like, tmp)
-    like = -100000 
-    for klass,_ in pairs(t.f) do
-      tmp = math.log((t.klasses[klass] or 0) /t.n ) 
-      for col,val in pairs(cells) do
-        if col ~= #cells then
-          if val ~= "?" then
-            tmp = tmp + math.log((freq(t,klass,col,val,0) + 1)/
-  	          (t.klasses[klass] + t.attr[col])) end end end
+  function like1(k,c,v)
+    return ((t.f[k][c][v] or 0) + 1) / (t.klasses[k] + t.attr[c]) end  
+
+  function classify(row,         out,like, tmp)
+    like, likes = -100000, {} 
+    for k,_ in pairs(t.f) do
+      tmp = math.log((t.klasses[k] or 0) /t.n ) 
+      for c,v in pairs(row) do
+        if c ~= #row then
+          if v ~= "?" then
+            tmp = tmp + math.log( like1(k,c,v) ) end end end
       if tmp > like then
-        like,out = tmp,klass end end
+        like,out = tmp,k end end
     return out,like end
 
--- Some low-level regualr expression stuff.
+-- When we see a new class, add another nested table to `t.f`.
 
-  function cols(str,   t) -- csv string to cells
-    t, str = {}, str:gsub("[\n\t\r ]*","")
-    for word in string.gmatch(str, '([^,]+)') do t[ #t+1 ] = word end
-    return t end
+  function klasses(k)
+    if not t.f[k] then
+      t.f[k], t.klasses[k] = {}, 0 
+      for c,_ in pairs(t.header) do t.f[k][c] = {} end end 
+    return k end
 
--- Main function. `train` on each row. If we've seen enough data (say, 20 rows)
--- then before we train, we try to classifiy.
+-- When we see new headers, intialize `seen` and `t.attr`.
 
-  function main(stream,       str,cells,klass,guess,like)
-    str = io.read()
-    while str do
-      cells = cols(str)
-      str   = io.read()
-      t.n   = t.n + 1
-      if t.n==0
-        then t.header = cells
-        else klass = cells[ #cells ]
-             if t.n > 20 then 
-               guess,like = classify(t, cells) 
-               print(klass, guess,like) end
-  	         train(t, cells, klass) end end 
-    io.close(stream) end
+  function headers(row) 
+    for c,_ in pairs(row) do seen[c], t.attr[c] = {},0 end
+    t.header = row end 
 
--- This code reads from a file or standard input.
+-- When we read a new row, always train on it. Sometimes classify it.
+  function data(row,k,       klass)
+    klasses(k)
+    if t.n > 20 then 
+      print(k,  classify(row) ) end
+    train(row, k ) end
 
-  main( file and io.input(file) or io.input())
+  for row, nr, nf in csv(file) do
+    t.n = nr
+    if t.n == 1 then headers(row) else data(row, row[nf]) end end
 end
 
-return {main = nb }
+return { main = nb }
