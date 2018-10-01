@@ -130,7 +130,7 @@
 -- - Converts some strings to numbers, as appropriate.
 -- - Returns the `row`, the row number `n` and the number of fields in that row `#row`.
 
-function csv(file,           n,str,row,stream)
+local function csv(file,           n,str,row,stream)
   stream = file and io.input(file) or io.input()
   n,str  = 0, io.read()
   return function ()
@@ -156,7 +156,9 @@ end
 -- -  `t.attrs[col]`  is number of unique symbols in a column
 -- - `f[klass][col][val]` = frequency of val in col of klass
 
-function nb(file,      t,seen)
+function nb(file)
+  local t,seen
+  local train, like1, classify, klasses, headers, data
   t = {n=-1,  header={}, klasses={}, attr={}, f={}}
   seen = {}  -- esoterica: temporary used to know when to inc t.attr
  
@@ -170,7 +172,7 @@ function nb(file,      t,seen)
       if v ~= "?" then
         t.f[k][c][v] = (t.f[k][c][v] or 0) + 1 
         if not seen[c][v]  then
-          seen[c][v]  = 1       
+          seen[c][v]  = true       
           t.attr[c] = t.attr[c] + 1 end end end end
 
 -- Classification is simple: for each `klass` do, ask how much
@@ -182,7 +184,7 @@ function nb(file,      t,seen)
     return ((t.f[k][c][v] or 0) + 1) / (t.klasses[k] + t.attr[c]) end  
 
   function classify(row,         out,like, tmp)
-    like, likes = -100000, {} 
+    like  = -100000, {} 
     for k,_ in pairs(t.f) do
       tmp = math.log((t.klasses[k] or 0) /t.n ) 
       for c,v in pairs(row) do
