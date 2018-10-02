@@ -21,25 +21,91 @@
 ------- --------- --------- --------- --------- ---------~</p>
     </div>
     <div class='code'>
-      <div class="highlight"><pre><span></span><span class="nb">require</span> <span class="s2">&quot;lib&quot;</span>
-
-<span class="kr">function</span> <span class="nf">cut</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span><span class="n">lo</span><span class="p">,</span><span class="n">hi</span><span class="p">)</span>
-  <span class="kr">return</span> <span class="p">{</span><span class="n">stats</span><span class="o">=</span><span class="n">n</span><span class="p">,</span> <span class="n">mu</span><span class="o">=</span><span class="n">n</span><span class="p">.</span><span class="n">mu</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="n">c</span><span class="p">,</span><span class="n">lo</span><span class="o">=</span><span class="n">lo</span><span class="p">,</span> <span class="n">hi</span><span class="o">=</span><span class="n">hi</span><span class="p">}</span> <span class="kr">end</span>
-
-<span class="kr">function</span> <span class="nf">withinCut</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">lo</span><span class="p">,</span><span class="n">hi</span><span class="p">,</span> <span class="n">out</span><span class="p">)</span> 
+      <div class="highlight"><pre><span></span><span class="nb">require</span> <span class="s2">&quot;lib&quot;</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-1'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-1'>#</a>
+      </div>
+      <p>For simplicity&rsquo;s sake, we&rsquo;ll use the same <code>cut</code>
+structure for cuts to both discrete and continuous
+columns. </p>
+<ul>
+<li>For continous cuts, we use a cute where <code>lo</code> and <code>hi</code> are different.</li>
+<li>For discretes, we use a cut that uses <code>lo==hi</code>;</li>
+<li>For both kinds of cuts, we&rsquo;ll use<ul>
+<li>a <code>stats</code> slot story statistics in that cut</li>
+<li>a <code>mu</code> slot to store the mean value of the class variable in that cut</li>
+</ul>
+</li>
+</ul>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="kr">function</span> <span class="nf">cut</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span><span class="n">lo</span><span class="p">,</span><span class="n">hi</span><span class="p">)</span>
+  <span class="kr">return</span> <span class="p">{</span><span class="n">stats</span><span class="o">=</span><span class="n">n</span><span class="p">,</span> <span class="n">mu</span><span class="o">=</span><span class="n">n</span><span class="p">.</span><span class="n">mu</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="n">c</span><span class="p">,</span><span class="n">lo</span><span class="o">=</span><span class="n">lo</span><span class="p">,</span> <span class="n">hi</span><span class="o">=</span><span class="n">hi</span><span class="p">}</span> <span class="kr">end</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-2'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-2'>#</a>
+      </div>
+      <p>Given a <code>lo</code> and <code>hi</code> range, it is an engineering decision
+if the range runs <code>lo&lt;x&lt;hi</code> or <code>lo&lt;=x&lt;=hi</code> or
+<code>lo&lt;=x&lt;hi</code>. Whatever, just define it once and use it
+consistently throughout. Also, note one tiny detail </p>
+<ul>
+<li>if <code>lo==hi</code> then this is a discrete cut (see above).</li>
+</ul>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="kr">function</span> <span class="nf">withinCut</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">lo</span><span class="p">,</span><span class="n">hi</span><span class="p">,</span> <span class="n">out</span><span class="p">)</span> 
   <span class="n">hi</span> <span class="o">=</span> <span class="n">hi</span> <span class="ow">or</span> <span class="n">lo</span>
   <span class="kr">if</span>     <span class="n">x</span> <span class="o">==</span><span class="s2">&quot;?&quot;</span> <span class="kr">then</span> <span class="kr">return</span> <span class="kc">false</span> 
   <span class="kr">elseif</span> <span class="n">lo</span><span class="o">==</span><span class="n">hi</span>  <span class="kr">then</span> <span class="kr">return</span> <span class="n">x</span> <span class="o">==</span> <span class="n">lo</span>
   <span class="kr">else</span>                <span class="kr">return</span> <span class="n">x</span><span class="o">&gt;=</span> <span class="n">lo</span> <span class="ow">and</span> <span class="n">x</span><span class="o">&lt;</span><span class="n">hi</span>  <span class="kr">end</span>
-<span class="kr">end</span>
-
-<span class="kr">function</span> <span class="nf">numBreaks</span><span class="p">(</span><span class="n">c</span><span class="p">,</span><span class="n">t</span><span class="p">,</span>     <span class="n">lo</span><span class="p">,</span><span class="n">mid</span><span class="p">,</span><span class="n">hi</span><span class="p">)</span>
+<span class="kr">end</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-3'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-3'>#</a>
+      </div>
+      <p>To find a number break, sort column <code>c</code> 
+then note that our cuts will be a the <code>lo</code>
+and <code>hi</code> and <code>mid</code> (median) point.</p>
+<ul>
+<li>Aside: Of course there is no analagous code for <code>symBreaks</code> since
+discrete columns are already broken up into dsicrete values.</li>
+</ul>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="kr">function</span> <span class="nf">numBreaks</span><span class="p">(</span><span class="n">c</span><span class="p">,</span><span class="n">t</span><span class="p">,</span>     <span class="n">lo</span><span class="p">,</span><span class="n">mid</span><span class="p">,</span><span class="n">hi</span><span class="p">)</span>
   <span class="n">t</span> <span class="o">=</span> <span class="n">ksort</span><span class="p">(</span><span class="n">c</span><span class="p">,</span><span class="n">t</span><span class="p">)</span>
   <span class="n">lo</span><span class="p">,</span><span class="n">mid</span><span class="p">,</span><span class="n">hi</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">math.floor</span><span class="p">(</span><span class="o">#</span><span class="n">t</span><span class="o">/</span><span class="mi">2</span><span class="p">),</span> <span class="o">#</span><span class="n">t</span>
   <span class="kr">return</span> <span class="n">t</span><span class="p">[</span><span class="n">lo</span><span class="p">][</span><span class="n">c</span><span class="p">],</span> <span class="n">t</span><span class="p">[</span><span class="n">mid</span><span class="p">][</span><span class="n">c</span><span class="p">],</span> <span class="n">t</span><span class="p">[</span><span class="n">hi</span><span class="p">][</span><span class="n">c</span><span class="p">]</span>
-<span class="kr">end</span>
-
-<span class="kr">function</span> <span class="nf">numCuts</span><span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="n">c</span><span class="p">,</span><span class="n">goal</span><span class="p">,</span><span class="n">cuts</span><span class="p">,</span>    
+<span class="kr">end</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-4'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-4'>#</a>
+      </div>
+      <p>For numberic column <code>c</code>, collect statistics
+about the goal variable (<code>y</code>) above and below the
+break (at the median point). This generates to
+<code>cuts</code> (one above, and one below).</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="kr">function</span> <span class="nf">numCuts</span><span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="n">c</span><span class="p">,</span><span class="n">goal</span><span class="p">,</span><span class="n">cuts</span><span class="p">,</span>    
                       <span class="n">lo</span><span class="p">,</span><span class="n">mid</span><span class="p">,</span><span class="n">hi</span><span class="p">,</span><span class="n">above</span><span class="p">,</span><span class="n">below</span><span class="p">,</span><span class="n">what</span><span class="p">,</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)</span>
   <span class="n">lo</span><span class="p">,</span><span class="n">mid</span><span class="p">,</span><span class="n">hi</span> <span class="o">=</span> <span class="n">numBreaks</span><span class="p">(</span><span class="n">c</span><span class="p">,</span><span class="n">t</span><span class="p">.</span><span class="n">rows</span><span class="p">)</span> 
   <span class="n">above</span>     <span class="o">=</span> <span class="n">num</span><span class="p">()</span>
@@ -51,9 +117,22 @@
      <span class="n">numInc</span><span class="p">(</span><span class="n">what</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span> <span class="kr">end</span>
   <span class="n">cuts</span><span class="p">[</span> <span class="o">#</span><span class="n">cuts</span><span class="o">+</span><span class="mi">1</span> <span class="p">]</span> <span class="o">=</span> <span class="n">cut</span><span class="p">(</span><span class="n">below</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span>  <span class="n">lo</span><span class="p">,</span> <span class="n">mid</span><span class="p">)</span>
   <span class="n">cuts</span><span class="p">[</span> <span class="o">#</span><span class="n">cuts</span><span class="o">+</span><span class="mi">1</span> <span class="p">]</span> <span class="o">=</span> <span class="n">cut</span><span class="p">(</span><span class="n">above</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">mid</span><span class="p">,</span> <span class="n">hi</span><span class="p">)</span>
-<span class="kr">end</span>
-
-<span class="kr">function</span> <span class="nf">symCuts</span><span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="n">c</span><span class="p">,</span><span class="n">goal</span><span class="p">,</span><span class="n">cuts</span><span class="p">,</span>     <span class="n">tmp</span><span class="p">,</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)</span>
+<span class="kr">end</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-5'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-5'>#</a>
+      </div>
+      <p>For discrete column <code>c</code>,   collect statistics
+about the goal variable (<code>y</code>) see for each
+value on the column. Create one seperate cut
+for each different value in this column,</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="kr">function</span> <span class="nf">symCuts</span><span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="n">c</span><span class="p">,</span><span class="n">goal</span><span class="p">,</span><span class="n">cuts</span><span class="p">,</span>     <span class="n">tmp</span><span class="p">,</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)</span>
   <span class="n">tmp</span> <span class="o">=</span> <span class="p">{}</span>
   <span class="kr">for</span> <span class="n">_</span><span class="p">,</span><span class="n">cells</span> <span class="kr">in</span> <span class="nb">pairs</span><span class="p">(</span><span class="n">t</span><span class="p">.</span><span class="n">rows</span><span class="p">)</span> <span class="kr">do</span>
     <span class="n">x</span> <span class="o">=</span> <span class="n">cells</span><span class="p">[</span><span class="n">c</span><span class="p">]</span>
@@ -63,9 +142,21 @@
   <span class="kr">end</span>
   <span class="kr">for</span> <span class="n">v</span><span class="p">,</span><span class="n">n</span> <span class="kr">in</span> <span class="nb">pairs</span><span class="p">(</span><span class="n">tmp</span><span class="p">)</span> <span class="kr">do</span>
       <span class="n">cuts</span><span class="p">[</span> <span class="o">#</span><span class="n">cuts</span><span class="o">+</span><span class="mi">1</span> <span class="p">]</span> <span class="o">=</span> <span class="n">cut</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="n">c</span><span class="p">,</span><span class="n">v</span><span class="p">,</span><span class="n">v</span><span class="p">)</span> <span class="kr">end</span>
-<span class="kr">end</span>
-
-<span class="kr">function</span> <span class="nf">bestCut</span><span class="p">(</span><span class="n">t</span><span class="p">,</span>   <span class="n">cuts</span><span class="p">,</span><span class="n">goal</span><span class="p">)</span>
+<span class="kr">end</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-6'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-6'>#</a>
+      </div>
+      <p>Generate cuts for each indendent column.
+Sort them by their <code>mu</code> score (which is
+the mean of the goal variable seen in each cut).</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="kr">function</span> <span class="nf">bestCut</span><span class="p">(</span><span class="n">t</span><span class="p">,</span>   <span class="n">cuts</span><span class="p">,</span><span class="n">goal</span><span class="p">)</span>
   <span class="n">cuts</span> <span class="o">=</span> <span class="p">{}</span>
   <span class="n">goal</span> <span class="o">=</span> <span class="o">#</span><span class="n">t</span><span class="p">.</span><span class="n">name</span>
   <span class="kr">for</span> <span class="n">c</span><span class="p">,</span><span class="n">name</span> <span class="kr">in</span> <span class="nb">pairs</span><span class="p">(</span><span class="n">t</span><span class="p">.</span><span class="n">name</span><span class="p">)</span> <span class="kr">do</span>
@@ -75,15 +166,39 @@
       <span class="kr">else</span> <span class="n">symCuts</span><span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="n">c</span><span class="p">,</span><span class="n">goal</span><span class="p">,</span><span class="n">cuts</span><span class="p">)</span> <span class="kr">end</span> <span class="kr">end</span> <span class="kr">end</span>
   <span class="n">cuts</span> <span class="o">=</span> <span class="n">ksort</span><span class="p">(</span><span class="s2">&quot;mu&quot;</span><span class="p">,</span> <span class="n">cuts</span><span class="p">)</span>
   <span class="kr">return</span> <span class="n">cuts</span><span class="p">[</span><span class="o">#</span><span class="n">cuts</span><span class="p">]</span> 
-<span class="kr">end</span>
-
-<span class="kr">function</span> <span class="nf">fftClause</span><span class="p">(</span><span class="n">cut</span><span class="p">,</span><span class="n">t</span><span class="p">,</span><span class="n">pre</span><span class="p">,</span>   <span class="n">suffix</span><span class="p">)</span>
+<span class="kr">end</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-7'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-7'>#</a>
+      </div>
+      <p>This is a minor detail- just create a pretty
+print for a cut</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="kr">function</span> <span class="nf">fftClause</span><span class="p">(</span><span class="n">cut</span><span class="p">,</span><span class="n">t</span><span class="p">,</span><span class="n">pre</span><span class="p">,</span>   <span class="n">suffix</span><span class="p">)</span>
   <span class="n">suffix</span> <span class="o">=</span> <span class="n">cut</span><span class="p">.</span><span class="n">lo</span> <span class="o">==</span> <span class="n">cut</span><span class="p">.</span><span class="n">hi</span> <span class="ow">and</span> <span class="s2">&quot;&quot;</span> <span class="ow">or</span>  <span class="s2">&quot; &lt; &quot;</span>  <span class="o">..</span> <span class="n">cut</span><span class="p">.</span><span class="n">hi</span>
   <span class="nb">print</span><span class="p">((</span><span class="n">pre</span> <span class="ow">or</span> <span class="s2">&quot;if   &quot;</span><span class="p">),</span> <span class="n">t</span><span class="p">.</span><span class="n">name</span><span class="p">[</span><span class="n">cut</span><span class="p">.</span><span class="n">col</span><span class="p">],</span><span class="s2">&quot;is&quot;</span><span class="p">,</span> 
         <span class="n">cut</span><span class="p">.</span><span class="n">lo</span><span class="o">..</span><span class="n">suffix</span><span class="p">,</span> <span class="s2">&quot;==&gt;&quot;</span><span class="p">,</span><span class="nb">math.floor</span><span class="p">(</span><span class="mf">0.5</span><span class="o">+</span> <span class="mi">100</span><span class="o">*</span><span class="n">cut</span><span class="p">.</span><span class="n">mu</span><span class="p">))</span>
-<span class="kr">end</span> 
-
-<span class="kr">function</span> <span class="nf">fft</span><span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="n">d</span><span class="p">,</span>  <span class="n">pre</span><span class="p">,</span><span class="n">cut</span><span class="p">,</span><span class="n">otherwise</span><span class="p">,</span><span class="n">x</span><span class="p">,</span><span class="n">str</span><span class="p">)</span>
+<span class="kr">end</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-8'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-8'>#</a>
+      </div>
+      <p>Main program: Find the best cut, divide the data
+into (a) that which falls into the cut and (b) &ldquo;otherwise&rdquo;.
+Print out (a) and recurse on &ldquo;otheriwse&rdquo; (stopping
+after four levels)</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="kr">function</span> <span class="nf">fft</span><span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="n">d</span><span class="p">,</span>  <span class="n">pre</span><span class="p">,</span><span class="n">cut</span><span class="p">,</span><span class="n">otherwise</span><span class="p">,</span><span class="n">x</span><span class="p">,</span><span class="n">str</span><span class="p">)</span>
   <span class="n">d</span> <span class="o">=</span> <span class="n">d</span> <span class="ow">or</span> <span class="mi">4</span>
   <span class="kr">if</span> <span class="n">d</span> <span class="o">&lt;=</span> <span class="mi">0</span>                <span class="kr">then</span> <span class="kr">return</span> <span class="kc">true</span> <span class="kr">end</span>
   <span class="kr">if</span> <span class="o">#</span><span class="n">t</span><span class="p">.</span><span class="n">rows</span> <span class="o">&lt;</span> <span class="n">Lean</span><span class="p">.</span><span class="n">fft</span><span class="p">.</span><span class="n">min</span> <span class="kr">then</span> <span class="kr">return</span> <span class="kc">true</span> <span class="kr">end</span>

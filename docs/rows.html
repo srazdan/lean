@@ -112,10 +112,10 @@ predict for the latter).</p>
       <p>The function <code>header</code> reads and processes special symbols
 that define a table.</p>
 <ul>
-<li>'&lt;' is a dependent goal to be maximized (it is also numeric);</li>
-<li>'&gt;' is a dependent goal to be minimized (it is also numeric);</li>
-<li>'$' is an independent  numeric colum;</li>
-<li>'!' is a class column (and is not numeric).</li>
+<li>&rsquo;&lt;&rsquo; is a dependent goal to be maximized (it is also numeric);</li>
+<li>&rsquo;&gt;&rsquo; is a dependent goal to be minimized (it is also numeric);</li>
+<li>&rsquo;$&rsquo; is an independent  numeric colum;</li>
+<li>&rsquo;!&rsquo; is a class column (and is not numeric).</li>
 </ul>
     </div>
     <div class='code'>
@@ -291,7 +291,7 @@ your code would:</p>
 <li>would call <code>header</code> to create a <code>data</code>,</li>
 <li>then call <code>row</code> for each row of data.</li>
 </ul>
-<p>For example, to select all rows from <code>old</code> whose last cells is <code>happy</code>...</p>
+<p>For example, to select all rows from <code>old</code> whose last cells is <code>happy</code>&hellip;</p>
 <pre><code>new = header(old.names)
 for _,cells in pairs(old.rows) do
    if cells[#cells] == 'happy' then
