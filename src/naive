@@ -4,12 +4,10 @@
 
 require "lib"
 
-function nb(file)
-  local t,seen
-  local train, classify,  headers, data
+function nb(file,     t)
   t = {n=-1,  header={}, klasses={}, seen={}, attr={}, f={}}
  
- function train(row, k)
+  local function train(row, k)
     t.klasses[k] = (t.klasses[k] or 0) + 1
     for c,v in pairs(row) do
       if v ~= "?" then
@@ -18,7 +16,7 @@ function nb(file)
           t.seen[c][v]  = true       
           t.attr[c] = t.attr[c] + 1 end end end end
 
-  function classify(row,         out,like, prior, evidence,post)
+  local function classify(row,    out,like, prior, evidence,post)
     like  = -100000, {} 
     for k,_ in pairs(t.f) do
       prior = (t.klasses[k] or 0) /t.n  
@@ -33,11 +31,11 @@ function nb(file)
         like,out = post,k end end
     return out,like end
 
-  function headers(row) 
-    for c,_ in pairs(row) do t.seen[c], t.attr[c] = {},0 end
-    t.header = row end 
+  local function headers(row) 
+    t.header = row 
+    for c,_ in pairs(row) do t.seen[c], t.attr[c] = {},0 end end
 
-  function data(row,k,       klass)
+  local function data(row,k,       klass)
     if not t.f[k] then
       t.f[k], t.klasses[k] = {}, 0 
       for c,_ in pairs(t.header) do t.f[k][c] = {} end end 
@@ -45,9 +43,12 @@ function nb(file)
       print(k,  classify(row) ) end
     train(row, k ) end
 
-  for row, nr, nf in csv(file) do
-    t.n = nr
-    if t.n == 1 then headers(row) else data(row, row[nf]) end end
+  for row in csv(file) do
+    t.n =row.n
+    if t.n == 1 
+      then headers(row.cells) 
+      else data(row.cells, row.cells[#row.cells]) end end
+  return t
 end
 
 nb()

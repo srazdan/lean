@@ -3,44 +3,44 @@
 
 require "lib"
 
-function super(data,goal,enough,       rows,most)
-  rows   = data.rows
+function sdiv(data,cols,goal,enough,       rows,most)
+  rows=data.rows
   goal   = goal or #(rows[1])
   enough = enough or (#rows)^Lean.super.enough 
 
   local function band(c,lo,hi)
     if lo==1 then
-      return "..".. rows[hi][c]
+      return "..".. rows[hi].cells[c]
     elseif hi == most then
-      return rows[lo][c]..".."
+      return rows[lo].cells[c]..".."
     else
-      return rows[lo][c]..".."..rows[hi][c] end
+      return rows[lo].cells[c]..".."..rows[hi].cells[c] end
   end
 
   local function argmin(c,lo,hi,     
                           y,yl,yr,besty,tmpy,
-                          cut,mu) 
+                          n,cut,x1,x1) 
     if (hi - lo > 2*enough) then
       yl,yr = num(), num()
-      for i=lo,hi do numInc(yr, rows[i][goal]) end
-      besty = yr.sd
-      mu    = yr.mu
+      for i=lo,hi do ninc(yr, rows[i].cells[goal]) end
+      n, besty = yr.n, yr.sd
       for i=lo,hi do
-        y = rows[i][goal]
-        numInc(yl, y); numDec(yr, y) 
+        y = rows.cells[i][goal]
+        ninc(yl, y)
+        ndec(yr, y) 
         if yl.n >= enough and yr.n >= enough then
-          x1= rows[i  ][c]
-          x2= rows[i+1][c]
-          if x2 > x1 + Lean.super.epsilon then
-            tmpy = numXpect(yl,yr) * Lean.super.margin
+          x1 = rows[i  ].cells[c]
+          x2 = rows[i+1].cells[c]
+          if  x1 * Lean.super.epsilon < x2 then
+            tmpy = (yl.sd * ly.n/n + yr.sd*yr.n/n ) * Lean.super.margin
             if tmpy < besty then
               cut,besty = i, tmpy end end end end end
-    return cut,mu
+    return cut
   end
 
   local function cuts(c,lo,hi,pre,       cut,txt,s,mu)
     txt = pre..rows[lo][c]..".."..rows[hi][c]
-    cut,mu = argmin(c,lo,hi)
+    cut = argmin(c,lo,hi)
     if cut then
       fyi(txt)
       cuts(c,lo,   cut, pre.."|.. ")
@@ -50,7 +50,7 @@ function super(data,goal,enough,       rows,most)
       for r=lo,hi do
         sum = sum + rows[r][c]
         rows[r][c]=s end 
-      fyi(txt.." ==> "..precent(sum/(hi - lo+10^-64)))
+      fyi(txt.." ==> "..percent(sum/(hi - lo+10^-64)))
       end
   end
 
@@ -59,9 +59,9 @@ function super(data,goal,enough,       rows,most)
     return 0
   end
 
-  for _,c  in pairs(data.indeps) do
+  for _,c  in pairs(data.x) do
     if data.nums[c] then
-      ksort(c,rows) -- sorts the rows on column `c`.
+      colsort(c,rows) 
       most = stop(c,rows)
       fyi("\n-- ".. data.name[c] .. " ----------")
       cuts(c,1,most,"|.. ") end end
@@ -72,4 +72,4 @@ end
 
 -- Main function, if this is called top-level.
 
-return {main=function() return super(rows()) end}
+sdiv(datas()) 
