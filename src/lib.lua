@@ -3,17 +3,17 @@
 
 -- ## Configuration Stuff
 
-function Lean0(     f,t) 
-  if _G["Lean"] then
-    t,f= Lean.ok.tries, Lean.ok.fails end
+function defaults()
   return  {
-  ok       = {tries= t or 0, fails=f or 0},
-  super    = {epsilon=1.01, margin=1.05} 
-  } end
+  ok     = {tries= 0, fails=0},
+  random = {seed=10013},
+  super  = {epsilon=1.01, margin=1.05,enough=0.25} 
+  } 
+end
 
-Lean = Lean0()
+Lean = defaults()
 
--- ## Unique id stuf
+-- ## Unique id stuff
 
 do 
   local id =0 
@@ -22,8 +22,37 @@ end
 
 -- ## Maths Stuff
 
+min = math.min
+max = math.max
 log = math.log
 
+function cap(x, lo, hi)
+  return min(hi, max(lo, x))
+end
+
+-- ## Random stuff
+
+do
+  local seed0     = Lean.random.seed
+  local seed      = seed0
+  local modulus   = 2147483647
+  local multipler = 16807
+  function rseed(n) seed = n or seed0 end 
+  function rand() -- park miller
+    seed = (multipler * seed) % modulus
+    return seed / modulus end
+end
+
+function another(x,t,     y)   
+  y = cap(math.floor(0.5+rand()*#t),1,#t)
+  if x==y then return another(x,t) end
+  if t[y] then return t[y] end
+  return another(x,t)
+end
+
+function any(t,    x)
+  return t[ cap(math.floor(0.5+rand()*#t),1,#t) ]
+end
 -- Table Stuff
 
 function ordered(t,  i,keys)
@@ -37,7 +66,7 @@ end
 
 cat = table.concat
 function dump(a,sep)
-  for i=1,#a do print(cat(a[i],sep or ",")) end
+  for i=1,#a do print(cat(a[i].cells,sep or ",")) end
 end
 
 -- ## String Stuff
@@ -91,6 +120,27 @@ function csv(file,           n,str,row,stream)
     io.close(stream) end 
 end
 
+-- Meta Stuff
+
+function same(x) return x end
+
+function map(t,f,    t1)
+  f= f or same
+  t1={}
+  for i,x in pairs(t) do t1[i] = f(x)  end
+  return t1
+end
+
+function copy(t) return map(t,same) end
+
+function deepCopy(t) 
+  return type(t)=="table" and map(t,copy) or t end
+
+function map2(t,u,f) -- for all x in t, call f(u,x)
+  map(t, function(x) f(u,x) end) 
+  return u
+end
+
 -- Data stuff
 
 function data()
@@ -123,6 +173,7 @@ function datas(file,    t)
     if row.n == 1 
       then t = header(row.cells,t)
       else t.rows[ #t.rows+1 ] = row end end 
+  return t
 end
 
 function colsort(k,t,  f) 
@@ -135,47 +186,16 @@ function colsort(k,t,  f)
   return t
 end  
 
--- Meta Stuff
-
-function same(x) return x end
-
-function map(t,f,    t1)
-  f= f or same
-  t1={}
-  for i,x in pairs(t) do t1[i] = f(x)  end
-  return t1
-end
-
-function copy(t) return map(t,same) end
-
-function deepCopy(t) 
-  return type(t)=="table" and map(t,copy) or t end
-
-function map2(t,u,f) -- for all x in t, call f(u,x)
-  map(t, function(x) f(u,x) end) 
-  return u
-end
-
-function rogues(    ignore)
-  ignore = {jit=true, utf8=true, math=true, package=true, 
-            table=true, coroutine=true, bit=true, os=true, 
-            io=true, bit32=true, string=true, arg=true, 
-            debug=true, _VERSION=true, _G=true }
-  for k,v in pairs( _G ) do
-   if type(v) ~= "function" and not ignore[k] then
-    if k:match("^[^A-Z]") then
-     print("-- warning, rogue local ["..k.."]") end end end 
-end 
-
 -- Sym Stuff
 
 function sym()
-  return {counts={},mode=nil,most=0,n=0,_ent=nil}
+  return {counts={},mode=nil,most=0,n=0,
+          also={} }
 end
 
 function sinc(t,x,   new,old)
   if x=="?" then return x end
-  t._ent= nil
+  t.also={}
   t.n = t.n + 1
   old = t.counts[x]
   new = old and old + 1 or 1
@@ -186,7 +206,7 @@ function sinc(t,x,   new,old)
 end
 
 function sdec(t,x)
-  t._ent= nil
+  t.also={}
   if t.n > 0 then
     t.n = t.n - 1
     t.counts[x] = t.counts[x] - 1
@@ -196,18 +216,18 @@ end
 
 function entXpect(i,j,   n)  
   n = i.n + j.n +0.0001
-  return i.n/n * i.sd+ j.n/n * j.sd
+  return i.n/n * ent(i) + j.n/n * ent(j)
 end
 
 function syms(t) return map2(t, sym(), sinc) end
 
 function ent(t,  p)
-  if not t._ent then
-    t._ent=0
+  if not t.also.ent then
+    t.also.ent=0
     for x,n in pairs(t.counts) do
       p      = n/t.n
-      t._ent = t._ent - p * math.log(p,2) end end
-  return t._ent
+      t.also.ent = t.also.ent - p * math.log(p,2) end end
+  return t.also.ent
 end
 
 -- Num Stuff
@@ -250,3 +270,39 @@ function sdXpect(i,j,   n)
   return i.n/n * i.sd+ j.n/n * j.sd
 end
 
+-- Test stuff
+
+function rogues(    ignore)
+  ignore = {jit=true, utf8=true, math=true, package=true, 
+            table=true, coroutine=true, bit=true, os=true, 
+            io=true, bit32=true, string=true, arg=true, 
+            debug=true, _VERSION=true, _G=true }
+  for k,v in pairs( _G ) do
+   if type(v) ~= "function" and not ignore[k] then
+    if k:match("^[^A-Z]") then
+     print("-- warning, rogue local ["..k.."]") end end end 
+end 
+
+do
+  local tries, fails = 0,0
+
+  function okReport( x)
+    x = (tries-fails)/ (tries+10^-64)
+    return math.floor(0.5 + 100*(1- x)) end
+
+  function ok(t,  n,score,      passed,err,s)
+    for x,f in pairs(t) do
+      tries = tries + 1
+      print("-- Test #" .. tries .. 
+            " (oops=".. okReport() .."%). Checking ".. x .."... ")
+      Lean = defaults()
+      passed,err = pcall(f)
+      if not passed then
+        fails = fails + 1
+        print("-- E> Failure " .. fails .. " of " 
+              .. tries ..": ".. err) end end
+    rogues()
+  end
+end
+
+function off(t) return t end

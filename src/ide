@@ -9,7 +9,6 @@ ide() {
 
 chmods() {
   for f in `ls | grep -v lua| grep -v .md`; do
-    echo $f
     chmod +x $f
   done
 }

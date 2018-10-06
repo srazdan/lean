@@ -3,19 +3,15 @@
 
 package.path = '../src/?.lua;' .. package.path 
 require "lib"
-require "ok"
-require "sym"
-require "random"
-require "meta"
 
 ok  { baseSym=function(  s)
 	s=syms{ 'y','y','y','y','y','y','y','y','y',
 	        'n','n','n','n','n'}
-	assert( close( symEnt(s),  0.9403) )
-	print(symEnt(s))
+	assert( 0.94028 < ent(s) and ent(s) < 0.94029 )
+	print(ent(s))
 end }
 
-ok { inc=function(        s,all,one,datas,data,syms,kept) 
+ok { inc=function(        datas,data,kept,all,s,syms,kept)
   datas,kept,all = {},{},{}
   rseed(1)
   syms={"a","b","c","d","e","f","g","h","i","j","k","l"}
@@ -25,12 +21,14 @@ ok { inc=function(        s,all,one,datas,data,syms,kept)
     for j=1,20 do data[j] = any(syms) end end
   s= sym()
   for i=1,20 do
-    map(datas[i], function (z) symInc(s, z) end)
-    kept[i] = symEnt(s)
+    map(datas[i], function (z) sinc(s, z) end)
+    kept[i] = ent(s)
   end
   for i=20,3,-1 do
-    assert(symEnt(s) == kept[i])
-    map(datas[i], function (z) symDec(s, z) end)
+    assert(ent(s) == kept[i])
+    map(datas[i], function (z) sdec(s, z) end)
   end
 end }
-return Lean.ok.tries, Lean.ok.fails
+
+
+
