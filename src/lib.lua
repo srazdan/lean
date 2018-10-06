@@ -40,6 +40,13 @@ function dump(a,sep)
   for i=1,#a do print(cat(a[i],sep or ",")) end
 end
 
+-- ## String Stuff
+
+function gsub(s,a,b,  _)
+  s,_ = string.gsub(s,a,b)
+  return s
+end
+
 -- ## Print Stuff
 
 function percent(x) return math.floor(100*x) end
@@ -160,6 +167,49 @@ function rogues(    ignore)
      print("-- warning, rogue local ["..k.."]") end end end 
 end 
 
+-- Sym Stuff
+
+function sym()
+  return {counts={},mode=nil,most=0,n=0,_ent=nil}
+end
+
+function sinc(t,x,   new,old)
+  if x=="?" then return x end
+  t._ent= nil
+  t.n = t.n + 1
+  old = t.counts[x]
+  new = old and old + 1 or 1
+  t.counts[x] = new
+  if new > t.most then
+    t.most, t.mode = new, x end
+  return x
+end
+
+function sdec(t,x)
+  t._ent= nil
+  if t.n > 0 then
+    t.n = t.n - 1
+    t.counts[x] = t.counts[x] - 1
+  end
+  return x
+end
+
+function entXpect(i,j,   n)  
+  n = i.n + j.n +0.0001
+  return i.n/n * i.sd+ j.n/n * j.sd
+end
+
+function syms(t) return map2(t, sym(), sinc) end
+
+function ent(t,  p)
+  if not t._ent then
+    t._ent=0
+    for x,n in pairs(t.counts) do
+      p      = n/t.n
+      t._ent = t._ent - p * math.log(p,2) end end
+  return t._ent
+end
+
 -- Num Stuff
 
 function num()  
@@ -193,9 +243,10 @@ function norm(t,x)
   return x=="?" and 0.5 or (x-t.lo) / (t.hi-t.lo + 10^-32)
 end
 
-function nums(t) return map2(t,num(), ninc) end
+function nums(t) return map2(t, num(), ninc) end
 
-function numXpect(i,j,   n)  
+function sdXpect(i,j,   n)  
   n = i.n + j.n +0.0001
   return i.n/n * i.sd+ j.n/n * j.sd
 end
+

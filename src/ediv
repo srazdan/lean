@@ -1,0 +1,82 @@
+#!/usr/bin/env luajit
+-- vim: filetype=lua ts=2 sw=2 sts=2 expandtab:cindent:formatoptions+=cro   
+--------- --------- --------- --------- --------- ---------  
+
+require "lib"
+
+function ediv(data,cols,goal,enough,       rows,most)
+  rows=data.rows
+  goal   = goal or #(rows[1])
+  enough = enough or (#rows)^Lean.super.enough 
+
+  local function band(c,lo,hi)
+    if lo==1 then
+      return "..".. rows[hi].cells[c]
+    elseif hi == most then
+      return rows[lo].cells[c]..".."
+    else
+      return rows[lo].cells[c]..".."..rows[hi].cells[c] end
+  end
+
+  local function argmin(lo,hi,c,     
+                        x,xl,xr,bestx,tmpx,
+                        y,yl,yr,besty,tmpy,
+                        x1,n,cut,x1,x1) 
+    c = c or goal
+    if (hi - lo > 2*enough) then
+      yl,yr = sym(), sym()
+      xl,xr = num(), num()
+      for i=lo,hi do 
+        ninc(xr, rows[i].cells[c])
+        sinc(yr, rows[i].cells[goal])
+      end
+      n, besty, bestx = yr.n, ent(yr), xr.sd
+      for i=lo,hi do
+        x = rows[i].cells[c];    ninc(xl, x);  ndec(xr, x) 
+        y = rows[i].cells[goal]; sinc(yl, y);  sdec(yr, y) 
+        if yl.n >= enough and yr.n >= enough then
+          x1 = rows[i+1].cells[c]
+          if  x < x1 then
+            tmpy = entXpect(yl,yr) * Lean.super.margin
+            if tmpy < besty then
+              tmpx = sdXpect(xl, xr) * Lean.super.margin
+              if tmpx < bestx then
+                cut,bestx,besty = i,tmpx,tmpy end end end end end end
+    return cut
+  end
+
+  local function cuts(lo,hi,c,pre,       cut,txt,s,mu,sum)
+    txt = pre..rows[lo][c]..".."..rows[hi][c]
+    cut = argmin(lo,hi,c)
+    if cut then
+      fyi(txt)
+      cuts(lo,   cut, c, pre.."|.. ")
+      cuts(cut+1, hi, c, pre.."|.. ")
+    else
+      s = band(c,lo,hi)
+      sum = sym()
+      for r=lo,hi do  
+        sinc(sum, rows[r][goal]) 
+        rows[r][c]=s 
+      end
+      fyi(txt.." ==> "..sum.mode)
+    end
+  end
+
+  function stop(c,t)
+    for i=#t,1,-1 do if t[i][c] ~= "?" then return i end end
+    return 0
+  end
+
+  for _,c  in pairs(data.x) do
+    if data.nums[c] then
+      colsort(c,rows) 
+      most = stop(c,rows)
+      fyi("\n-- ".. data.name[c] .. " ----------")
+      cuts(1,most,c,"|.. ") end end
+  print(gsub( cat(data.name,", "), 
+              "%$","")) -- dump dollars since no more nums
+  dump(rows)
+end
+
+ediv(datas()) 

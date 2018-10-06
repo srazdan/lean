@@ -1,1 +1,63 @@
-. ../etc/ide $(dirname $PWD)
+##  vim: filetype=sh ts=2 sw=2 sts=2 expandtab  
+######### ######### ######### ######### ######### #########
+
+exe=luajit
+
+ide() {
+  . ./ide
+}
+
+chmods() {
+  for f in `ls | grep -v lua| grep -v .md`; do
+    echo $f
+    chmod +x $f
+  done
+}
+
+lean0() {
+  chmods
+  for f in lua luajit; do
+    if ! hash $f 2> /dev/null; then
+      echo "Installing $fi ..."
+      brew install $f
+    fi
+  done
+  if ! hash pycco 2> /dev/null; then
+    echo "Installing pycco..."
+    sudo -H pip -q install pycco
+  fi
+  if  [ ! -d "$HOME/.vim/bundle/Vundle.vim" ]; then
+    echo "Installing vundle to $HOME/.vim/bundle/"
+    mkdir -p $HOME/.vim/bundle
+    git clone https://github.com/VundleVim/Vundle.vim.git \
+              $HOME/.vim/bundle/Vundle.vim
+  fi
+  vim -u ../etc/vimrc vim +PlugInstall +qall
+}
+pathmunge () {
+  if ! echo "$PATH" | grep -Eq "(^|:)$1($|:)" ; then
+    if [ "$2" = "after" ] 
+      then PATH="$PATH:$1"
+      else PATH="$1:$PATH"
+    fi 
+  fi
+}   
+
+pathmunge $PWD after
+
+alias pull="git pull"
+alias push="git commit -am pushing; git push"
+
+cols()  {
+  column -t -s, "$@" | less -F -S -X -K
+}
+
+ok() {
+  (cd ../tests; $exe $1.lua)
+}
+ed() { 
+  ## ed FILE       : Edit a file with my vim bindings.
+  vim -u ../etc/vimrc $1
+}
+
+lean0

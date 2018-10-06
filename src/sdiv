@@ -1,4 +1,5 @@
--- vim: ts=2 sw=2 sts=2 expandtab:cindent:formatoptions+=cro   
+#!/usr/bin/env luajit
+-- vim: filetype=lua ts=2 sw=2 sts=2 expandtab:cindent:formatoptions+=cro   
 --------- --------- --------- --------- --------- ---------  
 
 require "lib"
@@ -17,36 +18,43 @@ function sdiv(data,cols,goal,enough,       rows,most)
       return rows[lo].cells[c]..".."..rows[hi].cells[c] end
   end
 
-  local function argmin(c,lo,hi,     
-                          y,yl,yr,besty,tmpy,
-                          n,cut,x1,x1) 
+  local function argmin(lo,hi,c,     
+                        x,xl,xr,bestx,tmpx,
+                        y,yl,yr,besty,tmpy,
+                        x1,n,cut,x1,x1) 
+    c = c or goal
     if (hi - lo > 2*enough) then
       yl,yr = num(), num()
-      for i=lo,hi do ninc(yr, rows[i].cells[goal]) end
-      n, besty = yr.n, yr.sd
+      xl,xr = num(), num()
+      for i=lo,hi do 
+        ninc(xr, rows[i].cells[c])
+        ninc(yr, rows[i].cells[goal])
+      end
+      n, besty, bestx = yr.n, yr.sd, xr.sd
       for i=lo,hi do
-        y = rows.cells[i][goal]
-        ninc(yl, y)
-        ndec(yr, y) 
+        x = rows[i].cells[c];    ninc(xl, x);  ndec(xr, x) 
+        y = rows[i].cells[goal]; ninc(yl, y);  ndec(yr, y) 
         if yl.n >= enough and yr.n >= enough then
-          x1 = rows[i  ].cells[c]
-          x2 = rows[i+1].cells[c]
-          if  x1 * Lean.super.epsilon < x2 then
-            tmpy = (yl.sd * ly.n/n + yr.sd*yr.n/n ) * Lean.super.margin
+          x1 = rows[i+1].cells[c]
+          if  x < x1 then
+            tmpy = sdXpect(yl, yr) * Lean.super.margin
             if tmpy < besty then
-              cut,besty = i, tmpy end end end end end
+              tmpx = sdXpect(xl, xr) * Lean.super.margin
+              if tmpx < bestx then
+                cut,bestx,besty = i,tmpx,tmpy end end end end end end
     return cut
   end
 
-  local function cuts(c,lo,hi,pre,       cut,txt,s,mu)
+  local function cuts(lo,hi,c,pre,       cut,txt,s,mu,sum)
     txt = pre..rows[lo][c]..".."..rows[hi][c]
-    cut = argmin(c,lo,hi)
+    cut = argmin(lo,hi,c)
     if cut then
       fyi(txt)
-      cuts(c,lo,   cut, pre.."|.. ")
-      cuts(c,cut+1, hi, pre.."|.. ")
+      cuts(lo,   cut, c, pre.."|.. ")
+      cuts(cut+1, hi, c, pre.."|.. ")
     else
       s = band(c,lo,hi)
+      sum = 0
       for r=lo,hi do
         sum = sum + rows[r][c]
         rows[r][c]=s end 
@@ -64,7 +72,7 @@ function sdiv(data,cols,goal,enough,       rows,most)
       colsort(c,rows) 
       most = stop(c,rows)
       fyi("\n-- ".. data.name[c] .. " ----------")
-      cuts(c,1,most,"|.. ") end end
+      cuts(1,most,c,"|.. ") end end
   print(gsub( cat(data.name,", "), 
               "%$","")) -- dump dollars since no more nums
   dump(rows)
