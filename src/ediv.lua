@@ -4,10 +4,14 @@
 
 require "lib"
 
-function ediv(data,cols,goal,enough,       rows)
-  rows=data.rows
-  goal   = goal or #(rows[1].cells)
+function ediv(data,cols,goal,enough,eval,   rows)
+  rows   = data.rows
+  cols   = cols   or data.x
+  goal   = goal   or #(rows[1].cells)
   enough = enough or (#rows)^Lean.super.enough 
+  eval   = eval   or Lean.ediv.eval
+  eval   = type(eval)=="function" and eval
+           or _G[eval]
 
   local function band(c,lo,hi)
     if lo==1 then
@@ -22,7 +26,6 @@ function ediv(data,cols,goal,enough,       rows)
                         x,xl,xr,bestx,tmpx,
                         y,yl,yr,besty,tmpy,
                         x1,n,cut,x1,x1) 
-    c = c or goal
     if (hi - lo > 2*enough) then
       yl,yr = sym(), sym()
       xl,xr = num(), num()
@@ -37,7 +40,7 @@ function ediv(data,cols,goal,enough,       rows)
         if yl.n >= enough and yr.n >= enough then
           x1 = rows[i+1].cells[c]
           if  x < x1 then
-            tmpy = entXpect(yl,yr) * Lean.super.margin
+            tmpy = eval(yl,yr) * Lean.super.margin
             if tmpy < besty then
               tmpx = sdXpect(xl, xr) * Lean.super.margin
               if tmpx < bestx then
@@ -59,7 +62,7 @@ function ediv(data,cols,goal,enough,       rows)
         sinc(sum, rows[r].cells[goal]) 
         rows[r].cells[c]=s 
       end
-      fyi(txt.." ==> "..sum.mode)
+      fyi(txt.." ==> "..sum.mode..":"..sum.n)
     end
   end
 
@@ -71,10 +74,14 @@ function ediv(data,cols,goal,enough,       rows)
         return cuts(1,most,c,"")  end end
   end
 
-  for _,c  in pairs(data.x) do
+  for _,c in pairs(cols) do
     if data.nums[c] then div(c) end end
   print(gsub( cat(data.name,", "), "%$","")) 
   dump(rows)
 end
 
-ediv(datas()) 
+return { main = function() 
+  if arg[1] =="--goal" then
+    Lean.ediv.eval="unbore"
+    Lean.bore.goal=arg[2] end 
+  ediv(datas()) end} 

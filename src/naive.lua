@@ -43,12 +43,12 @@ function nb(file,     t)
       print(k,  classify(row) ) end
     train(row, k ) end
 
-  for row in csv(file) do
-    t.n =row.n
-    if t.n == 1 
-      then headers(row.cells) 
-      else data(row.cells, row.cells[#row.cells]) end end
+  first=true
+  for cells in csv(file) do
+    if first 
+      then first=false; headers(cells) 
+      else data(cells, cells[#cells]) end end
   return t
 end
 
-nb()
+return {main=nb}

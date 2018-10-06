@@ -5,8 +5,9 @@
 require "lib"
 
 function sdiv(data,cols,goal,enough,       rows,most)
-  rows=data.rows
-  goal   = goal or #(rows[1])
+  rows   = data.rows
+  cols   = cols   or data.x
+  goal   = goal   or #(rows[1].cells)
   enough = enough or (#rows)^Lean.super.enough 
 
   local function band(c,lo,hi)
@@ -22,7 +23,6 @@ function sdiv(data,cols,goal,enough,       rows,most)
                         x,xl,xr,bestx,tmpx,
                         y,yl,yr,besty,tmpy,
                         x1,n,cut,x1,x1) 
-    c = c or goal
     if (hi - lo > 2*enough) then
       yl,yr = num(), num()
       xl,xr = num(), num()
@@ -46,7 +46,7 @@ function sdiv(data,cols,goal,enough,       rows,most)
   end
 
   local function cuts(lo,hi,c,pre,       cut,txt,s,mu,sum)
-    txt = pre..rows[lo][c]..".."..rows[hi][c]
+    txt = pre..rows[lo].cells[c]..".."..rows[hi].cells[c]
     cut = argmin(lo,hi,c)
     if cut then
       fyi(txt)
@@ -54,30 +54,28 @@ function sdiv(data,cols,goal,enough,       rows,most)
       cuts(cut+1, hi, c, pre.."|.. ")
     else
       s = band(c,lo,hi)
-      sum = 0
+      sum = num()
       for r=lo,hi do
-        sum = sum + rows[r][c]
-        rows[r][c]=s end 
-      fyi(txt.." ==> "..percent(sum/(hi - lo+10^-64)))
+        ninc(sum, rows[r].cells[c])
+        rows[r].cells[c]=s end 
+      fyi(txt.." ==> "..sum.mu)
       end
   end
 
-  function stop(c,t)
-    for i=#t,1,-1 do if t[i][c] ~= "?" then return i end end
-    return 0
+  local function div(c,   most)
+    colsort(c, rows)
+    for most=#rows,1,-1 do 
+      if rows[most].cells[c] ~= "?" then 
+        fyi("\n-- ".. data.name[c] .. " ----------")
+        return cuts(1,most,c,"")  end end
   end
 
-  for _,c  in pairs(data.x) do
-    if data.nums[c] then
-      colsort(c,rows) 
-      most = stop(c,rows)
-      fyi("\n-- ".. data.name[c] .. " ----------")
-      cuts(1,most,c,"|.. ") end end
-  print(gsub( cat(data.name,", "), 
-              "%$","")) -- dump dollars since no more nums
+  for _,c  in pairs(cols) do
+    if data.nums[c] then div(c) end end
+  print(gsub( cat(data.name,", "), "%$","")) 
   dump(rows)
 end
 
 -- Main function, if this is called top-level.
 
-sdiv(datas()) 
+return { main = function() sdiv(datas()) end }

@@ -5,9 +5,11 @@
 
 function defaults()
   return  {
-  ok     = {tries= 0, fails=0},
+  bore   = {goal="positive"},
+  dom    = {samples=50},
   random = {seed=10013},
-  super  = {epsilon=1.01, margin=1.05,enough=0.25} 
+  super  = {epsilon=1.01, margin=1.05,enough=0.5}, 
+  ediv   = {eval="entXpect"}
   } 
 end
 
@@ -25,10 +27,9 @@ end
 min = math.min
 max = math.max
 log = math.log
+int = function (x) return math.floor(0.5+x) end
 
-function cap(x, lo, hi)
-  return min(hi, max(lo, x))
-end
+function cap(x, lo, hi) return min(hi, max(lo, x)) end
 
 -- ## Random stuff
 
@@ -104,18 +105,17 @@ end
 -- - Converts some strings to numbers, as appropriate.
 -- - Returns the row, the row num, and a row unique id.
 
-function csv(file,           n,str,row,stream)
+function csv(file,           str,cells,stream)
   stream = file and io.input(file) or io.input()
-  n,str  = 0, io.read()
+  str = io.read()
   return function ()
     while str do
       str = str:gsub("[\n\t\r ]*","")
-      n   = n + 1
-      row = {} 
+      cells = {} 
       for word in string.gmatch(str, '([^,]+)') do 
-        row[ #row+1 ] = tonumber(word) or word end
-      str   = io.read()
-      return {cells=row, n=n, id=unique()} 
+        cells[ #cells+1 ] = tonumber(word) or word end
+      str = io.read()
+      return cells
     end 
     io.close(stream) end 
 end
@@ -141,56 +141,28 @@ function map2(t,u,f) -- for all x in t, call f(u,x)
   return u
 end
 
--- Data stuff
+-- Goal stuff
 
-function data()
-  return  {x={}, y={}, syms={}, nums={}, rows={},
-           class=nil,name={}, _use={}} end
-
-function header(cells,t,    c,what)
-  t = t or data()
-  for c0,x in pairs(cells) do
-    if not x:match("%?")  then
-      c = #t._use+1
-      t._use[c] = c0
-      t.name[c] = x
-      if x:match("[<>%$]") 
-	      then t.nums[c] = true 
-	      else t.syms[c] = true
-      end 
-      what = t.y
-      if     x:match("<") then t.w[c]  = -1 
-      elseif x:match(">") then t.w[c]  =  1  
-      elseif x:match("!") then t.class =  c 
-      else   what = t.x end 
-      what[ #what+1 ] = c
-  end end
-  return t
+function bore(x,g,    best,rest,n)
+  g = g or Lean.bore.goal
+  best,rest = 0,0
+  for c,num in pairs(x.counts) do
+    if c:match(g) 
+      then best = best + num
+      else rest = rest + num end end
+  best, rest = best / x.n, rest / x.n
+  return best^2 / (best + rest) 
 end
 
-function datas(file,    t)
-  for row in csv(file) do
-    if row.n == 1 
-      then t = header(row.cells,t)
-      else t.rows[ #t.rows+1 ] = row end end 
-  return t
+function unbore(i,j, n)
+  n = i.n + j.n +0.0001
+  return i.n/n * (1-bore(i)) + j.n/n * (1-bore(j))
 end
-
-function colsort(k,t,  f) 
-  f=function(x,y)
-       x,y=x.cells[k], y.cells[k]
-       if     x=="?" then return false
-       elseif y=="?" then return true
-      else return x < y end end
-  table.sort(t,f)
-  return t
-end  
 
 -- Sym Stuff
 
 function sym()
-  return {counts={},mode=nil,most=0,n=0,
-          also={} }
+  return {counts={},mode=nil,most=0,n=0, also={} }
 end
 
 function sinc(t,x,   new,old)
@@ -228,6 +200,13 @@ function ent(t,  p)
       p      = n/t.n
       t.also.ent = t.also.ent - p * math.log(p,2) end end
   return t.also.ent
+end
+
+function srange(t,s )
+  s=""
+  for c,n in pairs(t.counts) do
+    s=s.." :"..c.." "..percent(n/t.n) end
+  return s
 end
 
 -- Num Stuff
@@ -270,7 +249,69 @@ function sdXpect(i,j,   n)
   return i.n/n * i.sd+ j.n/n * j.sd
 end
 
+-- Data stuff
+
+function data()
+  return  {x={}, y={}, syms={}, nums={}, rows={},
+           w={}, class=nil,name={}, _use={}} 
+end
+
+function header(cells,t,    c,what)
+  t = t or data()
+  for c0,x in pairs(cells) do
+    if not x:match("%?")  then
+      c = #t._use+1
+      t._use[c] = c0
+      t.name[c] = x
+      if x:match("[<>%$]") 
+	      then t.nums[c] = num()
+	      else t.syms[c] = sym()
+      end 
+      what = t.y
+      if     x:match("<") then t.w[c]  = -1 
+      elseif x:match(">") then t.w[c]  =  1  
+      elseif x:match("!") then t.class =  c 
+      else   what = t.x end 
+      what[ #what+1 ] = c
+  end end
+  return t
+end
+
+function rinc(t, cells)
+  t.rows[ #t.rows+1 ] = {cells=cells, id=unique()} 
+end
+
+function hinc(t, cells)
+  for c,num in pairs(t.nums) do ninc(num, cells[c]) end
+  for c,sym in pairs(t.syms) do sinc(sym, cells[c]) end
+end
+
+function datas(file,    t)
+  for cells in csv(file) do
+    if t then
+      rinc(t, cells)
+      hinc(t, cells) 
+    else
+      t = header(cells,t) end end
+  return t
+end
+
+function colsort(k,t,  f) 
+  f=function(x,y)
+       x,y=x.cells[k], y.cells[k]
+       if     x=="?" then return false
+       elseif y=="?" then return true
+      else return x < y end end
+  table.sort(t,f)
+  return t
+end  
+
 -- Test stuff
+
+function main(t)
+  if type(t) == 'table' and type(t.main) == 'function' then
+    t.main(); rogues() end
+end
 
 function rogues(    ignore)
   ignore = {jit=true, utf8=true, math=true, package=true, 
