@@ -6,6 +6,7 @@
 function defaults()
   return  {
   bore   = {goal="positive"},
+  tar3   = {beam=10},
   dom    = {samples=50},
   random = {seed=10013},
   super  = {epsilon=1.01, margin=1.05,enough=0.5}, 
@@ -54,7 +55,15 @@ end
 function any(t,    x)
   return t[ cap(math.floor(0.5+rand()*#t),1,#t) ]
 end
+
 -- Table Stuff
+
+function member(x,t,   f)
+  f = f or same
+  for _,y in pairs(t) do
+    if f(x) == f(y) then return true end end
+  return false
+end
 
 function ordered(t,  i,keys)
   i,keys = 0,{}
@@ -68,6 +77,18 @@ end
 cat = table.concat
 function dump(a,sep)
   for i=1,#a do print(cat(a[i].cells,sep or ",")) end
+end
+
+-- ## Set Stuff
+
+unpack = unpack or table.unpack
+
+function powerset(s)
+  local t = {{}}
+  for i = 1, #s do
+    for j = 1, #t do
+      t[#t+1] = {s[i], unpack(t[j])} end end
+  return t
 end
 
 -- ## String Stuff
@@ -247,6 +268,48 @@ function nums(t) return map2(t, num(), ninc) end
 function sdXpect(i,j,   n)  
   n = i.n + j.n +0.0001
   return i.n/n * i.sd+ j.n/n * j.sd
+end
+
+-- Set stuff
+
+function intersect(old,new,  key,val,out)
+  key, val, out = key or same, val or same, {}
+  for _,x in pairs(old) do
+    if new[ key(x) ] then
+      out[ key(x) ] = val(x) end end
+  return out
+end
+
+function union(t,  key,val,out)
+  key, val, out = key or same, val or same, {}
+  for _,x in pairs(t) do
+    if not out[ key(x) ] then
+      out[ key(x) ] = val(x) end end
+  return out
+end
+
+-- Range stuff
+
+function combine(t,  key,val,out,k,ks)
+  key, val, out = key or same, val or same, {}
+  for _,x in pairs(t) do
+    ks = out[ key(x) ] or {}
+    print(key(x), #ks)
+    if not member( key(x), ks) then 
+      ks[ #ks+1 ] = val(x)  end
+    out[ key(x) ] = ks
+  end
+  return out
+end
+
+function combineRanges(t,   out,some,k,v)
+  k   = function(z) return z.col end
+  v   = function(z) return z.val end
+  out = {}
+  for _,vals in pairs(combine(t,k,v)) do 
+    some = union(vals, k,v)
+    out  = out and intersect(out,some,k,v) or some end
+  return out
 end
 
 -- Data stuff
