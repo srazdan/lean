@@ -74,6 +74,8 @@ function ediv(data,cols,goal,enough,eval,   rows)
         return cuts(1,most,c,"")  end end
   end
 
+  print(cat(data.name,", "))
+  for n,c in pairs(data.name) do print(n,c) end
   for _,c in pairs(cols) do
     if data.nums[c] then div(c) end end
   print(gsub( cat(data.name,", "), "%$","")) 

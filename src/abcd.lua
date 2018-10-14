@@ -9,7 +9,8 @@ function abcd(db,rx)
 end
 
 -----------------------------------------------------------
-function abcdHas(t,x)
+function abcdHas(t,x,n)
+  n= n or 1
   if not t.known[x] then
     t.a[x] = 0
     t.b[x] = 0
@@ -17,28 +18,29 @@ function abcdHas(t,x)
     t.d[x] = 0
     t.known[x] = 0
   end
-  t.known[x] = t.known[x] + 1
+  t.known[x] = t.known[x] + n
   if t.known[x] == 1 then
     t.a[x] = t.yes + t.no end
 end 
 
 -----------------------------------------------------------
-function abcdInc(t,want, got)
-  abcdHas(t,want)
-  abcdHas(t,got)
+function abcdInc(t,want, got,  n)
+  n = n or 1
+  abcdHas(t,want,n)
+  abcdHas(t,got,n)
   if   want == got 
-  then t.yes = t.yes + 1
-  else t.no  = t.no  + 1 
+  then t.yes = t.yes + n
+  else t.no  = t.no  + n 
   end 
   for x,_ in pairs(t.known) do
     if want == x then
       if   want == got then
-           t.d[x] = t.d[x] + 1
-      else t.b[x] = t.b[x] + 1 end 
+           t.d[x] = t.d[x] + n
+      else t.b[x] = t.b[x] + n end 
     else
       if   got == x then
-           t.c[x] = t.c[x] + 1
-      else t.a[x] = t.a[x] + 1 end end end 
+           t.c[x] = t.c[x] + n
+      else t.a[x] = t.a[x] + n end end end 
 end
 
 -----------------------------------------------------------

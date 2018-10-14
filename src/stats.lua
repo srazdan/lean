@@ -60,9 +60,8 @@ function different(lst1,lst2)
     conf = Lean.stats.conf/100
     local function sampleWithReplacement(lst)
       local function n()   return math.floor(rand() * #lst) + 1 end
-      local function one() return lst[n()] end
       local out={}
-       for i=1,#lst do out[i] = one() end
+       for i=1,#lst do out[i] = lst[n()] end
        return out
     end
     local function delta(y,z)

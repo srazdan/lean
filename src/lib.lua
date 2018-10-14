@@ -86,6 +86,7 @@ unpack = unpack or table.unpack
 function powerset(s)
   local t = {{}}
   for i = 1, #s do
+    print(i)
     for j = 1, #t do
       t[#t+1] = {s[i], unpack(t[j])} end end
   return t
@@ -280,7 +281,9 @@ function intersect(old,new,  key,val,out)
   return out
 end
 
+
 function union(t,  key,val,out)
+  print(key)
   key, val, out = key or same, val or same, {}
   for _,x in pairs(t) do
     if not out[ key(x) ] then
@@ -293,6 +296,7 @@ end
 function combine(t,  key,val,out,k,ks)
   key, val, out = key or same, val or same, {}
   for _,x in pairs(t) do
+    print(10)
     ks = out[ key(x) ] or {}
     print(key(x), #ks)
     if not member( key(x), ks) then 
@@ -302,12 +306,14 @@ function combine(t,  key,val,out,k,ks)
   return out
 end
 
-function combineRanges(t,   out,some,k,v)
-  k   = function(z) return z.col end
-  v   = function(z) return z.val end
+function combineRanges(t,   k,v,out,some)
+  k   = k or function(z) return z.col end
+  v   = v or function(z) return z.val end
   out = {}
-  for _,vals in pairs(combine(t,k,v)) do 
-    some = union(vals, k,v)
+  print(2.5)
+  for _,x in pairs(combine(t,k,v)) do 
+    print(3)
+    some = union(x, k,v)
     out  = out and intersect(out,some,k,v) or some end
   return out
 end
@@ -319,24 +325,40 @@ function data()
            w={}, class=nil,name={}, _use={}} 
 end
 
+function rows(file,    use,iter)
+  local function usable(cells,  out) 
+    out = {}
+    for c0,x in pairs(cells) do
+      if not x:match("%?") then
+        out[ #out+1 ] = c0 end end 
+    return out
+  end
+  iter = csv(file)
+  return function(      cells,row)
+    while true do
+      cells = iter()
+      if not cells then break end
+      use = use or usable(cells) 
+      row = {}
+      for c,c0 in pairs(use) do row[c] = cells[c0] end
+      return row end end 
+end
+     
 function header(cells,t,    c,what)
   t = t or data()
-  for c0,x in pairs(cells) do
-    if not x:match("%?")  then
-      c = #t._use+1
-      t._use[c] = c0
-      t.name[c] = x
-      if x:match("[<>%$]") 
-	      then t.nums[c] = num()
-	      else t.syms[c] = sym()
-      end 
-      what = t.y
-      if     x:match("<") then t.w[c]  = -1 
-      elseif x:match(">") then t.w[c]  =  1  
-      elseif x:match("!") then t.class =  c 
-      else   what = t.x end 
-      what[ #what+1 ] = c
-  end end
+  for c,x in pairs(cells) do
+    t.name[c] = x
+    if x:match("[<>%$]") 
+	    then t.nums[c] = num()
+	    else t.syms[c] = sym()
+    end 
+    what = t.y
+    if     x:match("<") then t.w[c]  = -1 
+    elseif x:match(">") then t.w[c]  =  1  
+    elseif x:match("!") then t.class =  c 
+    else   what = t.x end 
+    what[ #what+1 ] = c
+  end
   return t
 end
 
@@ -350,12 +372,12 @@ function hinc(t, cells)
 end
 
 function datas(file,    t)
-  for cells in csv(file) do
+  for row in rows(file) do
     if t then
-      rinc(t, cells)
-      hinc(t, cells) 
+      rinc(t, row)
+      hinc(t, row) 
     else
-      t = header(cells,t) end end
+      t = header(row,t) end end
   return t
 end
 

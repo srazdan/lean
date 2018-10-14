@@ -20,9 +20,9 @@ function tar3(data,cols,goal,
         v = row.cells[c]
         if v ~= "?" then
   	      old   = f[c][v] or {
-                  n=0,col=c,v=v,val=0,rows={}}
+                  n=0,col=c,v=v,score=0,val={}}
           old.n = old.n + 1
-          old.rows[ #old.rows+1 ] = row
+          old.val[ #old.val+1 ] = row
           f[c][v] = old end end end end
 
   for i,row in pairs(rows) do
@@ -38,15 +38,18 @@ function tar3(data,cols,goal,
       b1 = b3.n / bests
       if r[c] and r[c][v] then r1 = r[c][v].n / rests end
       if b1 > r1 then
-        b3.val= b1^2/(b1+r1)
+        print(">>>",b3.col,b3.v)
+        b3.score= b1^2/(b1+r1)
         all[ #all+1 ] = b3 end end end
   table.sort(all, function(a,b) return 
-                    a.val > b.val end)
+                    a.score > b.score end)
   some={}
-  for i=1,Lean.tar3.beam do some[i] = all[i] end
+  for i=1,Lean.tar3.beam do print(9); some[i] = all[i]; end
+  print(1)
   for _,lst in pairs(powerset(some)) do
+    print(2,#lst)
     rule = combineRanges(lst)
-    -- print(rangeShow(rule)) 
+    o(rule) 
   end
 end
 
