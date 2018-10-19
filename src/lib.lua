@@ -79,24 +79,24 @@ function dump(a,sep)
   for i=1,#a do print(cat(a[i].cells,sep or ",")) end
 end
 
--- ## Set Stuff
+-- Meta Stuff
 
-unpack = unpack or table.unpack
+function same(x) return x end
 
-function powerset(s)
-  local t = {{}}
-  for i = 1, #s do
-    print(i)
-    for j = 1, #t do
-      t[#t+1] = {s[i], unpack(t[j])} end end
-  return t
+function map(t,f,    t1)
+  t1, f = {}, f or same
+  for i,x in pairs(t) do t1[i] = f(x)  end
+  return t1
 end
 
--- ## String Stuff
+function copy(t) return map(t,same) end
 
-function gsub(s,a,b,  _)
-  s,_ = string.gsub(s,a,b)
-  return s
+function deepCopy(t) 
+  return type(t)=="table" and map(t,deepCopy) or t end
+
+function map2(t,u,f) -- for all x in t, call f(u,x)
+  map(t, function(x) f(u,x) end) 
+  return u
 end
 
 -- ## Print Stuff
@@ -118,11 +118,82 @@ function o(t,    indent,   formatting)
         print(formatting .. tostring(v)) end end end
 end
 
+do
+  local tostring1 = tostring
+  function tostring(t,    pre,s)
+    if type(t) ~= "table" then return tostring1(t) end
+    for x,_ in pairs(t) do print(">>",x) end
+    pre, s = "", ""
+    if #t == 0 
+    then for k, v in ordered(t) do
+      if not (type(k)=='string' and k:match("^_")) then
+        s   = s .. pre ..":".. k .." ".. tostring(v)
+        pre = " " end end 
+    else for _,v in pairs(t) do
+      s = s .. pre .. tostring(v) 
+      pre=", " end end
+    return "{" .. s .. "}" end 
+end
+
+function cols(t,     numfmt, sfmt,noline,w,txt,sep)
+  w={}
+  for i,_ in pairs(t[1]) do w[i] = 0 end
+  for i,line in pairs(t) do
+    for j,cell in pairs(line) do
+      if type(cell)=="number" and numfmt then
+        cell    = string.format(numfmt,cell)
+        t[i][j] = cell end
+      w[j] = max( w[j], #tostring(cell) ) end end
+  for n,line in pairs(t) do
+    txt,sep="",""
+    for j,cell in pairs(line) do
+      sfmt = "%" .. (w[j]+1) .. "s"
+      txt = txt .. sep .. string.format(sfmt,cell)
+      sep = ","
+    end
+    print(txt)
+    if (n==1 and not noline) then
+      sep="#"
+      for _,w1 in pairs(w) do
+        io.write(sep .. string.rep("-",w1)  )
+        sep=", " end
+      print("") end end
+end
+
+
+-- ## Set Stuff
+
+unpack = unpack or table.unpack
+
+function powerset(s)
+  local t = {{}}
+  for i = 1, #s do
+    print(i)
+    for j = 1, #t do
+      t[#t+1] = {s[i], unpack(t[j])} end end
+  return t
+end
+
+-- ## String Stuff
+
+function gsub(s,a,b,  _)
+  s,_ = string.gsub(s,a,b)
+  return s
+end
+
+function split(s, sep,    t,notsep)
+  t, sep = {}, sep or ","
+  notsep = "([^" ..sep.. "]+)"
+  for y in string.gmatch(s, notsep) do t[#t+1] = y end
+  return t
+end
+
+
 -- ## File Stuff
 
 -- Here's a simple iterator over csv files.
 
--- - Read rows of comma seperated data either from standard input or from a file.
+--   pre - Read rows of comma seperated data either from standard input or from a file.
 -- - Kills all whitespace.
 -- - Converts some strings to numbers, as appropriate.
 -- - Returns the row, the row num, and a row unique id.
@@ -140,27 +211,6 @@ function csv(file,           str,cells,stream)
       return cells
     end 
     io.close(stream) end 
-end
-
--- Meta Stuff
-
-function same(x) return x end
-
-function map(t,f,    t1)
-  f= f or same
-  t1={}
-  for i,x in pairs(t) do t1[i] = f(x)  end
-  return t1
-end
-
-function copy(t) return map(t,same) end
-
-function deepCopy(t) 
-  return type(t)=="table" and map(t,copy) or t end
-
-function map2(t,u,f) -- for all x in t, call f(u,x)
-  map(t, function(x) f(u,x) end) 
-  return u
 end
 
 -- Goal stuff
