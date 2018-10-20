@@ -75,8 +75,8 @@ function ordered(t,  i,keys)
       i=i+1; return keys[i], t[keys[i]] end end
 end
 
-function likely(t,      n,all,total)
-  total, all = 0, {}
+function likely(t, want,     n,all,total)
+  total, all,want = 0, {}, want or 10^32
   for k,v in pairs(t) do 
     total = total + v
     all[#all+1] = {k,v} end
@@ -84,6 +84,7 @@ function likely(t,      n,all,total)
   n=0
   return function (  r,k,v)
     n = n + 1
+    if n > want then return nil end
     r = rand()
     for _,pair in pairs(all) do
       k,v = pair[1], pair[2]
