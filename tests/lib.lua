@@ -45,44 +45,4 @@ ok { cols = function()
      cols(t, "%5.2f")
 end}
 
-ok { sample= function (out,f) 
-  rseed(1)
-  out=sym()
-  for i,n in some(bars({aa=4,bb=6,cc=2,dd=1})) do
-    if n > 1000 then break end
-    sinc(out,i) end
-  print(out.counts)
-  
-  rseed(1)
-  out=sym()
-  f = some(bars {aa=1,cc=1}  )
-  for i=1,100 do   sinc(out,f()) end
-  print(out.counts)
-  
-  rseed(1)
-  out={}
-  f = some(triangular(1,2,10))
-  for i=1,100 do   out[#out+1] = int(f()*100) end
-  table.sort(out)
-  print(out)
-  
-  rseed(1)
-  out={}
-  f = some(uniform(1,10))
-  for i=1,100 do   out[#out+1] = int(f()*100) end
-  table.sort(out)
-  print(out)
-  
-  rseed(1)
-  out={}
-  f = some(sample {1,2,3,10,11,12})
-  for i=1,100 do   out[#out+1] = int(f()*100) end
-  table.sort(out)
-  print(out)
 
-  rseed(1)
-  out = num()
-  f   = some(gaussian(10,2))
-  for i=1,1000 do ninc(out, f()) end
-  print(out)
-end }
