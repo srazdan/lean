@@ -75,24 +75,6 @@ function ordered(t,  i,keys)
       i=i+1; return keys[i], t[keys[i]] end end
 end
 
-function likely(t, want,     n,all,total)
-  total, all,want = 0, {}, want or 10^32
-  for k,v in pairs(t) do 
-    total = total + v
-    all[#all+1] = {k,v} end
-  table.sort(all, function(x,y) return x[2] > y[2] end)
-  n=0
-  return function (  r,k,v)
-    n = n + 1
-    if n > want then return nil end
-    r = rand()
-    for _,pair in pairs(all) do
-      k,v = pair[1], pair[2]
-      r   = r - v/total
-      if r <= 0 then return v,n end end
-    return all[#all][1],n  end
-end
-
 cat = table.concat
 function dump(a,sep)
   for i=1,#a do print(cat(a[i].cells,sep or ",")) end
@@ -143,7 +125,7 @@ do
     if type(t) ~= "table" then return tostring1(t) end
     pre, s = "", ""
     if #t == 0 
-    then for k, v in ordered(t) do
+    then for k, v in pairs(t) do
       if not (type(k)=='string' and k:match("^_")) then
         s   = s .. pre ..":".. k .." ".. tostring(v)
         pre = " " end end 
@@ -291,9 +273,6 @@ function ent(t,  p)
   return t.also.ent
 end
 
-function sample(t)
-
-end
 
 function srange(t,s )
   s=""
@@ -535,3 +514,97 @@ do
 end
 
 function off(t) return t end
+
+-- Sampling stuff
+
+function some(f,want,  n)
+  n,want = 0,want or 10^32
+  return function()
+    n = n + 1
+    return n <= want and f(),n or nil end
+end
+
+function uniform(lo,hi)
+  return function()
+    return lo + rand()*(hi - lo) end
+end
+
+function sample(t,       i)
+  return function( i)
+    i = cap(math.floor(0.5+rand()*#t),1,#t-1) 
+    return t[i] + rand()*(t[i+1] - t[i]) end
+end
+
+function triangular(lo,mode,hi,    c)
+  c = (mode-lo)/(hi-lo)
+  return function(   u,v,x)
+     u,v = rand(),rand()
+     x = (1-c)*min(u,v) + c*max(u,v)
+     return lo + x*(hi-lo) end
+end
+
+function gaussian(mu,sd)
+  local function polar( x,y)
+    x = -1+2*rand()
+    y = -1+2*rand()
+    return x,x*x + y*y end
+  return function(   r,x)
+    r=0
+    while (r >= 1) or (r == 0) do x,r=polar() end
+    return mu + sd*x*(-2 * log(r) / r)^0.5 end
+end
+
+function bars(t,      default,all,total)
+  total, all = 0, {}
+  for k,v in pairs(t) do 
+    total = total + v
+    all[#all+1] = {k,v} end
+  table.sort(all, function(x,y) return x[2] > y[2] end)
+  default=all[#all][1]
+  return function (  r,k,v)
+    r = rand()
+    for _,pair in pairs(all) do
+      k,v = pair[1], pair[2]
+      r   = r - v/total
+      if r <= 0 then return k end end
+    return default end
+end
+
+Rand,Rany,Ror,Requires,Excludes=1,2,3,4,5
+
+a= {tree= {Rany,phone= {Rand, "calls", "gps", 
+                         screen= {Rany,"basic", "color", "highres"},
+                         media=  {Ror, "camera", "mp3"}}},
+    rules={{Requires,"camera","highres"},
+           {Excludes, "basic", "gps"}}}
+
+function features1(t,   wme,pre,car,cdr)
+  pre = pre or "|.. "
+  wme = wme or {}
+  print(pre,t)
+  if   type(t) == "string" 
+  then wme[ #wme+1 ] = t 
+  else 
+    cdr = {}
+    for k,v in pairs(t) do
+      print(k,v,car,cdr)
+      if car then cdr[#cdr+1] = v else car = v end 
+    end 
+    table.sort(cdr, function(a,b) return rand() < 0.5 end)
+    print(100,cdr)
+    if car == Rand then 
+      features1(cdr, wme, pre .. "|.. ")
+    elseif car == Rany then 
+      for i=1,#cdr*rand() do features1(cdr[i], wme, pre .. "|.. ") end
+    elseif car == Ror  then 
+      features(cdr[1], wme, pre .. "|.. ")
+    else 
+      for _,v in pairs(cdr)  do features1(v, wme) end end end
+  return wme
+end
+
+function features(t) print(features1(t)) end
+
+features(a.tree)
+
+
