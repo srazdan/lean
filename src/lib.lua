@@ -10,7 +10,8 @@ function defaults()
   dom    = {samples=50},
   random = {seed=10013},
   super  = {epsilon=1.01, margin=1.05,enough=0.5}, 
-  ediv   = {eval="entXpect"}
+  ediv   = {eval="entXpect"},
+  dist   = {p=2}
   } 
 end
 
@@ -74,6 +75,23 @@ function ordered(t,  i,keys)
       i=i+1; return keys[i], t[keys[i]] end end
 end
 
+function likely(t,      n,all,total)
+  total, all = 0, {}
+  for k,v in pairs(t) do 
+    total = total + v
+    all[#all+1] = {k,v} end
+  table.sort(all, function(x,y) return x[2] > y[2] end)
+  n=0
+  return function (  r,k,v)
+    n = n + 1
+    r = rand()
+    for _,pair in pairs(all) do
+      k,v = pair[1], pair[2]
+      r   = r - v/total
+      if r <= 0 then return v,n end end
+    return all[#all][1],n  end
+end
+
 cat = table.concat
 function dump(a,sep)
   for i=1,#a do print(cat(a[i].cells,sep or ",")) end
@@ -122,7 +140,6 @@ do
   local tostring1 = tostring
   function tostring(t,    pre,s)
     if type(t) ~= "table" then return tostring1(t) end
-    for x,_ in pairs(t) do print(">>",x) end
     pre, s = "", ""
     if #t == 0 
     then for k, v in ordered(t) do
@@ -159,7 +176,6 @@ function cols(t,     numfmt, sfmt,noline,w,txt,sep)
         sep=", " end
       print("") end end
 end
-
 
 -- ## Set Stuff
 
@@ -274,6 +290,10 @@ function ent(t,  p)
   return t.also.ent
 end
 
+function sample(t)
+
+end
+
 function srange(t,s )
   s=""
   for c,n in pairs(t.counts) do
@@ -311,7 +331,7 @@ function ndec(t,x,    d)
 end
 
 function norm(t,x)
-  return x=="?" and 0.5 or (x-t.lo) / (t.hi-t.lo + 10^-32)
+  return x=="?" and 0.5 or (x-t.lo) / (t.hi-t.lo + 10^-64)
 end
 
 function nums(t) return map2(t, num(), ninc) end
@@ -440,6 +460,38 @@ function colsort(k,t,  f)
   table.sort(t,f)
   return t
 end  
+
+-- Distance stuff
+
+function dist(t,row1,row2,cols,  p,   d,n,x,y,f,d1,n1)
+  cols = cols or t.x
+  p    = p    or Lean.dist.p
+  function symDist(x,y)
+    if     x=="?" and y=="?" then return 1 
+    elseif x=="?" or  y=="?" then return 1 
+    elseif x==y              then return 0
+    else                          return 1
+    end end
+  
+  function numDist(t,x,y)
+    if     x=="?" and y=="?" then return 0,0 
+    elseif x=="?" then y= norm(t,y); x= y < 0.5 and 1 or 0
+    elseif y=="?" then x= norm(t,x); y= x < 0.5 and 1 or 0
+    else               x= norm(t,x); y= norm(t,y) 
+    end
+    return (x-y)^p end
+
+  d,n = 0,0
+  for _,c in pairs(cols) do
+    x, y  = row1.cells[c], row2.cells[c]
+    if t.nums[c] 
+      then d1 = numDist(t.nums[c],x,y) 
+      else d1 = symDist(x,y)
+    end
+    d, n = d + d1, n + 1 
+  end
+  return (d/n) ^ (1/p) 
+end
 
 -- Test stuff
 

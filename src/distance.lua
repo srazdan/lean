@@ -1,7 +1,6 @@
 -- vim: ts=2 sw=2 sts=2 expandtab:cindent:formatoptions+=cro 
 --------- --------- --------- --------- --------- ---------~
 
-require "rows"
 require "lib"
 
 -- Based on Aha et al. [Instance-based Learning Algorithms](https://link.springer.com/content/pdf/10.1007/BF00153759.pdf) -- (see top of p42).

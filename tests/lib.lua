@@ -45,3 +45,17 @@ ok { cols = function()
      cols(t, "%5.2f")
 end}
 
+rseed(1)
+log=sym()
+for i,n in likely({aa=4,bb=6,cc=2,dd=1}) do
+  if n > 1000 then break end
+  sinc(log,i) end
+print(log.counts)
+
+rseed(1)
+log=sym()
+iter = likely {aa=1,bb=1,cc=2}  
+for i=1,100 do  sinc(log,iter()) end
+print(log.counts)
+
+
