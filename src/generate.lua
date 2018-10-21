@@ -56,42 +56,45 @@ function bars(t,      default,all,total)
     return default end
 end
 
-Rand,Rany,Ror,Requires,Excludes=1,2,3,4,5
+function rall(t) return {what="all",  items=t} end
+function rany(t) return {what="any",  items=t} end
+function rone(t) return {what="one", items=t} end
 
-function random0(t,n) 
-  table.sort(t,function(a,b) return rand() < 0.5 end)
-  return {want=n, items=t}
-end
-
-function rall(t) return {what="all", items=t} end
-function rone(t) return {what="some", items=t} end
-
-a= {rules= {phone  = rall{"calls",  "gps","screen","camera"},
-            screen = rone{"basic", "color","highres"},
-	    media  = rone{"camera", "mps"}}, 
-    nogood={{Requires, {"camera"},
-                      {"highres"}},
-           {Excludes, {"basic"}, 
-                      {"gps"}}}}
-
-function features1(token, rules, wme,pre)
-  pre, wme = pre or "|.. ", wme or {}
-  x=rules[token]
-  print(pre,totnmx)
-  if x then
-	  print(x.items)
-    table.sort(x.items, function(a,b) return rand() < 0.5 end)
-    hi= x.what=="some" and rand()*#x or #x
-    for sub =1, hi do
-      features1(x.items[i], rules, wme, pre .. "|.. ") end 
-  else
-    wme[ #wme+1 ] = token
+function features(t,root,     wme,n) 
+  local function feature1(token,wme,pre,    hi,x)
+    x = t.rules[token]
+    if x then
+      x.items = shuffle(x.items)
+      n = #x.items
+      if   x.what == "all" 
+      then hi = n
+      else hi = cap(math.floor(0.5+rand()*n),1,n) 
+      end
+      for i =1, hi do
+        feature1(x.items[i],  wme, pre .. "|.. ") 
+        if x.what == "one" then break end end 
+    else
+      wme[ token ] = true
+    end
+    return wme
   end
-  return wme
-end
 
-function features(t) 
-  for i=1,20 do print(features1("phone",a.rules)) end 
-end
+  local function implied()
+    for _,two in pairs(t.implies) do
+      if wme[two[1]] and not wme[two[2]] 
+        then return false end end
+    return true
+  end
 
-features(a.rules)
+  local function excluded(  n)
+    for _,es in pairs(t.excludes) do
+      n = 0
+      for _,e in pairs(es) do 
+        if wme[e] then n = n + 1 end end
+      if  n==1 then return true end end
+    return false
+  end
+
+  wme = feature1(root,{},"")
+  if implied(wme) and not excluded(wme) then return wme end
+end
